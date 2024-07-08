@@ -1,3 +1,30 @@
 {
-	"Token":"[TOKEN HERE]"
+	"Token":"[TOKEN HERE]",
+	"NameLayer":"Nom",
+	"Admins":
+	[
+		"Discord ID 1 (right click->get user id)",
+		"Discord ID 2 (right click->get user id)"
+	],
+	"Watermarks":
+	[
+		{
+			"LayerIndex":"The index of the layer of the watermark in the Photoshop's watermark folder",
+			"DisplayName":"The name of the watermark"
+		}
+	],
+	"Backgrounds":
+	[
+		{
+			"LayerIndex":"The index of the layer of the background in the Photoshop's backgrounds folder",
+			"DisplayName":"The name of the background"
+		}
+	],
+	"SpecialtyIcons":
+	[
+		{
+			"LayerIndex":"The index of the layer of the specialty icon in the Photoshop's specialty icons folder",
+			"DisplayName":"The name of the specialty icon"
+		}
+	]
 }

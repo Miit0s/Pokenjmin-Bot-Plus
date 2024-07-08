@@ -15,7 +15,7 @@ con = sqlite3.connect("data.db")
 def create_tables():
     sql_statements = [ 
         """CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY,
+                id INTEGER PRIMARY KEY,-
                 discordName  TEXT NOT NULL
         );""",
         """CREATE TABLE IF NOT EXISTS skills (
@@ -51,20 +51,44 @@ def create_tables():
                 PRIMARY KEY(user_id,card_id),
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY(card_id) REFERENCES cards(id) ON DELETE CASCADE
+        );""",
+        """CREATE TABLE IF NOT EXISTS server_settings (
+                server_id INTEGER PRIMARY KEY,
+                card_watermark INTEGER,
+                server_cohort TEXT
         );"""
         ]
     cur=con.cursor()
     for statement in sql_statements:
         cur.execute(statement)
 
-
 create_tables()
+
+def get_or_create_user(discordName):
+    cursor = con.cursor()
+    cursor.execute("SELECT * from users WHERE discordName=?",(discordName,))
+    result=cursor.fetchone()
+    if(result!=None): return result
+
+    cursor=con.cursor()
+    cursor.execute("INSERT INTO users (discordName) VALUES (?)",(discordName,))
+    cursor.execute("SELECT * from users WHERE discordName=?",(discordName,))
+    result=cursor.fetchone()
+    print(result)
 #endregion
 
 #region Bot management
 @client.event
 async def on_ready():
     await tree.sync()
+
+@tree.command(
+    name="set",
+    description="Set the value of one or more fields of your card"
+)
+async def set_card_field(interaction, name:str ):
+    get_or_create_user(interaction.user.name)
+    await interaction.response.send_message("Hello "+interaction.user.name+" !")
 
 client.run(settings["Token"])
 #endregion
