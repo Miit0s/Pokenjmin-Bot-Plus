@@ -10,13 +10,14 @@ tree = app_commands.CommandTree(client)
 settingsFile= open('settings.json')
 settings=json.load(settingsFile)
 con = sqlite3.connect("data.db")
+con.row_factory = sqlite3.Row
 
 #region Database management
 def create_tables():
     sql_statements = [ 
         """CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY,-
-                discordName  TEXT NOT NULL
+                id INTEGER PRIMARY KEY,
+                discord_id INTEGER
         );""",
         """CREATE TABLE IF NOT EXISTS skills (
                 id INTEGER PRIMARY KEY,
@@ -64,31 +65,94 @@ def create_tables():
 
 create_tables()
 
-def get_or_create_user(discordName):
+def get_or_create_user(discordId):
     cursor = con.cursor()
-    cursor.execute("SELECT * from users WHERE discordName=?",(discordName,))
+    cursor.execute("SELECT * from users WHERE discord_id=?",(discordId,))
     result=cursor.fetchone()
     if(result!=None): return result
 
     cursor=con.cursor()
-    cursor.execute("INSERT INTO users (discordName) VALUES (?)",(discordName,))
-    cursor.execute("SELECT * from users WHERE discordName=?",(discordName,))
+    cursor.execute("INSERT INTO users (discord_id) VALUES (?)",(discordId,))
+    cursor.execute("SELECT * from users WHERE discord_id=?",(discordId,))
+    con.commit()
     result=cursor.fetchone()
-    print(result)
+    return result
+
+def get_or_create_card(user):
+    for userKey in user.keys():
+        print(str(userKey)+" "+str(user[userKey]))
+    # for userKey in user:
+    #     print(str(userKey))
+    cursor=con.cursor()
+    cursor.execute("SELECT * from cards WHERE owner_id=?",(user["id"],))
+    result=cursor.fetchone()
+    if(result!=None): return sqlite3Row_to_dict(result)
+
+    cursor=con.cursor()
+    cursor.execute("""INSERT INTO skills (skill_name) VALUES("Skill 1")""")
+    skill1_id=cursor.lastrowid
+    cursor.execute("""INSERT INTO skills (skill_name) VALUES("Skill 2")""")
+    skill2_id=cursor.lastrowid
+
+    cursor.execute("INSERT INTO cards (owner_id, skill1_id,skill2_id) VALUES (?,?,?)",(user["id"],skill1_id,skill2_id))
+    con.commit()
+    cursor.execute("SELECT * from cards WHERE owner_id=?",(user["id"],))
+    result=cursor.fetchone()
+    return sqlite3Row_to_dict(result)
+
+def sqlite3Row_to_dict(sqlite3Row):
+    dict={}
+    for sqlite3Row_field in sqlite3Row.keys():
+        dict[sqlite3Row_field]=sqlite3Row[sqlite3Row_field]
+    return dict
+
+def update_card(card):
+    cursor=con.cursor()
+    cursor.execute("""
+                UPDATE cards 
+                SET 
+                    card_name=?
+                WHERE
+                    id=?
+                """,(card["card_name"],card["id"]))
+    con.commit()
 #endregion
 
 #region Bot management
-@client.event
-async def on_ready():
-    await tree.sync()
-
 @tree.command(
     name="set",
-    description="Set the value of one or more fields of your card"
+    description="Set the value of one or more fields of your card",
+    guild=discord.Object(id=790626187944394772)
 )
 async def set_card_field(interaction, name:str ):
-    get_or_create_user(interaction.user.name)
-    await interaction.response.send_message("Hello "+interaction.user.name+" !")
+    user=get_or_create_user(interaction.user.id)
+    card=get_or_create_card(user)
+
+    card["card_name"]=name
+    update_card(card)
+
+    for role in interaction.user.roles:
+        print(role.name)
+    
+    await interaction.response.send_message("Hello "+interaction.user.name+" ! "+name)
+
+@tree.command(
+    name="get",
+    description="Prints all the values of your card in a text format, quicker than a full preview",
+    guild=discord.Object(id=790626187944394772)
+)
+async def get(interaction):
+    user=get_or_create_user(interaction.user.id)
+    card=get_or_create_card(user)
+    returnValue=""
+    for card_field in card.keys():
+        returnValue+=f"{card_field}:{card[card_field]}\n\n"
+
+    await interaction.response.send_message(returnValue)
+
+@client.event
+async def on_ready():
+    await tree.sync(guild=discord.Object(id=790626187944394772))
 
 client.run(settings["Token"])
 #endregion
