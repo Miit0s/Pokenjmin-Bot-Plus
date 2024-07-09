@@ -126,8 +126,8 @@ def update_card(card):
 def create_psd_card(cardDatas):
     print(os.getcwd())
     with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
-        nameLayer = ps.active_document.artLayers.getByName("Nom")
-        nameLayer.textItem.contents = cardDatas["card_name"]
+        ownerNameLayer = ps.active_document.artLayers.getByName(settings["OwnerNameLayer"])
+        ownerNameLayer.textItem.contents = cardDatas["owner_name"]
 
         #save the psd
         psd_file = os.path.join(os.getcwd(),settings["GeneratedPsdFolder"],cardDatas["card_name"]+".psd")

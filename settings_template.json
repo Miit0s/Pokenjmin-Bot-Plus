@@ -1,6 +1,6 @@
 {
 	"Token":"[TOKEN HERE]",
-	"NameLayer":"Nom",
+	"OwnerNameLayer":"Nom",
 	"Admins":
 	[
 		"Discord ID 1 (right click->get user id)",
