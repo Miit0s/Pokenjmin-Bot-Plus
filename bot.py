@@ -3,8 +3,10 @@ import discord
 import json
 from discord import app_commands
 from photoshop import Session
-import photoshop.api as ps
+import photoshop.api as photoshop
 import sqlite3
+import os
+from tempfile import mkdtemp
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -121,16 +123,40 @@ def update_card(card):
 #endregion
 
 #region Photoshop management
-app = ps.Application()
+#app = ps.Application()
+
+#Since you can't find nested layers easily, this function will take inputs like Infos/Nom and return the corresponding layer
+def get_layer_by_path(ps, layerPath):
+    subGroups=str(layerPath).split("/")
+    if(len(subGroups)<=1):
+        return ps.active_document.artLayers.getByName(layerPath)
+    
+    i=0
+    layerGroup=ps.active_document.layerSets
+    while(i<len(subGroups)):
+        print("subGroup = "+subGroups[i])
+        layerGroup= photoshop.LayerSets(layerGroup).getByName(subGroups[i])
+        print("subGroup done")
+        i+=1
+    
+    return layerGroup
 
 def create_psd_card(cardDatas):
-    with Session(settings["TemplatePsdFile"], action="open", auto_close=True) as ps:
-        nameLayer = ps.active_document.artLayers.getByName(settings["NameLayer"])
-        assert nameLayer.name == settings["NameLayer"]
+    print(os.getcwd())
+    with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
+
+        # infosLayerGroup=ps.active_document.layerSets.getByName("Infos")
+
+        # nameLayer = infosLayerGroup.getByName(settings["NameLayer"])
+        # assert nameLayer.name == settings["NameLayer"]
+        # nameLayer.textItem.contents = cardDatas["card_name"]
+
+
+        nameLayer = get_layer_by_path(ps,settings["NameLayer"])
         nameLayer.textItem.contents = cardDatas["card_name"]
 
         #save the psd
-        psd_file = settings["GeneratedPsdFolder"]+"/"+cardDatas["card_name"]+".psd"
+        psd_file = os.path.join(os.getcwd(),settings["GeneratedPsdFolder"],cardDatas["card_name"]+".psd")
         doc = ps.active_document
         options = ps.PhotoshopSaveOptions()
         doc.saveAs(psd_file, options, True)
@@ -142,8 +168,10 @@ def create_psd_card(cardDatas):
         option.jpegQuality = 12
         option.layers = True
         option.view = True  # opens the saved PDF in Acrobat.
-        pdf = settings["ExportPngFolder"]+"/"+cardDatas["card_name"]+".pdf"
+        pdf = os.path.join(os.getcwd(),settings["ExportPngFolder"],cardDatas["card_name"]+".pdf")
         ps.active_document.saveAs(pdf, option)
+
+
 
 #endregion
 
