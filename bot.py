@@ -2,6 +2,8 @@
 import discord
 import json
 from discord import app_commands
+from photoshop import Session
+import photoshop.api as ps
 import sqlite3
 
 intents = discord.Intents.default()
@@ -118,6 +120,33 @@ def update_card(card):
     con.commit()
 #endregion
 
+#region Photoshop management
+app = ps.Application()
+
+def create_psd_card(cardDatas):
+    with Session(settings["TemplatePsdFile"], action="open", auto_close=True) as ps:
+        nameLayer = ps.active_document.artLayers.getByName(settings["NameLayer"])
+        assert nameLayer.name == settings["NameLayer"]
+        nameLayer.textItem.contents = cardDatas["card_name"]
+
+        #save the psd
+        psd_file = settings["GeneratedPsdFolder"]+"/"+cardDatas["card_name"]+".psd"
+        doc = ps.active_document
+        options = ps.PhotoshopSaveOptions()
+        doc.saveAs(psd_file, options, True)
+        ps.alert("Task done!")
+        ps.echo(doc.activeLayer)
+
+        #export the pdf
+        option = ps.PDFSaveOptions()
+        option.jpegQuality = 12
+        option.layers = True
+        option.view = True  # opens the saved PDF in Acrobat.
+        pdf = settings["ExportPngFolder"]+"/"+cardDatas["card_name"]+".pdf"
+        ps.active_document.saveAs(pdf, option)
+
+#endregion
+
 #region Bot management
 @tree.command(
     name="set",
@@ -149,6 +178,20 @@ async def get(interaction):
         returnValue+=f"{card_field}:{card[card_field]}\n\n"
 
     await interaction.response.send_message(returnValue)
+
+@tree.command(
+    name="preview",
+    description="Exports your card as a pdf",
+    guild=discord.Object(id=790626187944394772)
+)
+async def get(interaction):
+    user=get_or_create_user(interaction.user.id)
+    card=get_or_create_card(user)
+    
+    create_psd_card(card)
+    await interaction.response.send_message("Done !")
+
+
 
 @client.event
 async def on_ready():
