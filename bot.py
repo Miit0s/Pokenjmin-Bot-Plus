@@ -83,8 +83,6 @@ def get_or_create_user(discordId):
     return result
 
 def get_or_create_card(user):
-    for userKey in user.keys():
-        print(str(userKey)+" "+str(user[userKey]))
     # for userKey in user:
     #     print(str(userKey))
     cursor=con.cursor()
@@ -125,34 +123,10 @@ def update_card(card):
 #region Photoshop management
 #app = ps.Application()
 
-#Since you can't find nested layers easily, this function will take inputs like Infos/Nom and return the corresponding layer
-def get_layer_by_path(ps, layerPath):
-    subGroups=str(layerPath).split("/")
-    if(len(subGroups)<=1):
-        return ps.active_document.artLayers.getByName(layerPath)
-    
-    i=0
-    layerGroup=ps.active_document.layerSets
-    while(i<len(subGroups)):
-        print("subGroup = "+subGroups[i])
-        layerGroup= photoshop.LayerSets(layerGroup).getByName(subGroups[i])
-        print("subGroup done")
-        i+=1
-    
-    return layerGroup
-
 def create_psd_card(cardDatas):
     print(os.getcwd())
     with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
-
-        # infosLayerGroup=ps.active_document.layerSets.getByName("Infos")
-
-        # nameLayer = infosLayerGroup.getByName(settings["NameLayer"])
-        # assert nameLayer.name == settings["NameLayer"]
-        # nameLayer.textItem.contents = cardDatas["card_name"]
-
-
-        nameLayer = get_layer_by_path(ps,settings["NameLayer"])
+        nameLayer = ps.active_document.artLayers.getByName("Nom")
         nameLayer.textItem.contents = cardDatas["card_name"]
 
         #save the psd
