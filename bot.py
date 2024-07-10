@@ -144,11 +144,14 @@ def get_layer_by_path(ps, layerPath):
 
     return layerGroup.artLayers.getByName(subGroups[len(subGroups)-1])
 
-def create_psd_card(cardDatas, fileName):
+def create_psd_card(cardDatas, fileName, isPreview=False):
     print(os.getcwd())
     with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
         i=0
-            
+
+        previewWatermark=ps.active_document.layerSets.getByName(settings["PreviewLayerGroup"])
+        previewWatermark.visible=isPreview
+        
         ownerNameLayer = get_layer_by_path(ps,settings["OwnerNameLayer"])
         ownerNameLayer.textItem.contents = cardDatas["owner_name"]
 
@@ -166,12 +169,14 @@ def create_psd_card(cardDatas, fileName):
 
         bottomTextLayer = get_layer_by_path(ps,settings["BottomTextLayer"])
         bottomTextLayer.textItem.contents = "["+cardDatas["bottom_text_title"]+"] "+cardDatas["bottom_text_content"]
-
-        #save the psd
-        psd_file = os.path.join(os.getcwd(),settings["GeneratedPsdFolder"],fileName+".psd")
-        doc = ps.active_document
-        options = ps.PhotoshopSaveOptions()
-        doc.saveAs(psd_file, options, True)
+        
+        if isPreview:
+            option = ps.JPEGSaveOptions()
+            option.quality=1
+            #you can't change the "jpg" part of the export path (for jpeg for example), Photoshop would overwrite it
+            jpegPath = os.path.join(mkdtemp(),fileName+".jpg")
+            ps.active_document.saveAs(jpegPath, option)
+            return jpegPath
 
         #export the pdf
         option = ps.PDFSaveOptions()
@@ -234,8 +239,10 @@ async def preview(interaction):
     user=get_or_create_user(interaction.user.id)
     card=get_or_create_card(user)
     
-    create_psd_card(card, interaction.user.name)
-    await interaction.followup.send("Done !",ephemeral=True)
+    fileName=interaction.user.name
+    jpegPreviewPath=create_psd_card(card, fileName,True)
+    #os.chdir(os.path.dirname(jpegPreviewPath))
+    await interaction.followup.send("",ephemeral=True,file=discord.File(jpegPreviewPath))
 
 
 
