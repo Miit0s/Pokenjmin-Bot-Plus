@@ -38,7 +38,8 @@ def create_tables():
                 owner_name TEXT DEFAULT "" NOT NULL,
                 owner_cohort TEXT DEFAULT "" NOT NULL, 
                 card_description TEXT DEFAULT "" NOT NULL, 
-                bottom_text TEXT DEFAULT "" NOT NULL,
+                bottom_text_title TEXT DEFAULT "Pré-prod" NOT NULL,
+                bottom_text_content TEXT DEFAULT "" NOT NULL,
                 cp_value INTEGER DEFAULT 0 NOT NULL,
                 card_background INTEGER DEFAULT 0 NOT NULL,
                 card_watermark INTEGER DEFAULT 0 NOT NULL,
@@ -113,36 +114,71 @@ def update_card(card):
     cursor.execute("""
                 UPDATE cards 
                 SET 
-                    card_name=?
+                    card_name=?,
+                    owner_name=?,
+                    cp_name=?,
+                    card_description=?,
+                    bottom_text_title=?,
+                    bottom_text_content=?,
+                    cp_value=?
                 WHERE
                     id=?
-                """,(card["card_name"],card["id"]))
+                """,(card["card_name"],card["owner_name"],card["cp_name"],card["card_description"],card["bottom_text_title"],card["bottom_text_content"],card["cp_value"],card["id"]))
     con.commit()
 #endregion
 
 #region Photoshop management
 #app = ps.Application()
 
-def create_psd_card(cardDatas):
+#Get layer by path written as Group/Group/Layer, for exampel Infos/Name
+def get_layer_by_path(ps, layerPath):
+    subGroups=str(layerPath).split("/")
+    if(len(subGroups)<=1):
+        return ps.active_document.artLayers.getByName(layerPath)
+    
+    i=0
+    layerGroup=ps.active_document
+    while(i<len(subGroups)-1):
+        layerGroup= layerGroup.layerSets.getByName(subGroups[i])
+        i+=1
+
+    return layerGroup.artLayers.getByName(subGroups[len(subGroups)-1])
+
+def create_psd_card(cardDatas, fileName):
     print(os.getcwd())
     with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
-        ownerNameLayer = ps.active_document.artLayers.getByName(settings["OwnerNameLayer"])
+        i=0
+            
+        ownerNameLayer = get_layer_by_path(ps,settings["OwnerNameLayer"])
         ownerNameLayer.textItem.contents = cardDatas["owner_name"]
 
+        cardNameLayer = get_layer_by_path(ps,settings["CardNameLayer"])
+        cardNameLayer.textItem.contents = cardDatas["card_name"]
+
+        descriptionLayer = get_layer_by_path(ps,settings["DescriptionLayer"])
+        descriptionLayer.textItem.contents = cardDatas["card_description"]
+
+        cpNameLayer = get_layer_by_path(ps,settings["CPNameLayer"])
+        cpNameLayer.textItem.contents = cardDatas["cp_name"]
+
+        cpValueLayer = get_layer_by_path(ps,settings["CPValueLayer"])
+        cpValueLayer.textItem.contents = str(cardDatas["cp_value"])
+
+        bottomTextLayer = get_layer_by_path(ps,settings["BottomTextLayer"])
+        bottomTextLayer.textItem.contents = "["+cardDatas["bottom_text_title"]+"] "+cardDatas["bottom_text_content"]
+
         #save the psd
-        psd_file = os.path.join(os.getcwd(),settings["GeneratedPsdFolder"],cardDatas["card_name"]+".psd")
+        psd_file = os.path.join(os.getcwd(),settings["GeneratedPsdFolder"],fileName+".psd")
         doc = ps.active_document
         options = ps.PhotoshopSaveOptions()
         doc.saveAs(psd_file, options, True)
-        ps.alert("Task done!")
-        ps.echo(doc.activeLayer)
 
         #export the pdf
         option = ps.PDFSaveOptions()
         option.jpegQuality = 12
         option.layers = True
-        option.view = True  # opens the saved PDF in Acrobat.
-        pdf = os.path.join(os.getcwd(),settings["ExportPngFolder"],cardDatas["card_name"]+".pdf")
+        option.view = False  # opens the saved PDF in Acrobat.
+        pdf = os.path.join(os.getcwd(),settings["ExportPngFolder"],fileName+".pdf")
         ps.active_document.saveAs(pdf, option)
 
 
@@ -151,21 +187,28 @@ def create_psd_card(cardDatas):
 
 #region Bot management
 @tree.command(
-    name="set",
+    name="set_card",
     description="Set the value of one or more fields of your card",
     guild=discord.Object(id=790626187944394772)
 )
-async def set_card_field(interaction, name:str ):
+async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:str=None, card_description:str=None, bottom_text_title:str=None, bottom_text_content:str=None, cp_value:int=None):
     user=get_or_create_user(interaction.user.id)
     card=get_or_create_card(user)
 
-    card["card_name"]=name
+    if(card_name!=None): card["card_name"]=card_name
+    if(owner_name!=None): card["owner_name"]=owner_name
+    if(cp_name!=None): card["cp_name"]=cp_name
+    if(card_description!=None): card["card_description"]=card_description
+    if(bottom_text_title!=None): card["bottom_text_title"]=bottom_text_title
+    if(bottom_text_content!=None): card["bottom_text_content"]=bottom_text_content
+    if(cp_value!=None): card["cp_value"]=cp_value
+
     update_card(card)
 
     for role in interaction.user.roles:
         print(role.name)
     
-    await interaction.response.send_message("Hello "+interaction.user.name+" ! "+name)
+    await interaction.response.send_message("Hello "+interaction.user.name+" ! ",ephemeral=True)
 
 @tree.command(
     name="get",
@@ -179,19 +222,20 @@ async def get(interaction):
     for card_field in card.keys():
         returnValue+=f"{card_field}:{card[card_field]}\n\n"
 
-    await interaction.response.send_message(returnValue)
+    await interaction.response.send_message(returnValue,ephemeral=True)
 
 @tree.command(
     name="preview",
     description="Exports your card as a pdf",
     guild=discord.Object(id=790626187944394772)
 )
-async def get(interaction):
+async def preview(interaction):
+    await interaction.response.defer(ephemeral=True, thinking=True)
     user=get_or_create_user(interaction.user.id)
     card=get_or_create_card(user)
     
-    create_psd_card(card)
-    await interaction.response.send_message("Done !")
+    create_psd_card(card, interaction.user.name)
+    await interaction.followup.send("Done !",ephemeral=True)
 
 
 
