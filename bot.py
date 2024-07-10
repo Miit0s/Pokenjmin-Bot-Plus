@@ -144,6 +144,30 @@ def get_layer_by_path(ps, layerPath):
 
     return layerGroup.artLayers.getByName(subGroups[len(subGroups)-1])
 
+#https://loonghao.github.io/photoshop-python-api/examples/#replace-images
+def replace_image(ps, layerToReplace):
+    active_layer = layerToReplace
+    bounds = active_layer.bounds
+    print(f"current layer {active_layer.name}: {bounds}")
+    input_file = os.path.join(os.getcwd(),"Test.png")
+    replace_contents = ps.app.stringIDToTypeID("placedLayerReplaceContents")
+    desc = ps.ActionDescriptor
+    idnull = ps.app.charIDToTypeID("null")
+    desc.putPath(idnull, input_file)
+    ps.app.executeAction(replace_contents, desc)
+
+    # replaced image.
+    active_layer = ps.active_document.activeLayer
+    current_bounds = active_layer.bounds
+    width = bounds[2] - bounds[0]
+    height = bounds[3] - bounds[1]
+
+    current_width = current_bounds[2] - current_bounds[0]
+    current_height = current_bounds[3] - current_bounds[1]
+    new_size = width / current_width * 100
+    active_layer.resize(new_size, new_size, ps.AnchorPosition.MiddleCenter)
+    print(f"current layer {active_layer.name}: {current_bounds}")
+
 def create_psd_card(cardDatas, fileName, isPreview=False):
     print(os.getcwd())
     with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
@@ -169,7 +193,10 @@ def create_psd_card(cardDatas, fileName, isPreview=False):
 
         bottomTextLayer = get_layer_by_path(ps,settings["BottomTextLayer"])
         bottomTextLayer.textItem.contents = "["+cardDatas["bottom_text_title"]+"] "+cardDatas["bottom_text_content"]
-        
+
+        cardImageLayer=get_layer_by_path(ps,settings["CardImageLayer"])
+        replace_image(ps,cardImageLayer)
+
         if isPreview:
             option = ps.JPEGSaveOptions()
             option.quality=1
