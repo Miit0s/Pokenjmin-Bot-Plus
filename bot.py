@@ -146,10 +146,9 @@ def get_layer_by_path(ps, layerPath):
     return layerGroup.artLayers.getByName(subGroups[len(subGroups)-1])
 
 #https://loonghao.github.io/photoshop-python-api/examples/#replace-images
-def replace_image(ps, layerToReplace):
+def replace_image(ps, layerToReplace, input_file):
     active_layer = layerToReplace
     bounds = active_layer.bounds
-    input_file = os.path.join(os.getcwd(),"TestPaysage.jpg")
     replace_contents = ps.app.stringIDToTypeID("placedLayerReplaceContents")
     desc = ps.ActionDescriptor
     idnull = ps.app.charIDToTypeID("null")
@@ -167,7 +166,7 @@ def replace_image(ps, layerToReplace):
     new_size = width / current_width * 100
     active_layer.resize(new_size, new_size, ps.AnchorPosition.MiddleCenter)
 
-def create_psd_card(cardDatas, fileName, isPreview=False):
+def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
     print(os.getcwd())
     with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
         i=0
@@ -193,8 +192,10 @@ def create_psd_card(cardDatas, fileName, isPreview=False):
         bottomTextLayer = get_layer_by_path(ps,settings["BottomTextLayer"])
         bottomTextLayer.textItem.contents = "["+cardDatas["bottom_text_title"]+"] "+cardDatas["bottom_text_content"]
 
-        cardImageLayer=get_layer_by_path(ps,settings["CardImageLayer"])
-        replace_image(ps,cardImageLayer)
+        cardImagePath=os.path.join(os.getcwd(),settings["CardImagesFolder"],cardImagesName)
+        if os.path.exists(cardImagePath):
+            cardImageLayer=get_layer_by_path(ps,settings["CardImageLayer"])
+            replace_image(ps,cardImageLayer,cardImagePath)
 
         if isPreview:
             option = ps.JPEGSaveOptions()
@@ -242,8 +243,16 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:s
         bruteImagePath=os.path.join(mkdtemp(),"cached_"+card_image.filename)
         await card_image.save(bruteImagePath)
         with Image.open(bruteImagePath) as im:
-                im.save(os.path.join(os.getcwd(),"PNGExportTest2.png"))
-        
+            im.save(os.path.join(os.getcwd(),settings["CardImagesFolder"],str(interaction.user.id)+".png"))
+
+    if(owner_photo!=None):
+        if owner_photo.content_type.split("/")[0]!="image":
+            await interaction.response.send_message("Error: Card Image was not an image", ephemeral=True)
+            return
+        bruteImagePath=os.path.join(mkdtemp(),"cached_"+owner_photo.filename)
+        await owner_photo.save(bruteImagePath)
+        with Image.open(bruteImagePath) as im:
+            im.save(os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],str(interaction.user.id)+".png"))
 
     update_card(card)
 
@@ -277,7 +286,7 @@ async def preview(interaction):
     card=get_or_create_card(user)
     
     fileName=interaction.user.name
-    jpegPreviewPath=create_psd_card(card, fileName,True)
+    jpegPreviewPath=create_psd_card(card, fileName,str(interaction.user.id)+".png", True)
     #os.chdir(os.path.dirname(jpegPreviewPath))
     await interaction.followup.send("",ephemeral=True,file=discord.File(jpegPreviewPath))
 

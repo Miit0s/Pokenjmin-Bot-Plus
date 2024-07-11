@@ -5,6 +5,10 @@
 	"GeneratedPsdFolder":"Exports/GeneratedPSDs",
 	"ExportPngFolder":"Exports/PNG",
 
+	"CardImagesFolder":"Data/CardImages",
+	"OwnerPhotosFolder":"Data/OwnerPhotos",
+
+
 	"Admins":
 	[
 		368497205889204225,
@@ -22,6 +26,7 @@
 	"CPValueLayer":"Infos/CPValeur",
 	"CohortNameValueLayer":"Infos/P19",
 	"BottomTextLayer":"Passif/BottomText",
+	"CardImageLayer":"CardImageMask/CardImage",
 	"Watermarks":
 	[
 		{
