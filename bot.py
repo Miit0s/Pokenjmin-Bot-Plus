@@ -7,6 +7,7 @@ import photoshop.api as photoshop
 import sqlite3
 import os
 from tempfile import mkdtemp
+from PIL import Image
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
@@ -148,8 +149,7 @@ def get_layer_by_path(ps, layerPath):
 def replace_image(ps, layerToReplace):
     active_layer = layerToReplace
     bounds = active_layer.bounds
-    print(f"current layer {active_layer.name}: {bounds}")
-    input_file = os.path.join(os.getcwd(),"Test.png")
+    input_file = os.path.join(os.getcwd(),"TestPaysage.jpg")
     replace_contents = ps.app.stringIDToTypeID("placedLayerReplaceContents")
     desc = ps.ActionDescriptor
     idnull = ps.app.charIDToTypeID("null")
@@ -166,7 +166,6 @@ def replace_image(ps, layerToReplace):
     current_height = current_bounds[3] - current_bounds[1]
     new_size = width / current_width * 100
     active_layer.resize(new_size, new_size, ps.AnchorPosition.MiddleCenter)
-    print(f"current layer {active_layer.name}: {current_bounds}")
 
 def create_psd_card(cardDatas, fileName, isPreview=False):
     print(os.getcwd())
@@ -223,7 +222,8 @@ def create_psd_card(cardDatas, fileName, isPreview=False):
     description="Set the value of one or more fields of your card",
     guild=discord.Object(id=790626187944394772)
 )
-async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:str=None, card_description:str=None, bottom_text_title:str=None, bottom_text_content:str=None, cp_value:int=None):
+async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
+                  bottom_text_content:str=None, cp_value:int=None, card_image:discord.Attachment=None, owner_photo:discord.Attachment=None):
     user=get_or_create_user(interaction.user.id)
     card=get_or_create_card(user)
 
@@ -234,6 +234,16 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:s
     if(bottom_text_title!=None): card["bottom_text_title"]=bottom_text_title
     if(bottom_text_content!=None): card["bottom_text_content"]=bottom_text_content
     if(cp_value!=None): card["cp_value"]=cp_value
+
+    if(card_image!=None):
+        if card_image.content_type.split("/")[0]!="image":
+            await interaction.response.send_message("Error: Card Image was not an image", ephemeral=True)
+            return
+        bruteImagePath=os.path.join(mkdtemp(),"cached_"+card_image.filename)
+        await card_image.save(bruteImagePath)
+        with Image.open(bruteImagePath) as im:
+                im.save(os.path.join(os.getcwd(),"PNGExportTest2.png"))
+        
 
     update_card(card)
 
