@@ -156,8 +156,8 @@ def replace_image(ps, layerToReplace, input_file):
     ps.app.executeAction(replace_contents, desc)
 
     # replaced image.
-    active_layer = ps.active_document.activeLayer
     current_bounds = active_layer.bounds
+    print(f"current layer {active_layer.name}: {current_bounds}; {layerToReplace.name}")
     width = bounds[2] - bounds[0]
     height = bounds[3] - bounds[1]
 
@@ -195,7 +195,13 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
         cardImagePath=os.path.join(os.getcwd(),settings["CardImagesFolder"],cardImagesName)
         if os.path.exists(cardImagePath):
             cardImageLayer=get_layer_by_path(ps,settings["CardImageLayer"])
+            print("Card Image replace !")
             replace_image(ps,cardImageLayer,cardImagePath)
+
+        # ownerPhotoPath=os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],cardImagesName)
+        # if os.path.exists(ownerPhotoPath):
+        #     ownerPhotoLayer=get_layer_by_path(ps,settings["OwnerPhotoLayer"])
+        #     replace_image(ps,ownerPhotoLayer,ownerPhotoPath)
 
         if isPreview:
             option = ps.JPEGSaveOptions()
@@ -213,7 +219,11 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
         pdf = os.path.join(os.getcwd(),settings["ExportPngFolder"],fileName+".pdf")
         ps.active_document.saveAs(pdf, option)
 
-
+        #save the psd
+        psd_file = os.path.join(os.getcwd(),settings["GeneratedPsdFolder"],fileName+".psd")
+        doc = ps.active_document
+        options = ps.PhotoshopSaveOptions()
+        doc.saveAs(psd_file, options, True)
 
 #endregion
 
@@ -227,6 +237,7 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:s
                   bottom_text_content:str=None, cp_value:int=None, card_image:discord.Attachment=None, owner_photo:discord.Attachment=None):
     user=get_or_create_user(interaction.user.id)
     card=get_or_create_card(user)
+    feedbackMessage=""
 
     if(card_name!=None): card["card_name"]=card_name
     if(owner_name!=None): card["owner_name"]=owner_name
@@ -243,6 +254,9 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:s
         bruteImagePath=os.path.join(mkdtemp(),"cached_"+card_image.filename)
         await card_image.save(bruteImagePath)
         with Image.open(bruteImagePath) as im:
+            ratio= im.width/im.height
+            if(abs(ratio-settings["CardImagesPreferredRatio"])>=0.005):
+                feedbackMessage+="card_image isn't in the preferred ratio "+str(settings["CardImagesPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(1080)+"\*"+str(1080*settings["CardImagesPreferredRatio"])+"\n"
             im.save(os.path.join(os.getcwd(),settings["CardImagesFolder"],str(interaction.user.id)+".png"))
 
     if(owner_photo!=None):
@@ -252,6 +266,9 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:s
         bruteImagePath=os.path.join(mkdtemp(),"cached_"+owner_photo.filename)
         await owner_photo.save(bruteImagePath)
         with Image.open(bruteImagePath) as im:
+            ratio= im.width/im.height
+            if(abs(ratio-settings["OwnerPhotoPreferredRatio"])>=0.005):
+                feedbackMessage+="owner_photo isn't in the preferred ratio "+str(settings["OwnerPhotoPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(1080)+"\*"+str(1080*settings["OwnerPhotoPreferredRatio"])+"\n"
             im.save(os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],str(interaction.user.id)+".png"))
 
     update_card(card)
@@ -259,7 +276,8 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:s
     for role in interaction.user.roles:
         print(role.name)
     
-    await interaction.response.send_message("Hello "+interaction.user.name+" ! ",ephemeral=True)
+    feedbackMessage+="All field successfully setted !"
+    await interaction.response.send_message(feedbackMessage,ephemeral=True)
 
 @tree.command(
     name="get",
@@ -286,9 +304,9 @@ async def preview(interaction):
     card=get_or_create_card(user)
     
     fileName=interaction.user.name
-    jpegPreviewPath=create_psd_card(card, fileName,str(interaction.user.id)+".png", True)
+    jpegPreviewPath=create_psd_card(card, fileName,str(interaction.user.id)+".png", False)
     #os.chdir(os.path.dirname(jpegPreviewPath))
-    await interaction.followup.send("",ephemeral=True,file=discord.File(jpegPreviewPath))
+    #await interaction.followup.send("",ephemeral=True,file=discord.File(jpegPreviewPath))
 
 
 
