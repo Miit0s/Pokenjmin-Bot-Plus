@@ -28,6 +28,7 @@ def create_tables():
                 id INTEGER PRIMARY KEY,
                 skill_name  TEXT DEFAULT "" NOT NULL,
                 skill_desc  TEXT DEFAULT "" NOT NULL,
+                skill_cost INTEGER DEFAULT 0 NOT NULL,
                 spe1 INTEGER,
                 spe2 INTEGER,
                 spe3 INTEGER
@@ -144,12 +145,13 @@ def update_skill(skill):
                 SET 
                     skill_name=?,
                     skill_desc=?,
+                    skill_cost=?,
                     spe1=?,
                     spe2=?,
                     spe3=?,
                 WHERE
                     id=?
-                """,(skill["skill_name"],skill["skill_desc"],skill["spe1"],skill["spe2"],skill["spe3"],skill["id"]))
+                """,(skill["skill_name"],skill["skill_desc"],skill["skill_cost"],skill["spe1"],skill["spe2"],skill["spe3"],skill["id"]))
     con.commit()
 #endregion
 
@@ -227,6 +229,9 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
             ownerPhotoLayer=get_layer_by_path(ps,settings["OwnerPhotoLayer"])
             replace_image(ps,ownerPhotoLayer,ownerPhotoPath)
 
+        skill1Datas=get_skill_of_card(cardDatas)
+
+
         if isPreview:
             option = ps.JPEGSaveOptions()
             option.quality=1
@@ -248,6 +253,9 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
         # doc = ps.active_document
         # options = ps.PhotoshopSaveOptions()
         # doc.saveAs(psd_file, options, True)
+
+def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
+    return
 
 #endregion
 
@@ -339,18 +347,25 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:s
 @app_commands.choices(spe1=specialtiesChoices)
 @app_commands.choices(spe2=specialtiesChoices)
 @app_commands.choices(spe3=specialtiesChoices)
-async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:str=None, spe1:int=None, spe2:int=None, spe3:int=None):
+async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:str=None, skill_cost:int=None, spe1:int=None, spe2:int=None, spe3:int=None):
     user=get_or_create_user(interaction.user.id)
     card=get_or_create_card(user)
     skill=get_skill_of_card(card,skill_nbr)
+    feedbackMessage=""
+    error=False
+
     if(skill_name!=None): skill["skill_name"]
     if(skill_desc!=None): skill["skill_desc"]
+    if(skill_cost!=None): skill["skill_cost"]
     if(spe1!=None): skill["spe1"]
     if(spe2!=None): skill["spe2"]
     if(spe3!=None): skill["spe3"]
-    feedbackMessage=""
-    error=False
-    await interaction.response.send_message("Salut",ephemeral=True)
+    update_skill(skill)
+
+    if(error==False):
+        feedbackMessage+="All field successfully setted !"
+
+    await interaction.response.send_message(feedbackMessage,ephemeral=True)
 
 @tree.command(
     name="get",

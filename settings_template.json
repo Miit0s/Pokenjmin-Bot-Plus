@@ -6,7 +6,9 @@
 	"ExportPngFolder":"Exports/PNG",
 
 	"CardImagesFolder":"Data/CardImages",
+	"CardImagesPreferredRatio":1.48,
 	"OwnerPhotosFolder":"Data/OwnerPhotos",
+	"OwnerPhotoPreferredRatio":1,
 
 
 	"Admins":
@@ -27,6 +29,17 @@
 	"CohortNameValueLayer":"Infos/P19",
 	"BottomTextLayer":"Passif/BottomText",
 	"CardImageLayer":"CardImageMask/CardImage",
+	"OwnerPhotoLayer":"OwnerPhotoMask/OwnerPhoto",
+
+	"Skill1Group":"Compétence 1",
+	"Skill2Group":"Compétence 2",
+	"SkillDescLayerName":"Desc",
+	"SkillTitleLayerName":"Title",
+	"SkillCostLayerName":"Cost",
+	"Spe1IconGroupName":"Spe1",
+	"Spe2IconGroupName":"Spe2",
+	"Spe3IconGroupName":"Spe3",
+
 	"Watermarks":
 	[
 		{
