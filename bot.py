@@ -104,6 +104,16 @@ def get_or_create_card(user):
     result=cursor.fetchone()
     return sqlite3Row_to_dict(result)
 
+def get_skill_of_card(card, skillNbr):
+    cursor=con.cursor()
+    skillParameter="skill1_id"
+    if(skillNbr==2):
+        skillParameter="skill2_id"
+    skillId=card[skillParameter]
+    cursor.execute(f"SELECT * from skills WHERE id=?", (skillId,))
+    result=cursor.fetchone()
+    return sqlite3Row_to_dict(result)
+
 def sqlite3Row_to_dict(sqlite3Row):
     dict={}
     for sqlite3Row_field in sqlite3Row.keys():
@@ -125,6 +135,21 @@ def update_card(card):
                 WHERE
                     id=?
                 """,(card["card_name"],card["owner_name"],card["cp_name"],card["card_description"],card["bottom_text_title"],card["bottom_text_content"],card["cp_value"],card["id"]))
+    con.commit()
+
+def update_skill(skill):
+    cursor=con.cursor()
+    cursor.execute("""
+                UPDATE skill 
+                SET 
+                    skill_name=?,
+                    skill_desc=?,
+                    spe1=?,
+                    spe2=?,
+                    spe3=?,
+                WHERE
+                    id=?
+                """,(skill["skill_name"],skill["skill_desc"],skill["spe1"],skill["spe2"],skill["spe3"],skill["id"]))
     con.commit()
 #endregion
 
@@ -206,7 +231,7 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
             option = ps.JPEGSaveOptions()
             option.quality=1
             #you can't change the "jpg" part of the export path (for jpeg for example), Photoshop would overwrite it
-            jpegPath = os.path.join(mkdtemp(),fileName+".jpg")
+            jpegPath = os.path.join(mkdtemp(),str(fileName)+".jpg")
             ps.active_document.saveAs(jpegPath, option)
             return jpegPath
 
@@ -227,6 +252,19 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
 #endregion
 
 #region Bot management
+specialtiesChoices=[
+    app_commands.Choice(name="⬜​ None",value=0),
+    app_commands.Choice(name="🤖 Prog", value=1),
+    app_commands.Choice(name="🎲 GD", value=2),
+    app_commands.Choice(name="🎨 Graph", value=3),
+    app_commands.Choice(name="🧠 Ergo", value=4),
+    app_commands.Choice(name="👔 Producing",value=5),
+    app_commands.Choice(name="🎧 Sound-designer",value=6),
+    app_commands.Choice(name="⚙️ IEM", value=7),
+    app_commands.Choice(name="❔License",value=8),
+    app_commands.Choice(name="🌟 Legendary",value=9)
+]
+
 @tree.command(
     name="set_card",
     description="Set the value of one or more fields of your card",
@@ -286,8 +324,33 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:s
     
     if(error==False):
         feedbackMessage+="All field successfully setted !"
-        
+
     await interaction.response.send_message(feedbackMessage,ephemeral=True)
+
+@tree.command(
+    name="set_skill",
+    description="Set the value of one or more fields of your card",
+    guild=discord.Object(id=790626187944394772)
+)
+@app_commands.choices(skill_nbr=[
+    app_commands.Choice(name='Skill 1', value=1),
+    app_commands.Choice(name='Skill 2', value=2)
+])
+@app_commands.choices(spe1=specialtiesChoices)
+@app_commands.choices(spe2=specialtiesChoices)
+@app_commands.choices(spe3=specialtiesChoices)
+async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:str=None, spe1:int=None, spe2:int=None, spe3:int=None):
+    user=get_or_create_user(interaction.user.id)
+    card=get_or_create_card(user)
+    skill=get_skill_of_card(card,skill_nbr)
+    if(skill_name!=None): skill["skill_name"]
+    if(skill_desc!=None): skill["skill_desc"]
+    if(spe1!=None): skill["spe1"]
+    if(spe2!=None): skill["spe2"]
+    if(spe3!=None): skill["spe3"]
+    feedbackMessage=""
+    error=False
+    await interaction.response.send_message("Salut",ephemeral=True)
 
 @tree.command(
     name="get",
@@ -309,16 +372,21 @@ async def get(interaction):
     guild=discord.Object(id=790626187944394772)
 )
 async def preview(interaction):
+    await send_message_with_preview(interaction,"")
+
+async def send_message_with_preview(interaction, message):
     await interaction.response.defer(ephemeral=True, thinking=True)
     user=get_or_create_user(interaction.user.id)
     card=get_or_create_card(user)
     
-    fileName=interaction.user.name
+    fileName=interaction.user.id
+    print(card)
+    print(fileName)
     jpegPreviewPath=create_psd_card(card, fileName,str(interaction.user.id)+".png", True)
+    currentDir=os.getcwd()
     os.chdir(os.path.dirname(jpegPreviewPath))
-    await interaction.followup.send("",ephemeral=True,file=discord.File(jpegPreviewPath))
-
-
+    await interaction.followup.send(message,ephemeral=True,file=discord.File(jpegPreviewPath))
+    os.chdir(currentDir)
 
 @client.event
 async def on_ready():
