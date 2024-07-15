@@ -12,7 +12,7 @@ from PIL import Image
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-settingsFile= open('settings.json')
+settingsFile= open('settings.json', encoding="utf-8")
 settings=json.load(settingsFile)
 con = sqlite3.connect("data.db")
 con.row_factory = sqlite3.Row
@@ -268,23 +268,38 @@ def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
     skillTitleLayer.textItem.contents=skillDatas["skill_name"]
     skillCostLayer=skillLayerGroup.artLayers.getByName(settings["SkillCostLayerName"])
     skillCostLayer.textItem.contents=str(skillDatas["skill_cost"])
+
+    spe1IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe1IconGroupName"])
+    set_spe_image(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
+
+    spe2IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe2IconGroupName"])
+    set_spe_image(spe2IconGroup,skillDatas["spe2"],"IconLayerName")
+
+    spe3IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe3IconGroupName"])
+    set_spe_image(spe3IconGroup,skillDatas["spe3"],"IconLayerName")
+
     return
 
+def set_spe_image(speIconsGroup, speId, imageLayerKey):
+    chosenSpe=None
+    for spe in settings["Specialties"]:
+        if spe["Id"]==speId:
+            chosenSpe=spe
+            break
+    
+    if(chosenSpe==None):
+        speIconsGroup.visible=False
+        return
+
+    for iconLayer in speIconsGroup.artLayers:
+        iconLayer.visible=iconLayer.name==chosenSpe[imageLayerKey]
 #endregion
 
 #region Bot management
-specialtiesChoices=[
-    app_commands.Choice(name="⬜​ None",value=0),
-    app_commands.Choice(name="🤖 Prog", value=1),
-    app_commands.Choice(name="🎲 GD", value=2),
-    app_commands.Choice(name="🎨 Graph", value=3),
-    app_commands.Choice(name="🧠 Ergo", value=4),
-    app_commands.Choice(name="👔 Producing",value=5),
-    app_commands.Choice(name="🎧 Sound-designer",value=6),
-    app_commands.Choice(name="⚙️ IEM", value=7),
-    app_commands.Choice(name="❔License",value=8),
-    app_commands.Choice(name="🌟 Legendary",value=9)
-]
+specialtiesChoices=[]
+
+for spe in settings["Specialties"]:
+    specialtiesChoices.append(app_commands.Choice(name=spe["DisplayName"], value=spe["Id"]))
 
 @tree.command(
     name="set_card",

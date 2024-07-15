@@ -40,25 +40,66 @@
 	"Spe2IconGroupName":"Spe2",
 	"Spe3IconGroupName":"Spe3",
 
-	"Watermarks":
-	[
+	"Specialties":[
 		{
-			"LayerIndex":"The index of the layer of the watermark in the Photoshop's watermark folder",
-			"DisplayName":"The name of the watermark"
-		}
-	],
-	"Backgrounds":
-	[
+			"Id":0,
+			"DisplayName":"⬜​ None",
+			"IconLayerName":"Son",
+			"BackgroundLayerName":"GraphFond"
+		},
 		{
-			"LayerIndex":"The index of the layer of the background in the Photoshop's backgrounds folder",
-			"DisplayName":"The name of the background"
-		}
-	],
-	"SpecialtyIcons":
-	[
+			"Id":1,
+			"DisplayName":"🤖 Prog",
+			"IconLayerName":"Prog",
+			"BackgroundLayerName":"ProgFond"
+		},
 		{
-			"LayerIndex":"The index of the layer of the specialty icon in the Photoshop's specialty icons folder",
-			"DisplayName":"The name of the specialty icon"
+			"Id":2,
+			"DisplayName":"🎲 GD",
+			"IconLayerName":"GD2",
+			"BackgroundLayerName":"GDFond"
+		},
+		{
+			"Id":3,
+			"DisplayName":"🎨 Graph",
+			"IconLayerName":"Graph",
+			"BackgroundLayerName":"GraphFond"
+		},
+		{
+			"Id":4,
+			"DisplayName":"🧠 Ergo",
+			"IconLayerName":"Ergo",
+			"BackgroundLayerName":"ErgoFond"
+		},
+		{
+			"Id":5,
+			"DisplayName":"👔 Producing",
+			"IconLayerName":"CDP",
+			"BackgroundLayerName":"CDPFond"
+		},
+		{
+			"Id":6,
+			"DisplayName":"🎧 Sound-designer",
+			"IconLayerName":"Son",
+			"BackgroundLayerName":"SonFond"
+		},
+		{
+			"Id":7,
+			"DisplayName":"⚙️ IEM",
+			"IconLayerName":"IEM",
+			"BackgroundLayerName":"IEMFond"
+		},
+		{
+			"Id":8,
+			"DisplayName":"❔License",
+			"IconLayerName":"Son",
+			"BackgroundLayerName":"GraphFond"
+		},
+		{
+			"Id":9,
+			"DisplayName":"🌟 Legendary",
+			"IconLayerName":"Legende",
+			"BackgroundLayerName":"LegendeFond"
 		}
 	]
 }
