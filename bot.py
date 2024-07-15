@@ -43,7 +43,7 @@ def create_tables():
                 bottom_text_title TEXT DEFAULT "Pré-prod" NOT NULL,
                 bottom_text_content TEXT DEFAULT "" NOT NULL,
                 cp_value INTEGER DEFAULT 0 NOT NULL,
-                card_background INTEGER DEFAULT 0 NOT NULL,
+                spe INTEGER DEFAULT 0 NOT NULL,
                 card_watermark INTEGER DEFAULT 0 NOT NULL,
                 skill1_id INTEGER NOT NULL,
                 skill2_id INTEGER NOT NULL,
@@ -63,14 +63,78 @@ def create_tables():
         """CREATE TABLE IF NOT EXISTS server_settings (
                 server_id INTEGER PRIMARY KEY,
                 card_watermark INTEGER,
+                default_spe INTEGER,
                 server_cohort TEXT
-        );"""
+        );""",
+        """CREATE TABLE IF NOT EXISTS role_settings (
+                role_id INTEGER,
+                server_id INTEGER,
+                spe INTEGER,
+                FOREIGN KEY(server_id) REFERENCES server_settings(server_id) ON DELETE CASCADE,
+                PRIMARY KEY(server_id, role_id)
+        );""",
         ]
     cur=con.cursor()
     for statement in sql_statements:
         cur.execute(statement)
 
 create_tables()
+
+def get_or_create_server_settings(serverId):
+    cursor = con.cursor()
+    cursor.execute("SELECT * from server_settings WHERE server_id=?",(serverId,))
+    result=cursor.fetchone()
+    if(result!=None): return sqlite3Row_to_dict(result)
+
+    cursor=con.cursor()
+    cursor.execute("INSERT INTO server_settings (server_id) VALUES (?)",(serverId,))
+    cursor.execute("SELECT * from server_settings WHERE server_id=?",(serverId,))
+    con.commit()
+    result=cursor.fetchone()
+    return sqlite3Row_to_dict(result)
+
+def update_server_settings(server_settings):
+    cursor=con.cursor()
+    cursor.execute("""
+                UPDATE server_settings 
+                SET 
+                    card_watermark=?,
+                    default_spe=?,
+                    server_cohort=?
+                WHERE
+                    server_id=?
+                """,(server_settings["card_watermark"],server_settings["default_spe"],server_settings["server_cohort"],server_settings["server_id"]))
+    con.commit()
+
+def get_or_create_role_settings(serverId, roleId):
+    cursor = con.cursor()
+    cursor.execute("SELECT * from role_settings WHERE server_id=? AND role_id=?",(serverId,roleId))
+    result=cursor.fetchone()
+    if(result!=None): return sqlite3Row_to_dict(result)
+
+    cursor=con.cursor()
+    cursor.execute("INSERT INTO role_settings (server_id, role_id) VALUES (?,?)",(serverId,roleId))
+    cursor.execute("SELECT * from role_settings WHERE server_id=? AND role_id=?",(serverId,roleId))
+    con.commit()
+    result=cursor.fetchone()
+    return sqlite3Row_to_dict(result)
+
+def get_roles_settings(serverId, roleId):
+    cursor = con.cursor()
+    cursor.execute("SELECT * from role_settings WHERE server_id=? AND role_id=?",(serverId,roleId))
+    result=cursor.fetchone()
+    return result
+
+def update_role_settings(role_settings):
+    cursor=con.cursor()
+    cursor.execute("""
+                UPDATE role_settings 
+                SET 
+                    spe=?
+                WHERE
+                    server_id=? AND role_id=?
+                """,(role_settings["spe"],role_settings["server_id"],role_settings["role_id"]))
+    con.commit()
 
 def get_or_create_user(discordId):
     cursor = con.cursor()
@@ -132,10 +196,12 @@ def update_card(card):
                     card_description=?,
                     bottom_text_title=?,
                     bottom_text_content=?,
-                    cp_value=?
+                    cp_value=?,
+                    owner_cohort=?,
+                    spe=?
                 WHERE
                     id=?
-                """,(card["card_name"],card["owner_name"],card["cp_name"],card["card_description"],card["bottom_text_title"],card["bottom_text_content"],card["cp_value"],card["id"]))
+                """,(card["card_name"],card["owner_name"],card["cp_name"],card["card_description"],card["bottom_text_title"],card["bottom_text_content"],card["cp_value"],card["owner_cohort"],card["spe"],card["id"]))
     con.commit()
 
 def update_skill(skill):
@@ -153,6 +219,18 @@ def update_skill(skill):
                     id=?
                 """,(skill["skill_name"],skill["skill_desc"],skill["skill_cost"],skill["spe1"],skill["spe2"],skill["spe3"],skill["id"]))
     con.commit()
+
+#return the spe of the user, which is the default server spe if no override exist for any role of the user
+def get_spe_for_user(guildId, userRoles):
+    server=get_or_create_server_settings(guildId)
+    spe=server["default_spe"]
+    for role in userRoles:
+        role_settings=get_roles_settings(guildId,role.id)
+        if role_settings==None: continue
+        return role_settings["spe"]
+
+    return spe
+
 #endregion
 
 #region Photoshop management
@@ -237,6 +315,17 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
         skill2LayerSet=ps.active_document.layerSets.getByName(settings["Skill2Group"])
         fill_layers_for_skill(ps,skill2LayerSet,skill2Datas)
 
+        spe=cardDatas["spe"]
+        if(spe==None): spe=0
+
+        speIconLayerGroup=ps.active_document.layerSets.getByName(settings["SpeIconGroupName"])
+        set_spe_image(speIconLayerGroup,spe,"IconLayerName")
+
+        backgroundLayerGroup=ps.active_document.layerSets.getByName(settings["BackgroundsGroupName"])
+        set_spe_image(backgroundLayerGroup, spe,"BackgroundLayerName")
+
+        cohortNameLayer = get_layer_by_path(ps,settings["CohortNameValueLayer"])
+        cohortNameLayer.textItem.contents = cardDatas["owner_cohort"]
 
         if isPreview:
             option = ps.JPEGSaveOptions()
@@ -261,7 +350,6 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
         # doc.saveAs(psd_file, options, True)
 
 def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
-    print(f"SkillDesc= {skillDatas["skill_desc"]}; SkillName={skillDatas["skill_name"]}; skillCost={skillDatas["skill_cost"]}")
     skillDescLayer=skillLayerGroup.artLayers.getByName(settings["SkillDescLayerName"])
     skillDescLayer.textItem.contents=skillDatas["skill_desc"]
     skillTitleLayer=skillLayerGroup.artLayers.getByName(settings["SkillTitleLayerName"])
@@ -353,6 +441,16 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:s
             feedbackMessage+="There was an error converting the card_image, try exporting it to another format like png or jpg\n"
             error=True
 
+    serverSettings=get_or_create_server_settings(interaction.guild_id)
+    if(serverSettings["server_cohort"]==None):
+        update_card(card)
+        feedbackMessage+="All your fields were successfully setted, but we're missing server informations. Ask your local admin to run the set_server_settings command."
+        await interaction.response.send_message(feedbackMessage,ephemeral=True)
+        return
+
+    card["owner_cohort"]=serverSettings["server_cohort"]
+    card["spe"]=get_spe_for_user(interaction.guild_id,interaction.user.roles)
+
     update_card(card)
 
     for role in interaction.user.roles:
@@ -394,6 +492,39 @@ async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:s
         feedbackMessage+="All field successfully setted !"
 
     await interaction.response.send_message(feedbackMessage,ephemeral=True)
+
+@tree.command(
+    name="set_server_settings",
+    description="Set the default spe for a given server",
+    guild=discord.Object(id=790626187944394772),
+)
+@app_commands.choices(default_spe=specialtiesChoices)
+async def setServerSettings(interaction, default_spe:int, cohort:str):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+
+    serverSettings=get_or_create_server_settings(interaction.guild_id)
+    if(default_spe!=None): serverSettings["default_spe"]=default_spe
+    if(cohort!=None): serverSettings["server_cohort"]=cohort
+    update_server_settings(serverSettings)
+    await interaction.response.send_message("Server settings successfully setted !",ephemeral=True)
+
+@tree.command(
+    name="set_role_settings",
+    description="Set the default spe for a given server",
+    guild=discord.Object(id=790626187944394772),
+)
+@app_commands.choices(spe=specialtiesChoices)
+async def setRoleSettings(interaction, role:discord.Role, spe:int):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+
+    roleSettings=get_or_create_role_settings(interaction.guild_id,role.id)
+    if(spe!=None): roleSettings["spe"]=spe
+    update_role_settings(roleSettings)
+    await interaction.response.send_message("Role settings successfully setted !",ephemeral=True)
 
 @tree.command(
     name="get",

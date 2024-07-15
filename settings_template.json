@@ -31,8 +31,8 @@
 	"CardImageLayer":"CardImageMask/CardImage",
 	"OwnerPhotoLayer":"OwnerPhotoMask/OwnerPhoto",
 
-	"Skill1Group":"Compétence 1",
-	"Skill2Group":"Compétence 2",
+	"Skill1Group":"Skill 1",
+	"Skill2Group":"Skill 2",
 	"SkillDescLayerName":"Desc",
 	"SkillTitleLayerName":"Title",
 	"SkillCostLayerName":"Cost",
@@ -40,12 +40,15 @@
 	"Spe2IconGroupName":"Spe2",
 	"Spe3IconGroupName":"Spe3",
 
+	"SpeIconGroupName":"Spe Icons",
+	"BackgroundsGroupName":"Backgrounds",
+
 	"Specialties":[
 		{
 			"Id":0,
 			"DisplayName":"⬜​ None",
-			"IconLayerName":"Son",
-			"BackgroundLayerName":"GraphFond"
+			"IconLayerName":"None",
+			"BackgroundLayerName":"None"
 		},
 		{
 			"Id":1,
