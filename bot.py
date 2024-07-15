@@ -141,14 +141,14 @@ def update_card(card):
 def update_skill(skill):
     cursor=con.cursor()
     cursor.execute("""
-                UPDATE skill 
+                UPDATE skills
                 SET 
                     skill_name=?,
                     skill_desc=?,
                     skill_cost=?,
                     spe1=?,
                     spe2=?,
-                    spe3=?,
+                    spe3=?
                 WHERE
                     id=?
                 """,(skill["skill_name"],skill["skill_desc"],skill["skill_cost"],skill["spe1"],skill["spe2"],skill["spe3"],skill["id"]))
@@ -229,7 +229,13 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
             ownerPhotoLayer=get_layer_by_path(ps,settings["OwnerPhotoLayer"])
             replace_image(ps,ownerPhotoLayer,ownerPhotoPath)
 
-        skill1Datas=get_skill_of_card(cardDatas)
+        skill1Datas=get_skill_of_card(cardDatas,1)
+        skill1LayerSet=ps.active_document.layerSets.getByName(settings["Skill1Group"])
+        fill_layers_for_skill(ps,skill1LayerSet,skill1Datas)
+
+        skill2Datas=get_skill_of_card(cardDatas,2)
+        skill2LayerSet=ps.active_document.layerSets.getByName(settings["Skill2Group"])
+        fill_layers_for_skill(ps,skill2LayerSet,skill2Datas)
 
 
         if isPreview:
@@ -255,6 +261,13 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
         # doc.saveAs(psd_file, options, True)
 
 def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
+    print(f"SkillDesc= {skillDatas["skill_desc"]}; SkillName={skillDatas["skill_name"]}; skillCost={skillDatas["skill_cost"]}")
+    skillDescLayer=skillLayerGroup.artLayers.getByName(settings["SkillDescLayerName"])
+    skillDescLayer.textItem.contents=skillDatas["skill_desc"]
+    skillTitleLayer=skillLayerGroup.artLayers.getByName(settings["SkillTitleLayerName"])
+    skillTitleLayer.textItem.contents=skillDatas["skill_name"]
+    skillCostLayer=skillLayerGroup.artLayers.getByName(settings["SkillCostLayerName"])
+    skillCostLayer.textItem.contents=str(skillDatas["skill_cost"])
     return
 
 #endregion
@@ -354,12 +367,12 @@ async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:s
     feedbackMessage=""
     error=False
 
-    if(skill_name!=None): skill["skill_name"]
-    if(skill_desc!=None): skill["skill_desc"]
-    if(skill_cost!=None): skill["skill_cost"]
-    if(spe1!=None): skill["spe1"]
-    if(spe2!=None): skill["spe2"]
-    if(spe3!=None): skill["spe3"]
+    if(skill_name!=None): skill["skill_name"]=skill_name
+    if(skill_desc!=None): skill["skill_desc"]=skill_desc
+    if(skill_cost!=None): skill["skill_cost"]=skill_cost
+    if(spe1!=None): skill["spe1"]=spe1
+    if(spe2!=None): skill["spe2"]=spe2
+    if(spe3!=None): skill["spe3"]=spe3
     update_skill(skill)
 
     if(error==False):
