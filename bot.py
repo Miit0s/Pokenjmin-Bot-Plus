@@ -8,6 +8,7 @@ import sqlite3
 import os
 from tempfile import mkdtemp
 from PIL import Image
+import re
 
 intents = discord.Intents.default()
 intents.members=True
@@ -154,6 +155,12 @@ def get_or_create_user(discordId, guildId):
     con.commit()
     result=cursor.fetchone()
     return sqlite3Row_to_dict(result)
+
+def get_user(discordId):
+    cursor = con.cursor()
+    cursor.execute("SELECT * from users WHERE discord_id=?",(discordId,))
+    result=cursor.fetchone()
+    return result
 
 def update_user_guild(userId, guildId):
     cursor = con.cursor()
@@ -303,7 +310,7 @@ def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
         cpValueLayer.textItem.contents = str(cardDatas["cp_value"])
 
         bottomTextLayer = get_layer_by_path(ps,settings["BottomTextLayer"])
-        bottomTextLayer.textItem.contents = "["+cardDatas["bottom_text_title"]+"] "+cardDatas["bottom_text_content"]
+        bottomTextLayer.textItem.contents = "["+cardDatas["bottom_text_title"]+"] "+replacePingsByCardNames(cardDatas["bottom_text_content"])
 
         cardImagePath=os.path.join(os.getcwd(),settings["CardImagesFolder"],cardImagesName)
         if os.path.exists(cardImagePath):
@@ -396,6 +403,16 @@ specialtiesChoices=[]
 for spe in settings["Specialties"]:
     specialtiesChoices.append(app_commands.Choice(name=spe["DisplayName"], value=spe["Id"]))
 
+def replacePingsByCardNames(startString:str):
+    matches=re.finditer("\<@([^\>\[]*)>",startString)
+    for matchObject in matches:
+        userId=int(matchObject.group().replace("<@","").replace(">",""))
+        user=get_user(userId)
+        cardName="\"[CARD_NOT_FOUND]\""
+        if(user!=None):
+            cardName=get_or_create_card(user)["card_name"]
+        startString.replace(matchObject.group,"\""+cardName+"\"")
+    return startString
 
 @tree.command(
     name="set_current_server_as_main",
@@ -422,15 +439,15 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
     feedbackMessage=""
     error=False
 
-    if hp_value>999 :
+    if hp_value!=None and hp_value>999 :
         feedbackMessage+="/!\ HP Value is limited to 999 max !\n"
         hp_value=999
     
-    if hp_value<-99 :
+    if hp_value!=None and hp_value<-99 :
         feedbackMessage+="/!\ HP Value is limited to -99 min !\n"
         hp_value=-99
 
-    if len(hp_name)>3 : 
+    if hp_name!=None and len(hp_name)>3 : 
         feedbackMessage+="HP Name length is limited to 3 characters !\n"
 
     if(card_name!=None): card["card_name"]=card_name
@@ -551,7 +568,7 @@ async def setRoleSettings(interaction, role:discord.Role, spe:int):
     guild=discord.Object(id=790626187944394772)
 )
 async def get(interaction):
-    user=get_or_create_user(interaction.user.id)
+    user=get_or_create_user(interaction.user.id, interaction.guild_id)
     card=get_or_create_card(user)
     returnValue=""
     for card_field in card.keys():
