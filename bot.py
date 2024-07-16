@@ -10,6 +10,7 @@ from tempfile import mkdtemp
 from PIL import Image
 
 intents = discord.Intents.default()
+intents.members=True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 settingsFile= open('settings.json', encoding="utf-8")
@@ -22,7 +23,8 @@ def create_tables():
     sql_statements = [ 
         """CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY,
-                discord_id INTEGER
+                discord_id INTEGER NOT NULL,
+                guild_id INTEGER NOT NULL
         );""",
         """CREATE TABLE IF NOT EXISTS skills (
                 id INTEGER PRIMARY KEY,
@@ -38,12 +40,10 @@ def create_tables():
                 card_name TEXT DEFAULT "" NOT NULL,
                 cp_name TEXT DEFAULT "" NOT NULL, 
                 owner_name TEXT DEFAULT "" NOT NULL,
-                owner_cohort TEXT DEFAULT "" NOT NULL, 
                 card_description TEXT DEFAULT "" NOT NULL, 
                 bottom_text_title TEXT DEFAULT "Pré-prod" NOT NULL,
                 bottom_text_content TEXT DEFAULT "" NOT NULL,
                 cp_value INTEGER DEFAULT 0 NOT NULL,
-                spe INTEGER DEFAULT 0 NOT NULL,
                 card_watermark INTEGER DEFAULT 0 NOT NULL,
                 skill1_id INTEGER NOT NULL,
                 skill2_id INTEGER NOT NULL,
@@ -93,6 +93,12 @@ def get_or_create_server_settings(serverId):
     result=cursor.fetchone()
     return sqlite3Row_to_dict(result)
 
+def get_server_settings(serverId):
+    cursor = con.cursor()
+    cursor.execute("SELECT * from server_settings WHERE server_id=?",(serverId,))
+    result=cursor.fetchone()
+    return result
+
 def update_server_settings(server_settings):
     cursor=con.cursor()
     cursor.execute("""
@@ -136,18 +142,23 @@ def update_role_settings(role_settings):
                 """,(role_settings["spe"],role_settings["server_id"],role_settings["role_id"]))
     con.commit()
 
-def get_or_create_user(discordId):
+def get_or_create_user(discordId, guildId):
     cursor = con.cursor()
     cursor.execute("SELECT * from users WHERE discord_id=?",(discordId,))
     result=cursor.fetchone()
-    if(result!=None): return result
+    if(result!=None): return sqlite3Row_to_dict(result)
 
     cursor=con.cursor()
-    cursor.execute("INSERT INTO users (discord_id) VALUES (?)",(discordId,))
+    cursor.execute("INSERT INTO users (discord_id, guild_id) VALUES (?,?)",(discordId,guildId))
     cursor.execute("SELECT * from users WHERE discord_id=?",(discordId,))
     con.commit()
     result=cursor.fetchone()
-    return result
+    return sqlite3Row_to_dict(result)
+
+def update_user_guild(userId, guildId):
+    cursor = con.cursor()
+    cursor.execute("UPDATE users SET guild_id=? WHERE discord_id=?", (guildId,userId))
+    con.commit
 
 def get_or_create_card(user):
     # for userKey in user:
@@ -196,12 +207,10 @@ def update_card(card):
                     card_description=?,
                     bottom_text_title=?,
                     bottom_text_content=?,
-                    cp_value=?,
-                    owner_cohort=?,
-                    spe=?
+                    cp_value=?
                 WHERE
                     id=?
-                """,(card["card_name"],card["owner_name"],card["cp_name"],card["card_description"],card["bottom_text_title"],card["bottom_text_content"],card["cp_value"],card["owner_cohort"],card["spe"],card["id"]))
+                """,(card["card_name"],card["owner_name"],card["cp_name"],card["card_description"],card["bottom_text_title"],card["bottom_text_content"],card["cp_value"],card["id"]))
     con.commit()
 
 def update_skill(skill):
@@ -271,8 +280,7 @@ def replace_image(ps, layerToReplace, input_file):
     new_size = width / current_width * 100
     active_layer.resize(new_size, new_size, ps.AnchorPosition.MiddleCenter)
 
-def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
-    print(os.getcwd())
+def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):
     with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
         i=0
 
@@ -289,7 +297,7 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
         descriptionLayer.textItem.contents = cardDatas["card_description"]
 
         cpNameLayer = get_layer_by_path(ps,settings["CPNameLayer"])
-        cpNameLayer.textItem.contents = cardDatas["cp_name"]
+        cpNameLayer.textItem.contents = str(cardDatas["cp_name"]).upper()
 
         cpValueLayer = get_layer_by_path(ps,settings["CPValueLayer"])
         cpValueLayer.textItem.contents = str(cardDatas["cp_value"])
@@ -315,7 +323,6 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
         skill2LayerSet=ps.active_document.layerSets.getByName(settings["Skill2Group"])
         fill_layers_for_skill(ps,skill2LayerSet,skill2Datas)
 
-        spe=cardDatas["spe"]
         if(spe==None): spe=0
 
         speIconLayerGroup=ps.active_document.layerSets.getByName(settings["SpeIconGroupName"])
@@ -325,7 +332,7 @@ def create_psd_card(cardDatas, fileName, cardImagesName, isPreview=False):
         set_spe_image(backgroundLayerGroup, spe,"BackgroundLayerName")
 
         cohortNameLayer = get_layer_by_path(ps,settings["CohortNameValueLayer"])
-        cohortNameLayer.textItem.contents = cardDatas["owner_cohort"]
+        cohortNameLayer.textItem.contents = cohort
 
         if isPreview:
             option = ps.JPEGSaveOptions()
@@ -389,25 +396,50 @@ specialtiesChoices=[]
 for spe in settings["Specialties"]:
     specialtiesChoices.append(app_commands.Choice(name=spe["DisplayName"], value=spe["Id"]))
 
+
+@tree.command(
+    name="set_current_server_as_main",
+    description="Make this server your main. It determines how your spe is computed",
+    guild=discord.Object(id=790626187944394772)
+)
+async def setCurrentServerAsMain(interaction):
+    update_user_guild(interaction.user.id, interaction.guild_id)
+    await interaction.response.send_message("The current server is now marked as your main !",ephemeral=True)
+
 @tree.command(
     name="set_card",
     description="Set the value of one or more fields of your card",
     guild=discord.Object(id=790626187944394772)
 )
-async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
-                  bottom_text_content:str=None, cp_value:int=None, card_image:discord.Attachment=None, owner_photo:discord.Attachment=None):
-    user=get_or_create_user(interaction.user.id)
+@app_commands.describe(card_name="The name at the top of the card")
+@app_commands.describe(owner_name="YOUR name, on the left side")
+@app_commands.describe(hp_name="The name beside the HP's value at the top of the card")
+@app_commands.describe(hp_value="HP's value at the top of the card")
+async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
+                  bottom_text_content:str=None, hp_value:int=None, card_image:discord.Attachment=None, owner_photo:discord.Attachment=None):
+    user=get_or_create_user(interaction.user.id, interaction.guild_id)
     card=get_or_create_card(user)
     feedbackMessage=""
     error=False
 
+    if hp_value>999 :
+        feedbackMessage+="/!\ HP Value is limited to 999 max !\n"
+        hp_value=999
+    
+    if hp_value<-99 :
+        feedbackMessage+="/!\ HP Value is limited to -99 min !\n"
+        hp_value=-99
+
+    if len(hp_name)>3 : 
+        feedbackMessage+="HP Name length is limited to 3 characters !\n"
+
     if(card_name!=None): card["card_name"]=card_name
     if(owner_name!=None): card["owner_name"]=owner_name
-    if(cp_name!=None): card["cp_name"]=cp_name
+    if(hp_name!=None): card["cp_name"]=hp_name
     if(card_description!=None): card["card_description"]=card_description
     if(bottom_text_title!=None): card["bottom_text_title"]=bottom_text_title
     if(bottom_text_content!=None): card["bottom_text_content"]=bottom_text_content
-    if(cp_value!=None): card["cp_value"]=cp_value
+    if(hp_value!=None): card["cp_value"]=hp_value
 
     if(card_image!=None):
         if card_image.content_type.split("/")[0]!="image":
@@ -441,21 +473,8 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:s
             feedbackMessage+="There was an error converting the card_image, try exporting it to another format like png or jpg\n"
             error=True
 
-    serverSettings=get_or_create_server_settings(interaction.guild_id)
-    if(serverSettings["server_cohort"]==None):
-        update_card(card)
-        feedbackMessage+="All your fields were successfully setted, but we're missing server informations. Ask your local admin to run the set_server_settings command."
-        await interaction.response.send_message(feedbackMessage,ephemeral=True)
-        return
-
-    card["owner_cohort"]=serverSettings["server_cohort"]
-    card["spe"]=get_spe_for_user(interaction.guild_id,interaction.user.roles)
-
     update_card(card)
 
-    for role in interaction.user.roles:
-        print(role.name)
-    
     if(error==False):
         feedbackMessage+="All field successfully setted !"
 
@@ -474,7 +493,7 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,cp_name:s
 @app_commands.choices(spe2=specialtiesChoices)
 @app_commands.choices(spe3=specialtiesChoices)
 async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:str=None, skill_cost:int=None, spe1:int=None, spe2:int=None, spe3:int=None):
-    user=get_or_create_user(interaction.user.id)
+    user=get_or_create_user(interaction.user.id, interaction.guild_id)
     card=get_or_create_card(user)
     skill=get_skill_of_card(card,skill_nbr)
     feedbackMessage=""
@@ -550,13 +569,21 @@ async def preview(interaction):
 
 async def send_message_with_preview(interaction, message):
     await interaction.response.defer(ephemeral=True, thinking=True)
-    user=get_or_create_user(interaction.user.id)
+    user=get_or_create_user(interaction.user.id, interaction.guild_id)
     card=get_or_create_card(user)
+    mainGuildOfUser=user["guild_id"]
+    serverSettings=get_server_settings(mainGuildOfUser)
+
+    if(serverSettings==None):
+        await interaction.followup.send("Your main server doesn't have settings, which are required to create a preview. Try making this server your main by using the set_current_server_as_main command, if its already the case, ask your local admin."
+                                        ,ephemeral=True)
+        return
+    
+    memberRoles=client.get_guild(mainGuildOfUser).get_member(user["discord_id"]).roles
+    spe=get_spe_for_user(mainGuildOfUser,memberRoles)
     
     fileName=interaction.user.id
-    print(card)
-    print(fileName)
-    jpegPreviewPath=create_psd_card(card, fileName,str(interaction.user.id)+".png", True)
+    jpegPreviewPath=create_psd_card(card, serverSettings["server_cohort"], spe, fileName,str(interaction.user.id)+".png", True)
     currentDir=os.getcwd()
     os.chdir(os.path.dirname(jpegPreviewPath))
     await interaction.followup.send(message,ephemeral=True,file=discord.File(jpegPreviewPath))
