@@ -466,7 +466,7 @@ def replacePingsByCardNames(startString:str):
 async def help(interaction):
     await interaction.response.send_message(settings["HelpMessage"],ephemeral=True)
     if(interaction.user.id in settings["Admins"]):
-        await interaction.response.send_message(settings["AdminHelpMessage"],ephemeral=True)
+        await interaction.followup.send(settings["AdminHelpMessage"],ephemeral=True)
 
 @tree.command(
     name="set_current_server_as_main",
@@ -729,17 +729,34 @@ async def getCurrentSwitch(interaction):
     description="Prints all the values of your card in a text format, quicker than a full preview"
 )
 async def get(interaction):
+    def skillToString(skillDatas):
+        returnString=""
+        returnString+="\tName: "+skillDatas["skill_name"]
+        returnString+="\n\tCost: "+str(skillDatas["skill_cost"])
+        returnString+="\n\tDesc: "+skillDatas["skill_desc"]
+        return returnString
+    
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
     card=get_or_create_card(user)
     returnValue=""
-    for card_field in card.keys():
-        returnValue+=f"{card_field}:{card[card_field]}\n\n"
+
+    returnValue+="Owner name: "+card["owner_name"]
+    returnValue+="\nCard name: "+card["card_name"]
+    returnValue+="\nDescription: "+replacePingsByCardNames(card["card_description"])
+    returnValue+="\nHPs name: "+str(card["cp_name"]).upper()
+    returnValue+="\nHPs value: "+str(card["cp_value"])
+
+    bottomText = "["+card["bottom_text_title"]+"] "+replacePingsByCardNames(card["bottom_text_content"])
+    returnValue+="\nBottom Text: "+bottomText
+    
+    returnValue+="\nSkill 1:\n"+skillToString(get_skill_of_card(card,1))
+    returnValue+="\nSkill 2:\n"+skillToString(get_skill_of_card(card,2))
 
     await interaction.response.send_message(returnValue,ephemeral=True)
 
 @tree.command(
     name="preview",
-    description="Exports your card as a pdf"
+    description="Exports your card as a jpg"
 )
 async def preview(interaction):
     await send_message_with_preview(interaction,"")
