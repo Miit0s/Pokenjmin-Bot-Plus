@@ -744,11 +744,11 @@ async def get(interaction):
 
     returnValue+="Owner name: "+card["owner_name"]
     returnValue+="\nCard name: "+card["card_name"]
-    returnValue+="\nDescription: "+replacePingsByCardNames(card["card_description"])
+    returnValue+="\nDescription: "+card["card_description"]
     returnValue+="\nHPs name: "+str(card["cp_name"]).upper()
     returnValue+="\nHPs value: "+str(card["cp_value"])
 
-    bottomText = "["+card["bottom_text_title"]+"] "+replacePingsByCardNames(card["bottom_text_content"])
+    bottomText = "["+card["bottom_text_title"]+"] "+card["bottom_text_content"]
     returnValue+="\nBottom Text: "+bottomText
     
     returnValue+="\nSkill 1:\n"+skillToString(get_skill_of_card(card,1))
