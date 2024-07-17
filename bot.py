@@ -460,9 +460,17 @@ def replacePingsByCardNames(startString:str):
     return startString
 
 @tree.command(
+    name="help",
+    description="Get help with how to create Pokenjmin's cards using Mecha Buendia"
+)
+async def help(interaction):
+    await interaction.response.send_message(settings["HelpMessage"],ephemeral=True)
+    if(interaction.user.id in settings["Admins"]):
+        await interaction.response.send_message(settings["AdminHelpMessage"],ephemeral=True)
+
+@tree.command(
     name="set_current_server_as_main",
-    description="Make this server your main. It determines how your spe is computed",
-    guild=discord.Object(id=790626187944394772)
+    description="Make this server your main. It determines how your spe is computed"
 )
 async def setCurrentServerAsMain(interaction):
     update_user_guild(interaction.user.id, interaction.guild_id)
@@ -470,15 +478,14 @@ async def setCurrentServerAsMain(interaction):
 
 @tree.command(
     name="set_card",
-    description="Set the value of one or more fields of your card",
-    guild=discord.Object(id=790626187944394772)
+    description="Set the value of one or more fields of your card"
 )
 @app_commands.describe(card_name="The name at the top of the card")
 @app_commands.describe(owner_name="YOUR name, on the left side")
 @app_commands.describe(hp_name="The name beside the HP's value at the top of the card")
 @app_commands.describe(hp_value="HP's value at the top of the card")
 async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
-                  bottom_text_content:str=None, hp_value:int=None, card_image:discord.Attachment=None, owner_photo:discord.Attachment=None):
+                  bottom_text_content:str=None, hp_value:int=None, card_image:discord.Attachment=None, owner_image:discord.Attachment=None):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
     card=get_or_create_card(user)
     feedbackMessage=""
@@ -521,12 +528,12 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
             feedbackMessage+="There was an error converting the card_image, try exporting it to another format like png or jpg\n"
             error=True
 
-    if(owner_photo!=None):
-        if owner_photo.content_type.split("/")[0]!="image":
+    if(owner_image!=None):
+        if owner_image.content_type.split("/")[0]!="image":
             await interaction.response.send_message("Error: Card Image was not an image", ephemeral=True)
             return
-        bruteImagePath=os.path.join(mkdtemp(),"cached_"+owner_photo.filename)
-        await owner_photo.save(bruteImagePath)
+        bruteImagePath=os.path.join(mkdtemp(),"cached_"+owner_image.filename)
+        await owner_image.save(bruteImagePath)
         try:
             with Image.open(bruteImagePath) as im:
                 ratio= im.width/im.height
@@ -546,8 +553,7 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
 
 @tree.command(
     name="create_legendary",
-    description="Create a legendary card",
-    guild=discord.Object(id=790626187944394772)
+    description="Create a legendary card"
 )
 async def createLegendary(interaction, card_name:str, owner_name:str):
     if(interaction.user.id not in settings["Admins"]):
@@ -564,8 +570,7 @@ async def createLegendary(interaction, card_name:str, owner_name:str):
 
 @tree.command(
     name="list_legendaries",
-    description="Get the list of all existing legendary cards",
-    guild=discord.Object(id=790626187944394772)
+    description="Get the list of all existing legendary cards"
 )
 async def listLegendaries(interaction):
     results=list_legendary_cards()
@@ -582,8 +587,7 @@ async def listLegendaries(interaction):
 
 @tree.command(
     name="set_skill",
-    description="Set the value of one or more fields of your card",
-    guild=discord.Object(id=790626187944394772)
+    description="Set the value of one or more fields of your card"
 )
 @app_commands.choices(skill_nbr=[
     app_commands.Choice(name='Skill 1', value=1),
@@ -614,8 +618,7 @@ async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:s
 
 @tree.command(
     name="set_server_settings",
-    description="Set the default spe for a given server",
-    guild=discord.Object(id=790626187944394772),
+    description="Set the default spe for a given server"
 )
 @app_commands.choices(default_spe=specialtiesChoices)
 async def setServerSettings(interaction, default_spe:int, cohort:str):
@@ -631,8 +634,7 @@ async def setServerSettings(interaction, default_spe:int, cohort:str):
 
 @tree.command(
     name="set_role_settings",
-    description="Set the default spe for a given server",
-    guild=discord.Object(id=790626187944394772),
+    description="Set the default spe for a given server"
 )
 @app_commands.choices(spe=specialtiesChoices)
 async def setRoleSettings(interaction, role:discord.Role, spe:int):
@@ -647,8 +649,7 @@ async def setRoleSettings(interaction, role:discord.Role, spe:int):
 
 @tree.command(
         name="get_admins",
-        description="List all the admins of the bot",
-        guild=discord.Object(id=790626187944394772)
+        description="List all the admins of the bot"
 )
 async def getAdmins(interaction):
     messageResponse="List of all admins:\n"
@@ -674,8 +675,7 @@ async def switchToUserCard(interaction, target:discord.User):
 
 @tree.command(
     name="switch_to_legendary",
-    description="Allows you to set your current card to another user's one",
-    guild=discord.Object(id=790626187944394772)
+    description="Allows you to set your current card to another user's one"
 )
 async def switchToLegendary(interaction, target_id:str):
     if(interaction.user.id not in settings["Admins"]):
@@ -696,8 +696,7 @@ async def switchToLegendary(interaction, target_id:str):
 
 @tree.command(
     name="reset_switch",
-    description="Set your current card as your own",
-    guild=discord.Object(id=790626187944394772)
+    description="Set your current card as your own"
 )
 async def resetSwitch(interaction):
     if(interaction.user.id not in settings["Admins"]):
@@ -710,8 +709,7 @@ async def resetSwitch(interaction):
 
 @tree.command(
     name="get_current_switch",
-    description="Get what card you are modifying",
-    guild=discord.Object(id=790626187944394772)
+    description="Get what card you are modifying"
 )
 async def getCurrentSwitch(interaction):
     if(interaction.user.id not in settings["Admins"]):
@@ -728,8 +726,7 @@ async def getCurrentSwitch(interaction):
 
 @tree.command(
     name="get",
-    description="Prints all the values of your card in a text format, quicker than a full preview",
-    guild=discord.Object(id=790626187944394772)
+    description="Prints all the values of your card in a text format, quicker than a full preview"
 )
 async def get(interaction):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
@@ -742,8 +739,7 @@ async def get(interaction):
 
 @tree.command(
     name="preview",
-    description="Exports your card as a pdf",
-    guild=discord.Object(id=790626187944394772)
+    description="Exports your card as a pdf"
 )
 async def preview(interaction):
     await send_message_with_preview(interaction,"")
@@ -777,7 +773,7 @@ async def send_message_with_preview(interaction, message):
 
 @client.event
 async def on_ready():
-    await tree.sync(guild=discord.Object(id=790626187944394772))
+    await tree.sync()
 
 client.run(settings["Token"])
 #endregion
