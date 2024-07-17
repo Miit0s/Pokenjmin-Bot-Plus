@@ -411,7 +411,7 @@ def replacePingsByCardNames(startString:str):
         cardName="\"[CARD_NOT_FOUND]\""
         if(user!=None):
             cardName=get_or_create_card(user)["card_name"]
-        startString.replace(matchObject.group,"\""+cardName+"\"")
+        startString=startString.replace(matchObject.group(),"\""+cardName+"\"")
     return startString
 
 @tree.command(
@@ -561,6 +561,17 @@ async def setRoleSettings(interaction, role:discord.Role, spe:int):
     if(spe!=None): roleSettings["spe"]=spe
     update_role_settings(roleSettings)
     await interaction.response.send_message("Role settings successfully setted !",ephemeral=True)
+
+@tree.command(
+        name="get_admins",
+        description="List all the admins of the bot",
+        guild=discord.Object(id=790626187944394772)
+)
+async def getAdmins(interaction):
+    messageResponse="List of all admins:\n"
+    for admin in settings["Admins"]:
+        messageResponse+="\t<@"+str(admin)+">"
+    await interaction.response.send_message(messageResponse, ephemeral=True)
 
 @tree.command(
     name="get",
