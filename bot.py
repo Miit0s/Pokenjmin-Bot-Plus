@@ -24,8 +24,10 @@ def create_tables():
     sql_statements = [ 
         """CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY,
-                discord_id INTEGER NOT NULL,
-                guild_id INTEGER NOT NULL
+                discord_id TEXT NOT NULL,
+                guild_id INTEGER NOT NULL,
+                overwrite_discord_id TEXT,
+                legendary_user INTEGER DEFAULT 0 NOT NULL
         );""",
         """CREATE TABLE IF NOT EXISTS skills (
                 id INTEGER PRIMARY KEY,
@@ -156,6 +158,25 @@ def get_or_create_user(discordId, guildId):
     result=cursor.fetchone()
     return sqlite3Row_to_dict(result)
 
+def create_legendary_user():
+    cursor = con.cursor()
+    cursor.execute("SELECT count(*) AS count FROM users WHERE legendary_user=TRUE")
+    nbrOfLegendaries=cursor.fetchone()["count"]
+
+    id="leg"+str(nbrOfLegendaries)
+    cursor = con.cursor()
+    cursor.execute("INSERT INTO users (discord_id, guild_id, legendary_user) VALUES (?,?, TRUE)",(id,0))
+    cursor.execute("SELECT * from users WHERE discord_id=?",(id,))
+    con.commit()
+    result=cursor.fetchone()
+    return sqlite3Row_to_dict(result)
+
+def list_legendary_cards():
+    cursor=con.cursor()
+    cursor.execute("SELECT users.discord_id, owner_name, card_name FROM cards INNER JOIN users ON cards.owner_id=users.id WHERE users.legendary_user==True")
+    result=cursor.fetchall()
+    return result
+
 def get_user(discordId):
     cursor = con.cursor()
     cursor.execute("SELECT * from users WHERE discord_id=?",(discordId,))
@@ -165,13 +186,23 @@ def get_user(discordId):
 def update_user_guild(userId, guildId):
     cursor = con.cursor()
     cursor.execute("UPDATE users SET guild_id=? WHERE discord_id=?", (guildId,userId))
-    con.commit
+    con.commit()
 
-def get_or_create_card(user):
+def update_user_overwrite(userId, overwriteId):
+    cursor = con.cursor()
+    cursor.execute("UPDATE users SET overwrite_discord_id=? WHERE discord_id=?", (overwriteId, userId))
+    con.commit()
+
+def get_or_create_card(user, ignoreOverwrites:bool=False):
     # for userKey in user:
     #     print(str(userKey))
+    userId=user["id"]
+
+    if user["overwrite_discord_id"]!=None and ignoreOverwrites==False:
+        userId=get_user(user["overwrite_discord_id"])["id"]
+
     cursor=con.cursor()
-    cursor.execute("SELECT * from cards WHERE owner_id=?",(user["id"],))
+    cursor.execute("SELECT * from cards WHERE owner_id=?",(userId,))
     result=cursor.fetchone()
     if(result!=None): return sqlite3Row_to_dict(result)
 
@@ -181,11 +212,20 @@ def get_or_create_card(user):
     cursor.execute("""INSERT INTO skills (skill_name) VALUES("Skill 2")""")
     skill2_id=cursor.lastrowid
 
-    cursor.execute("INSERT INTO cards (owner_id, skill1_id,skill2_id) VALUES (?,?,?)",(user["id"],skill1_id,skill2_id))
+    cursor.execute("INSERT INTO cards (owner_id, skill1_id,skill2_id) VALUES (?,?,?)",(userId,skill1_id,skill2_id))
     con.commit()
-    cursor.execute("SELECT * from cards WHERE owner_id=?",(user["id"],))
+    cursor.execute("SELECT * from cards WHERE owner_id=?",(userId,))
     result=cursor.fetchone()
     return sqlite3Row_to_dict(result)
+
+def get_owner_of_card(card):
+    cursor=con.cursor()
+    cursor.execute("SELECT * FROM cards INNER JOIN users ON cards.owner_id=users.id WHERE users.id=?",(card["owner_id"],))
+    result=cursor.fetchone()
+    return result
+
+def get_discord_id_of_card(card):
+    return get_owner_of_card(card)["discord_id"]
 
 def get_skill_of_card(card, skillNbr):
     cursor=con.cursor()
@@ -301,7 +341,7 @@ def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
         cardNameLayer.textItem.contents = cardDatas["card_name"]
 
         descriptionLayer = get_layer_by_path(ps,settings["DescriptionLayer"])
-        descriptionLayer.textItem.contents = cardDatas["card_description"]
+        descriptionLayer.textItem.contents = replacePingsByCardNames(cardDatas["card_description"])
 
         cpNameLayer = get_layer_by_path(ps,settings["CPNameLayer"])
         cpNameLayer.textItem.contents = str(cardDatas["cp_name"]).upper()
@@ -365,9 +405,9 @@ def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
 
 def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
     skillDescLayer=skillLayerGroup.artLayers.getByName(settings["SkillDescLayerName"])
-    skillDescLayer.textItem.contents=skillDatas["skill_desc"]
+    skillDescLayer.textItem.contents=replacePingsByCardNames(skillDatas["skill_desc"])
     skillTitleLayer=skillLayerGroup.artLayers.getByName(settings["SkillTitleLayerName"])
-    skillTitleLayer.textItem.contents=skillDatas["skill_name"]
+    skillTitleLayer.textItem.contents=replacePingsByCardNames(skillDatas["skill_name"])
     skillCostLayer=skillLayerGroup.artLayers.getByName(settings["SkillCostLayerName"])
     skillCostLayer.textItem.contents=str(skillDatas["skill_cost"])
 
@@ -406,11 +446,11 @@ for spe in settings["Specialties"]:
 def replacePingsByCardNames(startString:str):
     matches=re.finditer("\<@([^\>\[]*)>",startString)
     for matchObject in matches:
-        userId=int(matchObject.group().replace("<@","").replace(">",""))
+        userId=matchObject.group().replace("<@","").replace(">","")
         user=get_user(userId)
         cardName="\"[CARD_NOT_FOUND]\""
         if(user!=None):
-            cardName=get_or_create_card(user)["card_name"]
+            cardName=get_or_create_card(user,True)["card_name"]
         startString=startString.replace(matchObject.group(),"\""+cardName+"\"")
     return startString
 
@@ -458,6 +498,8 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
     if(bottom_text_content!=None): card["bottom_text_content"]=bottom_text_content
     if(hp_value!=None): card["cp_value"]=hp_value
 
+
+    fileName=get_discord_id_of_card(card)
     if(card_image!=None):
         if card_image.content_type.split("/")[0]!="image":
             await interaction.response.send_message("Error: Card Image was not an image", ephemeral=True)
@@ -469,7 +511,7 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
                 ratio= im.width/im.height
                 if(abs(ratio-settings["CardImagesPreferredRatio"])>=0.005):
                     feedbackMessage+="card_image isn't in the preferred ratio "+str(settings["CardImagesPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(1080)+"\*"+str(1080*settings["CardImagesPreferredRatio"])+"\n"
-                im.save(os.path.join(os.getcwd(),settings["CardImagesFolder"],str(interaction.user.id)+".png"))
+                im.save(os.path.join(os.getcwd(),settings["CardImagesFolder"],str(fileName)+".png"))
         except:
             feedbackMessage+="There was an error converting the card_image, try exporting it to another format like png or jpg\n"
             error=True
@@ -485,7 +527,7 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
                 ratio= im.width/im.height
                 if(abs(ratio-settings["OwnerPhotoPreferredRatio"])>=0.005):
                     feedbackMessage+="owner_photo isn't in the preferred ratio "+str(settings["OwnerPhotoPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(1080)+"\*"+str(1080*settings["OwnerPhotoPreferredRatio"])+"\n"
-                im.save(os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],str(interaction.user.id)+".png"))
+                im.save(os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],str(fileName)+".png"))
         except:
             feedbackMessage+="There was an error converting the card_image, try exporting it to another format like png or jpg\n"
             error=True
@@ -495,7 +537,43 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
     if(error==False):
         feedbackMessage+="All field successfully setted !"
 
+    await send_message_with_preview(interaction, feedbackMessage)
+
+@tree.command(
+    name="create_legendary",
+    description="Create a legendary card",
+    guild=discord.Object(id=790626187944394772)
+)
+async def createLegendary(interaction, card_name:str, owner_name:str):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+    user=create_legendary_user()
+    card=get_or_create_card(user)
+
+    card["card_name"]=card_name
+    card["owner_name"]=owner_name
+    update_card(card)
+    feedbackMessage="All field successfully setted !"
     await interaction.response.send_message(feedbackMessage,ephemeral=True)
+
+@tree.command(
+    name="list_legendaries",
+    description="Get the list of all existing legendary cards",
+    guild=discord.Object(id=790626187944394772)
+)
+async def listLegendaries(interaction):
+    results=list_legendary_cards()
+    returnMessage=""
+    for result in results:
+        returnMessage+="```"
+        returnMessage+="Card name: "+result["card_name"]+"\t"
+        returnMessage+="Owner name: "+result["owner_name"]+"\t"
+        returnMessage+="ID: "+str(result["discord_id"])+"\t"
+        returnMessage+="Insertion text: "+"<@"+result["discord_id"]+">"
+        returnMessage+="```"
+        returnMessage+="\n"
+    await interaction.response.send_message(returnMessage,ephemeral=True)
 
 @tree.command(
     name="set_skill",
@@ -527,7 +605,7 @@ async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:s
     if(error==False):
         feedbackMessage+="All field successfully setted !"
 
-    await interaction.response.send_message(feedbackMessage,ephemeral=True)
+    await send_message_with_preview(interaction, feedbackMessage)
 
 @tree.command(
     name="set_server_settings",
@@ -574,6 +652,76 @@ async def getAdmins(interaction):
     await interaction.response.send_message(messageResponse, ephemeral=True)
 
 @tree.command(
+    name="switch_to_user_card",
+    description="Allows you to set your current card to another user's one",
+    guild=discord.Object(id=790626187944394772)
+)
+async def switchToUserCard(interaction, target:discord.User):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+   
+    get_or_create_user(target.id, interaction.guild_id)
+    get_or_create_user(interaction.user.id, interaction.guild_id)
+
+    update_user_overwrite(interaction.user.id, target.id)
+    await interaction.response.send_message("You are now modifying the card of <@"+str(target.id)+">", ephemeral=True)
+
+@tree.command(
+    name="switch_to_legendary",
+    description="Allows you to set your current card to another user's one",
+    guild=discord.Object(id=790626187944394772)
+)
+async def switchToLegendary(interaction, target_id:str):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+
+    get_or_create_user(interaction.user.id, interaction.guild_id)
+    if(get_user(target_id)==None):
+        await interaction.response.send_message("Target id is either not existant or invalid", ephemeral=True)
+        return
+    
+    if(get_user(target_id)["legendary_user"]==False):
+        await interaction.response.send_message("If you want to switch to another user's card, use switch_to_user_card instead", ephemeral=True)
+        return
+
+    update_user_overwrite(interaction.user.id, target_id)
+    await interaction.response.send_message("You are now modifying the card of <@"+target_id+">", ephemeral=True)
+
+@tree.command(
+    name="reset_switch",
+    description="Set your current card as your own",
+    guild=discord.Object(id=790626187944394772)
+)
+async def resetSwitch(interaction):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+    
+    user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    update_user_overwrite(interaction.user.id, None)
+    await interaction.response.send_message("Switch has been reset", ephemeral=True)
+
+@tree.command(
+    name="get_current_switch",
+    description="Get what card you are modifying",
+    guild=discord.Object(id=790626187944394772)
+)
+async def getCurrentSwitch(interaction):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+    
+    user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    currentOverwrite=user["overwrite_discord_id"]
+    if(currentOverwrite==None):
+        await interaction.response.send_message("You are currently modifying your own card", ephemeral=True)
+        return 
+    
+    await interaction.response.send_message("You are currently modifying the card of <@"+currentOverwrite+">", ephemeral=True)
+
+@tree.command(
     name="get",
     description="Prints all the values of your card in a text format, quicker than a full preview",
     guild=discord.Object(id=790626187944394772)
@@ -599,6 +747,9 @@ async def send_message_with_preview(interaction, message):
     await interaction.response.defer(ephemeral=True, thinking=True)
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
     card=get_or_create_card(user)
+    #In most cases, cardOwner is the user, but it may be another user if the current user is an admin who used the switch feature to modify a legendary card or the card of someone else
+    cardOwner=get_owner_of_card(card)
+
     mainGuildOfUser=user["guild_id"]
     serverSettings=get_server_settings(mainGuildOfUser)
 
@@ -607,11 +758,13 @@ async def send_message_with_preview(interaction, message):
                                         ,ephemeral=True)
         return
     
-    memberRoles=client.get_guild(mainGuildOfUser).get_member(user["discord_id"]).roles
-    spe=get_spe_for_user(mainGuildOfUser,memberRoles)
+    spe=settings["LegendarySpeId"]
+    if cardOwner["legendary_user"]==0 :
+        memberRoles=client.get_guild(mainGuildOfUser).get_member(int(get_discord_id_of_card(card))).roles
+        spe=get_spe_for_user(mainGuildOfUser,memberRoles)
     
-    fileName=interaction.user.id
-    jpegPreviewPath=create_psd_card(card, serverSettings["server_cohort"], spe, fileName,str(interaction.user.id)+".png", True)
+    fileName=get_discord_id_of_card(card)
+    jpegPreviewPath=create_psd_card(card, serverSettings["server_cohort"], spe, fileName,str(fileName)+".png", True)
     currentDir=os.getcwd()
     os.chdir(os.path.dirname(jpegPreviewPath))
     await interaction.followup.send(message,ephemeral=True,file=discord.File(jpegPreviewPath))

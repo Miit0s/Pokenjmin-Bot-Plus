@@ -16,7 +16,8 @@
 		368497205889204225,
 		519650350689681418,
 		222439042871066624,
-		205415242384015369
+		205415242384015369,
+		205322044047491074
 	],
 
 	"PreviewLayerGroup":"Preview Watermark",
@@ -103,5 +104,6 @@
 			"IconLayerName":"Legende",
 			"BackgroundLayerName":"LegendeFond"
 		}
-	]
+	],
+	"LegendarySpeId":9
 }
