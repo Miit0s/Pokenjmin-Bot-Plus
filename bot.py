@@ -47,7 +47,6 @@ def create_tables():
                 bottom_text_title TEXT DEFAULT "Pré-prod" NOT NULL,
                 bottom_text_content TEXT DEFAULT "" NOT NULL,
                 cp_value INTEGER DEFAULT 0 NOT NULL,
-                card_watermark INTEGER DEFAULT 0 NOT NULL,
                 skill1_id INTEGER NOT NULL,
                 skill2_id INTEGER NOT NULL,
                 owner_id INTEGER NOT NULL,
@@ -67,7 +66,8 @@ def create_tables():
                 server_id INTEGER PRIMARY KEY,
                 card_watermark INTEGER,
                 default_spe INTEGER,
-                server_cohort TEXT
+                server_cohort TEXT,
+                default_watermark INTEGER
         );""",
         """CREATE TABLE IF NOT EXISTS role_settings (
                 role_id INTEGER,
