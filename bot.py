@@ -1,4 +1,3 @@
-#https://stackoverflow.com/questions/71165431/how-do-i-make-a-working-slash-command-in-discord-py
 import discord
 import json
 from discord import app_commands
