@@ -739,6 +739,8 @@ async def get(interaction):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
     card=get_or_create_card(user)
     returnValue=""
+    #In most cases, cardOwner is the user, but it may be another user if the current user is an admin who used the switch feature to modify a legendary card or the card of someone else
+    cardOwner=get_owner_of_card(card)
 
     returnValue+="Owner name: "+card["owner_name"]
     returnValue+="\nCard name: "+card["card_name"]
@@ -752,7 +754,16 @@ async def get(interaction):
     returnValue+="\nSkill 1:\n"+skillToString(get_skill_of_card(card,1))
     returnValue+="\nSkill 2:\n"+skillToString(get_skill_of_card(card,2))
 
-    await interaction.response.send_message(returnValue,ephemeral=True)
+    files_to_send:list[discord.File] = []
+    ownerPhotoPath=os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],cardOwner["discord_id"]+".png")
+    cardImagePath=os.path.join(os.getcwd(),settings["CardImagesFolder"],cardOwner["discord_id"]+".png")
+
+    if os.path.exists(ownerPhotoPath):
+        files_to_send.append(discord.File(ownerPhotoPath))
+    if os.path.exists(cardImagePath):
+        files_to_send.append(discord.File(cardImagePath))
+
+    await interaction.response.send_message(returnValue,ephemeral=True, files=files_to_send)
 
 @tree.command(
     name="preview",
