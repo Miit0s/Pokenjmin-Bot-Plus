@@ -324,7 +324,12 @@ def replace_image(ps, layerToReplace, input_file):
 
     current_width = current_bounds[2] - current_bounds[0]
     current_height = current_bounds[3] - current_bounds[1]
-    new_size = width / current_width * 100
+    sizeMultiplier=width / current_width   
+    newHeight=sizeMultiplier*current_height
+    if(newHeight<height):
+        sizeMultiplier=height/current_height
+
+    new_size = sizeMultiplier * 100
     active_layer.resize(new_size, new_size, ps.AnchorPosition.MiddleCenter)
 
 def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):
