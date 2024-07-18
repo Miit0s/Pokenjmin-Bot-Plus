@@ -10,6 +10,7 @@ from PIL import Image
 import re
 import xml.etree.ElementTree as ET
 import math
+from io import BytesIO
 
 intents = discord.Intents.default()
 intents.members=True
@@ -459,10 +460,8 @@ def get_svg_layer_by_path(root, layerPath):
             if sanitizeTag(child.tag)!="g":continue
             if('id' not in child.attrib): continue
             if isSvgLayerEqual(child.attrib['id'],group):
-                print("FOUND THE LAYER "+layerPath+" : "+child.attrib["id"])
                 nextLayer=child
                 break
-            print("still looking")
         if(nextLayer==None):
             print("/!\\Couldn't find the layer "+layerPath)
         currentLayer=nextLayer
@@ -477,7 +476,29 @@ def change_text_of_svg_layer(layer,text):
     if(textDiv==None):
         print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
     textDiv.text=text
-    print(layer.attrib["id"]+" done !")
+
+def toggle_svg_layer_visibility(layer, visibility:bool):Z
+    notVisibleString="display:none;"
+    visibleString="display:inline;"
+
+    desiredString=notVisibleString
+    undesiredString=visibleString
+    if(visibility):
+        desiredString=visibleString
+        undesiredString=notVisibleString
+
+    if("style" not in layer.attrib):
+        layer.attrib["style"]=desiredString
+        return
+
+    if(undesiredString in layer.attrib["style"]):
+        layer.attrib["style"]=layer.attrib["style"].replace(undesiredString, desiredString)
+        return
+    
+    if(desiredString in layer.attrib["style"]):
+        returnZ
+    
+    layer.attrib["style"]=desiredString+layer.attrib["style"]
 
 #https://loonghao.github.io/photoshop-python-api/examples/#replace-images
 def replace_image(ps, layerToReplace, input_file):
@@ -529,12 +550,16 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
 
     cardNameLayer = get_svg_layer_by_path(root,settings["CardNameLayer"])
     change_text_of_svg_layer(cardNameLayer,cardDatas["card_name"])
+    print(cardDatas["card_name"])
 
     ownerNameLayer = get_svg_layer_by_path(root,settings["OwnerNameLayer"])
     change_text_of_svg_layer(ownerNameLayer,cardDatas["owner_name"])
 
-    with open('testExport.svg', 'w') as f:
-        tree.write(f, encoding='unicode')
+    output = BytesIO()
+    tree.write(output, encoding='utf-8', xml_declaration=True) 
+    print(output.getvalue())  # your XML file, encoded as UTF-8
+    with open("output.svg", "wb") as f:
+        f.write(output.getbuffer())
 
 
 def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):

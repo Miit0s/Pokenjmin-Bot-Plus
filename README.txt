@@ -14,6 +14,7 @@ You should set Decimal Places to 7 (max value) and turn off every optimization o
 You should export with "Link" as image location in a folder that you will later fill in settings.json.
 Untick "Preserve Illustrator Editing Capabilities" as it would make the SVG really heavy and basically unreadable by python
 /!\ Only the visible layers will be exported to the svg, so make all the spe icons, watermarks, backgrounds etc. visible
+/!\ Sometime Illustrator will ignore the name given to a layer in photoshop, make sure every name are the same
 
 Exporting the stl directly from Photoshop will probably make a very broken svg.
 
