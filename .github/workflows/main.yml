@@ -12,7 +12,7 @@ jobs:
 
     - name: Copy and configure settings.json
       run: |
-        cp template_settings.json settings.json
+        cp settings_template.json settings.json
         sed -i 's/"Token": ".*"/"Token": "${{ secrets.DISCORD_BOT_TOKEN }}"/' settings.json
 
     - name: Log in to GitHub Container Registry
