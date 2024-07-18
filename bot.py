@@ -8,6 +8,9 @@ import os
 from tempfile import mkdtemp
 from PIL import Image
 import re
+import xml.etree.ElementTree as ET
+import math
+import xmltodict
 
 intents = discord.Intents.default()
 intents.members=True
@@ -441,6 +444,94 @@ def set_spe_image(speIconsGroup, speId, imageLayerKey):
         iconLayer.visible=iconLayer.name==chosenSpe[imageLayerKey]
 #endregion
 
+#region SVG management
+#app = ps.Application()
+
+#Get layer by path written as Group/Group/Layer, for exampel Infos/Name
+def get_layer_by_path(ps, layerPath):
+    subGroups=str(layerPath).split("/")
+    if(len(subGroups)<=1):
+        return ps.active_document.artLayers.getByName(layerPath)
+    
+    i=0
+    layerGroup=ps.active_document
+    while(i<len(subGroups)-1):
+        layerGroup= layerGroup.layerSets.getByName(subGroups[i])
+        i+=1
+
+    return layerGroup.artLayers.getByName(subGroups[len(subGroups)-1])
+
+#https://loonghao.github.io/photoshop-python-api/examples/#replace-images
+def replace_image(ps, layerToReplace, input_file):
+    active_layer = layerToReplace
+    ps.active_document.activeLayer=active_layer
+    bounds = active_layer.bounds
+    replace_contents = ps.app.stringIDToTypeID("placedLayerReplaceContents")
+    desc = ps.ActionDescriptor
+    idnull = ps.app.charIDToTypeID("null")
+    desc.putPath(idnull, input_file)
+    ps.app.executeAction(replace_contents, desc)
+
+    # replaced image.
+    current_bounds = active_layer.bounds
+    width = bounds[2] - bounds[0]
+    height = bounds[3] - bounds[1]
+
+    current_width = current_bounds[2] - current_bounds[0]
+    current_height = current_bounds[3] - current_bounds[1]
+    sizeMultiplier=width / current_width   
+    newHeight=sizeMultiplier*current_height
+    if(newHeight<height):
+        sizeMultiplier=height/current_height
+
+    new_size = sizeMultiplier * 100
+    active_layer.resize(new_size, new_size, ps.AnchorPosition.MiddleCenter)
+
+def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):
+    print("Test !")
+    svgTemplatePath=os.path.join(os.getcwd(),settings["TemplateSvgFile"])
+    tree = ET.parse(svgTemplatePath)
+
+    root = tree.getroot()
+
+    for child in root:
+        print(child.tag)
+
+def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
+    skillDescLayer=skillLayerGroup.artLayers.getByName(settings["SkillDescLayerName"])
+    skillDescLayer.textItem.contents=replacePingsByCardNames(skillDatas["skill_desc"])
+    skillTitleLayer=skillLayerGroup.artLayers.getByName(settings["SkillTitleLayerName"])
+    skillTitleLayer.textItem.contents=replacePingsByCardNames(skillDatas["skill_name"])
+    skillCostLayer=skillLayerGroup.artLayers.getByName(settings["SkillCostLayerName"])
+    skillCostLayer.textItem.contents=str(skillDatas["skill_cost"])
+
+    spe1IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe1IconGroupName"])
+    set_spe_image(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
+
+    spe2IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe2IconGroupName"])
+    set_spe_image(spe2IconGroup,skillDatas["spe2"],"IconLayerName")
+
+    spe3IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe3IconGroupName"])
+    set_spe_image(spe3IconGroup,skillDatas["spe3"],"IconLayerName")
+
+    return
+
+def set_spe_image(speIconsGroup, speId, imageLayerKey):
+    chosenSpe=None
+    for spe in settings["Specialties"]:
+        if spe["Id"]==speId:
+            chosenSpe=spe
+            break
+    
+    if(chosenSpe==None):
+        speIconsGroup.visible=False
+        return
+
+    for iconLayer in speIconsGroup.artLayers:
+        iconLayer.visible=iconLayer.name==chosenSpe[imageLayerKey]
+#endregion
+
+
 #region Bot management
 specialtiesChoices=[]
 
@@ -491,11 +582,11 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
     error=False
 
     if hp_value!=None and hp_value>999 :
-        feedbackMessage+="/!\ HP Value is limited to 999 max !\n"
+        feedbackMessage+="/!\\ HP Value is limited to 999 max !\n"
         hp_value=999
     
     if hp_value!=None and hp_value<-99 :
-        feedbackMessage+="/!\ HP Value is limited to -99 min !\n"
+        feedbackMessage+="/!\\ HP Value is limited to -99 min !\n"
         hp_value=-99
 
     if hp_name!=None and len(hp_name)>3 : 
@@ -521,7 +612,7 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
             with Image.open(bruteImagePath) as im:
                 ratio= im.width/im.height
                 if(abs(ratio-settings["CardImagesPreferredRatio"])>=0.005):
-                    feedbackMessage+="card_image isn't in the preferred ratio "+str(settings["CardImagesPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(1080)+"\*"+str(1080*settings["CardImagesPreferredRatio"])+"\n"
+                    feedbackMessage+="card_image isn't in the preferred ratio "+str(settings["CardImagesPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(1080)+"\\*"+str(math.ceil(1080*settings["CardImagesPreferredRatio"]))+"\n"
                 im.save(os.path.join(os.getcwd(),settings["CardImagesFolder"],str(fileName)+".png"))
         except:
             feedbackMessage+="There was an error converting the card_image, try exporting it to another format like png or jpg\n"
@@ -537,7 +628,7 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
             with Image.open(bruteImagePath) as im:
                 ratio= im.width/im.height
                 if(abs(ratio-settings["OwnerPhotoPreferredRatio"])>=0.005):
-                    feedbackMessage+="owner_photo isn't in the preferred ratio "+str(settings["OwnerPhotoPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(1080)+"\*"+str(1080*settings["OwnerPhotoPreferredRatio"])+"\n"
+                    feedbackMessage+="owner_photo isn't in the preferred ratio "+str(settings["OwnerPhotoPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(1080)+"\\*"+str(math.ceil(1080*settings["OwnerPhotoPreferredRatio"]))+"\n"
                 im.save(os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],str(fileName)+".png"))
         except:
             feedbackMessage+="There was an error converting the card_image, try exporting it to another format like png or jpg\n"
@@ -792,11 +883,13 @@ async def send_message_with_preview(interaction, message):
         spe=get_spe_for_user(mainGuildOfUser,memberRoles)
     
     fileName=get_discord_id_of_card(card)
-    jpegPreviewPath=create_psd_card(card, serverSettings["server_cohort"], spe, fileName,str(fileName)+".png", True)
-    currentDir=os.getcwd()
-    os.chdir(os.path.dirname(jpegPreviewPath))
-    await interaction.followup.send(message,ephemeral=True,file=discord.File(jpegPreviewPath))
-    os.chdir(currentDir)
+    create_svg_card(card, serverSettings["server_cohort"], spe, fileName,str(fileName)+".png", True)
+    # fileName=get_discord_id_of_card(card)
+    # jpegPreviewPath=create_psd_card(card, serverSettings["server_cohort"], spe, fileName,str(fileName)+".png", True)
+    # currentDir=os.getcwd()
+    # os.chdir(os.path.dirname(jpegPreviewPath))
+    # await interaction.followup.send(message,ephemeral=True,file=discord.File(jpegPreviewPath))
+    # os.chdir(currentDir)
 
 @client.event
 async def on_ready():
