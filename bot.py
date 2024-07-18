@@ -450,14 +450,19 @@ def set_spe_image(speIconsGroup, speId, imageLayerKey):
 def get_svg_layer_by_path(root, layerPath):
     subGroups=str(layerPath).split("/")
     currentLayer=root
+    if(" " in layerPath or "_" in layerPath):
+        print("/!\\ Error: LayerPath that you want to get and modify cannot contain a \" \" or a \"_\"")
+
     for group in subGroups:
         nextLayer=None
-        for child in root:
+        for child in currentLayer:
             if sanitizeTag(child.tag)!="g":continue
             if('id' not in child.attrib): continue
-            if(isSvgLayerEqual(child.attrib['id'],group)):
+            if isSvgLayerEqual(child.attrib['id'],group):
+                print("FOUND THE LAYER "+layerPath+" : "+child.attrib["id"])
                 nextLayer=child
                 break
+            print("still looking")
         if(nextLayer==None):
             print("/!\\Couldn't find the layer "+layerPath)
         currentLayer=nextLayer
@@ -467,11 +472,12 @@ def change_text_of_svg_layer(layer,text):
     textDiv=None
     for child in layer:
         if sanitizeTag(child.tag)=="text":
-            textDiv==child
+            textDiv=child
             break
     if(textDiv==None):
         print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
     textDiv.text=text
+    print(layer.attrib["id"]+" done !")
 
 #https://loonghao.github.io/photoshop-python-api/examples/#replace-images
 def replace_image(ps, layerToReplace, input_file):
@@ -498,20 +504,22 @@ def replace_image(ps, layerToReplace, input_file):
 
     new_size = sizeMultiplier * 100
     active_layer.resize(new_size, new_size, ps.AnchorPosition.MiddleCenter)
-
+    
 #The tags are all prefixed by "{http://www.w3.org/2000/svg}", this function removes it
 def sanitizeTag(input:str):
     return input.replace("{http://www.w3.org/2000/svg}","")
 
-#Replace the _ with spaces in the ids
+#Remove everything after a "_" in a layer id, keeping only the good part. But yes, it means we can't have "_" in the actual name of the id
 def sanitizeLayerId(input:str):
-    return input.replace("_"," ")
+    return input.split("_")[0]
 
 #since we mess with underscores and layer IDs in the SVG are suffixed with weird numbers, we can't just do ==, and yes, this raise the problem of false positivie, but it's an issue for a future programmer :)
 def isSvgLayerEqual(svgLayerId:str, target:str):
-    treatedTarget=target.replace("_"," ")
+    if(" " in target or "_" in target):
+        print("/!\\ Error: LayerPath that you want to get and modify cannot contain a \" \" or a \"_\"")
+    treatedId=sanitizeLayerId(svgLayerId)
     #If the start of the layer id is the target id, then yes, it's the layer we're looking for (or a lookalike)
-    return svgLayerId[0:len(treatedTarget)]==treatedTarget
+    return treatedId==target
 
 def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):
     svgTemplatePath=os.path.join(os.getcwd(),settings["TemplateSvgFile"])
@@ -519,8 +527,15 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
 
     root = tree.getroot()
 
-    for child in root:
-        print("Tag:"+sanitizeTag(child.tag)+"\tattrib:"+str(child.attrib))
+    cardNameLayer = get_svg_layer_by_path(root,settings["CardNameLayer"])
+    change_text_of_svg_layer(cardNameLayer,cardDatas["card_name"])
+
+    ownerNameLayer = get_svg_layer_by_path(root,settings["OwnerNameLayer"])
+    change_text_of_svg_layer(ownerNameLayer,cardDatas["owner_name"])
+
+    with open('testExport.svg', 'w') as f:
+        tree.write(f, encoding='unicode')
+
 
 def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
     skillDescLayer=skillLayerGroup.artLayers.getByName(settings["SkillDescLayerName"])
@@ -555,7 +570,6 @@ def set_spe_image(speIconsGroup, speId, imageLayerKey):
     for iconLayer in speIconsGroup.artLayers:
         iconLayer.visible=iconLayer.name==chosenSpe[imageLayerKey]
 #endregion
-
 
 #region Bot management
 specialtiesChoices=[]
