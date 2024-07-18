@@ -6,12 +6,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    env:
-      TIMESTAMP: ${{ steps.timestamp.outputs.date }}
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Set timestamp
+      id: timestamp
+      run: echo "TIMESTAMP=$(date +%s)" >> $GITHUB_ENV
 
     - name: Copy and configure settings.json
       run: |
