@@ -20,32 +20,28 @@
 		205322044047491074
 	],
 
-	"InfoLayers":{
-		"OwnerNameLayer":"Infos/Nom",
-		"CardNameLayer":"Infos/Nom de la carte",
-		"DescriptionLayer":"Infos/Description",
-		"CPNameLayer":"Infos/CPNom",
-		"CPValueLayer":"Infos/CPValeur",
-		"CohortNameValueLayer":"Infos/P19",
-		"BottomTextLayer":"Passif/BottomText",
-		"CardImageLayer":"CardImageMask/CardImage",
-		"OwnerPhotoLayer":"OwnerPhotoMask/OwnerPhoto"
-	},
-	
-	"InfoLayerGroups":{
-		"PreviewLayerGroup":"Preview Watermark",
-		"Skill1Group":"Skill 1",
-		"Skill2Group":"Skill 2",
-		"SkillDescLayerName":"Desc",
-		"SkillTitleLayerName":"Title",
-		"SkillCostLayerName":"Cost",
-		"Spe1IconGroupName":"Spe1",
-		"Spe2IconGroupName":"Spe2",
-		"Spe3IconGroupName":"Spe3",
+	"PreviewLayerGroup":"Preview Watermark",
+	"OwnerNameLayer":"Infos/Nom",
+	"CardNameLayer":"Infos/Nom de la carte",
+	"DescriptionLayer":"Infos/Description",
+	"CPNameLayer":"Infos/CPNom",
+	"CPValueLayer":"Infos/CPValeur",
+	"CohortNameValueLayer":"Infos/P19",
+	"BottomTextLayer":"Passif/BottomText",
+	"CardImageLayer":"CardImageMask/CardImage",
+	"OwnerPhotoLayer":"OwnerPhotoMask/OwnerPhoto",
 
-		"SpeIconGroupName":"Spe Icons",
-		"BackgroundsGroupName":"Backgrounds"
-	},
+	"Skill1Group":"Skill 1",
+	"Skill2Group":"Skill 2",
+	"SkillDescLayerName":"Desc",
+	"SkillTitleLayerName":"Title",
+	"SkillCostLayerName":"Cost",
+	"Spe1IconGroupName":"Spe1",
+	"Spe2IconGroupName":"Spe2",
+	"Spe3IconGroupName":"Spe3",
+
+	"SpeIconGroupName":"Spe Icons",
+	"BackgroundsGroupName":"Backgrounds",
 
 	"Specialties":[
 		{
