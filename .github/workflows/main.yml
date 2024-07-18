@@ -18,10 +18,16 @@ jobs:
       id: timestamp
       run: echo "TIMESTAMP=$(date +%s)" >> $GITHUB_ENV
 
+    - name: Print DISCORD_BOT_TOKEN (masked)
+      run: echo "DISCORD_BOT_TOKEN is set"
+      env:
+        DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+
     - name: Copy and configure settings.json
       run: |
         cp settings_template.json settings.json
         sed -i 's/"Token": ".*"/"Token": "${{ secrets.DISCORD_BOT_TOKEN }}"/' settings.json
+        cat settings.json
 
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@v2
