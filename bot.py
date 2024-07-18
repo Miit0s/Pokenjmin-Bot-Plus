@@ -323,6 +323,7 @@ def change_text_of_svg_layer(layer,text):
     if(textDiv==None):
         print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
     textDiv.text=text
+    textDiv.attrib["text-anchor"]="middle"
 
 def toggle_svg_layer_visibility(layer, visibility:bool):
     notVisibleString="display:none;"
@@ -401,6 +402,19 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
 
     ownerNameLayer = get_svg_layer_by_path(root,settings["OwnerNameLayer"])
     change_text_of_svg_layer(ownerNameLayer,cardDatas["owner_name"])
+
+    descriptionLayer = get_svg_layer_by_path(root,settings["DescriptionLayer"])
+    change_text_of_svg_layer(descriptionLayer, replacePingsByCardNames(cardDatas["card_description"]))
+
+    cpNameLayer = get_svg_layer_by_path(root,settings["CPNameLayer"])
+    change_text_of_svg_layer(cpNameLayer, str(cardDatas["cp_name"]).upper())
+
+    cpValueLayer = get_svg_layer_by_path(root,settings["CPValueLayer"])
+    change_text_of_svg_layer(cpValueLayer, str(cardDatas["cp_value"]))
+
+    bottomTextLayer = get_svg_layer_by_path(root,settings["BottomTextLayer"])
+    change_text_of_svg_layer(bottomTextLayer, "["+cardDatas["bottom_text_title"]+"] "+replacePingsByCardNames(cardDatas["bottom_text_content"]))
+
 
     output = BytesIO()
     tree.write(output, encoding='utf-8', xml_declaration=True) 

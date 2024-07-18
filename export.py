@@ -14,6 +14,10 @@ import re
 import xml.etree.ElementTree as ET
 import math
 from io import BytesIO
+import bot
+
+settingsFile= open('settings.json', encoding="utf-8")
+settings=json.load(settingsFile)
 
 #region Photoshop management
 #app = ps.Application()
@@ -72,7 +76,7 @@ def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
         cardNameLayer.textItem.contents = cardDatas["card_name"]
 
         descriptionLayer = get_layer_by_path(ps,settings["DescriptionLayer"])
-        descriptionLayer.textItem.contents = replacePingsByCardNames(cardDatas["card_description"])
+        descriptionLayer.textItem.contents = bot.replacePingsByCardNames(cardDatas["card_description"])
 
         cpNameLayer = get_layer_by_path(ps,settings["CPNameLayer"])
         cpNameLayer.textItem.contents = str(cardDatas["cp_name"]).upper()
@@ -81,7 +85,7 @@ def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
         cpValueLayer.textItem.contents = str(cardDatas["cp_value"])
 
         bottomTextLayer = get_layer_by_path(ps,settings["BottomTextLayer"])
-        bottomTextLayer.textItem.contents = "["+cardDatas["bottom_text_title"]+"] "+replacePingsByCardNames(cardDatas["bottom_text_content"])
+        bottomTextLayer.textItem.contents = "["+cardDatas["bottom_text_title"]+"] "+bot.replacePingsByCardNames(cardDatas["bottom_text_content"])
 
         cardImagePath=os.path.join(os.getcwd(),settings["CardImagesFolder"],cardImagesName)
         if os.path.exists(cardImagePath):
@@ -93,11 +97,11 @@ def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
             ownerPhotoLayer=get_layer_by_path(ps,settings["OwnerPhotoLayer"])
             replace_image(ps,ownerPhotoLayer,ownerPhotoPath)
 
-        skill1Datas=get_skill_of_card(cardDatas,1)
+        skill1Datas=bot.get_skill_of_card(cardDatas,1)
         skill1LayerSet=ps.active_document.layerSets.getByName(settings["Skill1Group"])
         fill_layers_for_skill(ps,skill1LayerSet,skill1Datas)
 
-        skill2Datas=get_skill_of_card(cardDatas,2)
+        skill2Datas=bot.get_skill_of_card(cardDatas,2)
         skill2LayerSet=ps.active_document.layerSets.getByName(settings["Skill2Group"])
         fill_layers_for_skill(ps,skill2LayerSet,skill2Datas)
 
@@ -136,9 +140,9 @@ def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
 
 def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
     skillDescLayer=skillLayerGroup.artLayers.getByName(settings["SkillDescLayerName"])
-    skillDescLayer.textItem.contents=replacePingsByCardNames(skillDatas["skill_desc"])
+    skillDescLayer.textItem.contents=bot.replacePingsByCardNames(skillDatas["skill_desc"])
     skillTitleLayer=skillLayerGroup.artLayers.getByName(settings["SkillTitleLayerName"])
-    skillTitleLayer.textItem.contents=replacePingsByCardNames(skillDatas["skill_name"])
+    skillTitleLayer.textItem.contents=bot.replacePingsByCardNames(skillDatas["skill_name"])
     skillCostLayer=skillLayerGroup.artLayers.getByName(settings["SkillCostLayerName"])
     skillCostLayer.textItem.contents=str(skillDatas["skill_cost"])
 
