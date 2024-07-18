@@ -64,20 +64,20 @@ def exportLayerAsPng(ps, layerPath, exportPath):
             layerGroup= layerGroup.layerSets.getByName(subGroups[i])
             layerGroup.visible=True
             i+=1
+
+        for artLayer in layerGroup.artLayers:
+            artLayer.visible=False
+            
         layerGroup.artLayers.getByName(subGroups[len(subGroups)-1]).visible=True
 
-    if not os.path.exists(exportPath):
-        os.makedirs(exportPath)
-    image_path = os.path.join(exportPath)
+    #Now we can just export it :)
+    if not os.path.exists(os.path.dirname(exportPath)):
+        os.makedirs(os.path.dirname(exportPath))
 
-    options = ps.TiffSaveOptions()
-    options.alphaChannels=True
-    options.interleaveChannels=False
-    options.layers=False
-    options.saveImagePyramid=False
-    path=os.path.join(exportPath,layerPath+".png")
-    ps.active_document.saveAs(path,options=options,asCopy=True)
-    
+    options=ps.ExportOptionsSaveForWeb()
+    #if you're reading this code to understand how to export as png, don't forget the "options.PNG8=True" that isn't mentionned anywhere in the doc or on the internet
+    options.PNG8=True
+    ps.active_document.exportDocument(os.path.join(os.getcwd(),exportPath), ps.ExportType.SaveForWeb, options)
 
 with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
     #We recursively turn the layer sets and their sublayerS/sublayerSets into dict object
@@ -103,7 +103,11 @@ with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open
             #For an unknown reason even "hasattr" make the software crash if layer has no textItem, so we added a try block just for it, because there's no way to check if textItem is assigned without making the software crash is the answer is no
             try:       
                 if layer.textItem!=None:
-                    justif=justificationToString(layer.textItem.justification)
+                    try:
+                        justif=justificationToString(layer.textItem.justification)
+                    except:
+                        print("/!\ Couldn't get the justification for "+layer.name+"Gonna assume it's left aligned")
+                        justif=photoshop.Justification.Left
 
                     if(justif!="Image" and selfLayerPath not in settings["TextLayerToPreRender"]):
                         newChild["type"]="textLayer"
@@ -111,25 +115,26 @@ with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open
                         newChild["font"]=layer.textItem.font
                         newChild["color"]=layer.textItem.color.rgb.hexValue
                         newChild["justification"]=justif
-                        print(namePrintPrefix+"\t"+layer.textItem.contents)
                         layerSetAsDict[newChildName]=newChild
                         continue
+                    #print("-----------------NOT TEXT --------------------- BECAUSE"+justif+" "+str(layer.textItem.justification))
             except:
                 pass
 
             newChild["type"]="Image"
 
-            #Now let's export the layer as an image
-            localPath=os.path.join(settings["GeneratedLayersFolder"],selfLayerPath+".png")
+            #Now let's export the layer as an image, we add every path to a list of psd to then convert them in PNG as a batch (couldn't get each layer to export nicely as a png one by one)
+            localPath=os.path.join(settings["GeneratedLayersFolder"],selfLayerPath)
             absolutePath=os.path.join(os.getcwd(),localPath)
-            exportLayerAsPng(ps,selfLayerPath,absolutePath)
-            newChild["ImagePath"]=localPath
+
+            exportLayerAsPng(ps,selfLayerPath,absolutePath+".png")
+
+            newChild["ImagePath"]=localPath+".png"
             layerSetAsDict[newChildName]=newChild
-       
+
         #In photoshop, the first layer is on the top, but with programmer logic it's the opposite, so we flip all dictionnaries
         return dict(reversed(list(layerSetAsDict.items())))  
-       
-    
+
     with open(settings["GeneratedTemplateJson"], 'w') as fp:
         json.dump(layerSetToDict(ps.active_document,"",""), fp)
     
