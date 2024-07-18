@@ -10,7 +10,6 @@ from PIL import Image
 import re
 import xml.etree.ElementTree as ET
 import math
-import xmltodict
 
 intents = discord.Intents.default()
 intents.members=True
@@ -448,18 +447,31 @@ def set_spe_image(speIconsGroup, speId, imageLayerKey):
 #app = ps.Application()
 
 #Get layer by path written as Group/Group/Layer, for exampel Infos/Name
-def get_layer_by_path(ps, layerPath):
+def get_svg_layer_by_path(root, layerPath):
     subGroups=str(layerPath).split("/")
-    if(len(subGroups)<=1):
-        return ps.active_document.artLayers.getByName(layerPath)
-    
-    i=0
-    layerGroup=ps.active_document
-    while(i<len(subGroups)-1):
-        layerGroup= layerGroup.layerSets.getByName(subGroups[i])
-        i+=1
+    currentLayer=root
+    for group in subGroups:
+        nextLayer=None
+        for child in root:
+            if sanitizeTag(child.tag)!="g":continue
+            if('id' not in child.attrib): continue
+            if(isSvgLayerEqual(child.attrib['id'],group)):
+                nextLayer=child
+                break
+        if(nextLayer==None):
+            print("/!\\Couldn't find the layer "+layerPath)
+        currentLayer=nextLayer
+    return currentLayer
 
-    return layerGroup.artLayers.getByName(subGroups[len(subGroups)-1])
+def change_text_of_svg_layer(layer,text):
+    textDiv=None
+    for child in layer:
+        if sanitizeTag(child.tag)=="text":
+            textDiv==child
+            break
+    if(textDiv==None):
+        print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
+    textDiv.text=text
 
 #https://loonghao.github.io/photoshop-python-api/examples/#replace-images
 def replace_image(ps, layerToReplace, input_file):
@@ -487,15 +499,28 @@ def replace_image(ps, layerToReplace, input_file):
     new_size = sizeMultiplier * 100
     active_layer.resize(new_size, new_size, ps.AnchorPosition.MiddleCenter)
 
+#The tags are all prefixed by "{http://www.w3.org/2000/svg}", this function removes it
+def sanitizeTag(input:str):
+    return input.replace("{http://www.w3.org/2000/svg}","")
+
+#Replace the _ with spaces in the ids
+def sanitizeLayerId(input:str):
+    return input.replace("_"," ")
+
+#since we mess with underscores and layer IDs in the SVG are suffixed with weird numbers, we can't just do ==, and yes, this raise the problem of false positivie, but it's an issue for a future programmer :)
+def isSvgLayerEqual(svgLayerId:str, target:str):
+    treatedTarget=target.replace("_"," ")
+    #If the start of the layer id is the target id, then yes, it's the layer we're looking for (or a lookalike)
+    return svgLayerId[0:len(treatedTarget)]==treatedTarget
+
 def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):
-    print("Test !")
     svgTemplatePath=os.path.join(os.getcwd(),settings["TemplateSvgFile"])
     tree = ET.parse(svgTemplatePath)
 
     root = tree.getroot()
 
     for child in root:
-        print(child.tag)
+        print("Tag:"+sanitizeTag(child.tag)+"\tattrib:"+str(child.attrib))
 
 def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
     skillDescLayer=skillLayerGroup.artLayers.getByName(settings["SkillDescLayerName"])
