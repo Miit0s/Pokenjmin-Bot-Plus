@@ -477,7 +477,7 @@ def change_text_of_svg_layer(layer,text):
         print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
     textDiv.text=text
 
-def toggle_svg_layer_visibility(layer, visibility:bool):Z
+def toggle_svg_layer_visibility(layer, visibility:bool):
     notVisibleString="display:none;"
     visibleString="display:inline;"
 
@@ -496,7 +496,7 @@ def toggle_svg_layer_visibility(layer, visibility:bool):Z
         return
     
     if(desiredString in layer.attrib["style"]):
-        returnZ
+        return
     
     layer.attrib["style"]=desiredString+layer.attrib["style"]
 
