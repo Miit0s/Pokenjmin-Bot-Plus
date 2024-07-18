@@ -4,6 +4,8 @@
 	"TemplatePsdFile":"Template_Pokenjmin.psd",
 	"GeneratedPsdFolder":"Exports/GeneratedPSDs",
 	"ExportPngFolder":"Exports/PNG",
+	"GeneratedLayersFolder":"GeneratedTemplate/GeneratedLayers",
+	"GeneratedTemplateJson":"GeneratedTemplate/template.json",
 
 	"CardImagesFolder":"Data/CardImages",
 	"CardImagesPreferredRatio":1.48,
@@ -42,6 +44,10 @@
 
 	"SpeIconGroupName":"Spe Icons",
 	"BackgroundsGroupName":"Backgrounds",
+
+	"TextLayerToPreRender":[
+		"Preview Watermark/Watermark"
+	],
 
 	"Specialties":[
 		{
