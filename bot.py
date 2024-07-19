@@ -795,6 +795,48 @@ def replacePingsByCardNames(startString:str):
         startString=startString.replace(matchObject.group(),"\""+cardName+"\"")
     return startString
 
+#returns in a percentage how much the person have progressed on their card
+def getProgressionForUser(userid:str):
+    totalFields=0
+    filledFields=0
+
+    def isFilled(field:str):
+        return field!=None and field!=""
+
+    def countSkill(skillDatas, totalFields, filledFields):
+        #the others fields have a default value so they're not counted, and nobody is filling just one part of their skill, so it's ok
+        totalFields+=1
+        if(isFilled(skillDatas["skill_desc"])): filledFields+=1
+        return totalFields, filledFields
+
+    user=get_user(userid)
+    if(user==None): return 0
+
+    card=get_or_create_card(user)
+    returnValue=""
+
+    totalFields+=6
+    if(isFilled(card["owner_name"])): filledFields+=1
+    if(isFilled(card["owner_name"])): filledFields+=1
+    if(isFilled(card["card_name"])): filledFields+=1
+    if(isFilled(card["card_description"])): filledFields+=1
+    if(isFilled(card["cp_name"])): filledFields+=1
+    if(isFilled(card["bottom_text_content"])): filledFields+=1
+
+    totalFields,filledFields=countSkill(get_skill_of_card(card,1),totalFields,filledFields)
+    totalFields,filledFields=countSkill(get_skill_of_card(card,2),totalFields,filledFields)
+
+    totalFields+=2
+    ownerPhotoPath=os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],userid+".png")
+    cardImagePath=os.path.join(os.getcwd(),settings["CardImagesFolder"],userid+".png")
+    if os.path.exists(ownerPhotoPath):
+        filledFields+=1
+    if os.path.exists(cardImagePath):
+        filledFields+=1
+    
+    #print(f"filledFields: {filledFields}, totalFields:{totalFields}")
+    return float(filledFields)/float(totalFields)
+
 @tree.command(
     name="help",
     description="Get help with how to create Pokenjmin's cards using Mecha Buendia"
@@ -1064,6 +1106,57 @@ async def getCurrentSwitch(interaction):
     await interaction.response.send_message("You are currently modifying the card of <@"+currentOverwrite+">", ephemeral=True)
 
 @tree.command(
+    name="get_advancement",
+    description="Prints the advancement of all the people of a role in your server, who did their card and who didn't",
+    #guild=discord.Object(id=790626187944394772)
+)
+@app_commands.describe(enumerate_empty="List the names of those who have a currently empty card")
+@app_commands.describe(enumerate_partial="List the names of those who have a currently partially filled card")
+@app_commands.describe(enumerate_complete="List the names of those who have a completely filled card")
+async def getAdvancement(interaction, role:discord.Role, enumerate_empty:bool=True, enumerate_partial:bool=True, enumerate_complete:bool=False):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+    
+    emptyUsers=[]
+    partialUsers=[]
+    completeUsers=[]
+    #We iterate over all the members of the discord but ignore all who don't have the role
+    for member in interaction.guild.members:
+        if(role not in member.roles): continue
+        progression:float=getProgressionForUser(str(member.id))
+
+        if(progression==0):
+            emptyUsers.append(member.id)
+            continue
+
+        if(progression==1):
+            completeUsers.append(member.id)
+            continue
+        
+        partialUsers.append({
+            "id":member.id,
+            "progression":progression
+        })
+    
+    returnString=""
+    totalCount=len(emptyUsers)+len(partialUsers)+len(completeUsers)
+    returnString+=f"Empty: {len(emptyUsers)}/{totalCount}\n"
+    if(enumerate_empty):
+        for emptyUser in emptyUsers:
+            returnString+=f"\t<@{emptyUser}>\n"
+    returnString+=f"Partial: {len(partialUsers)}/{totalCount}\n"
+    if(enumerate_partial):
+        for partialUser in partialUsers:
+            returnString+=f"\t<@{partialUser["id"]}>: {100*partialUser["progression"]}%\n"
+    returnString+=f"Complete: {len(completeUsers)}/{totalCount}\n"
+    if(enumerate_empty):
+        for completeUser in completeUsers:
+            returnString+=f"\t<@{completeUser}>\n"
+
+    await interaction.response.send_message(returnString,ephemeral=True)
+
+@tree.command(
     name="get",
     description="Prints all the values of your card in a text format, quicker than a full preview"
 )
@@ -1143,6 +1236,7 @@ async def send_message_with_preview(interaction, message):
 @client.event
 async def on_ready():
     await tree.sync()
+    await tree.sync(guild=discord.Object(id=790626187944394772))
 
 client.run(settings["Token"])
 #endregion
