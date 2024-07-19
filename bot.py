@@ -31,6 +31,11 @@ settings=json.load(settingsFile)
 con = sqlite3.connect("data.db")
 con.row_factory = sqlite3.Row
 
+#Node namespace, to add at the start of any node we create
+nodeNamespace="ns0:"
+#Same with atrib
+attribNamespace="ns1:"
+
 #region Database management
 def create_tables():
     sql_statements = [ 
@@ -456,7 +461,6 @@ if photoshopSupported:
     #endregion
 
 #region SVG management
-#app = ps.Application()
 
 #Get layer by path written as Group/Group/Layer, for exampel Infos/Name
 def get_svg_layer_by_path(root, layerPath):
@@ -469,8 +473,15 @@ def get_svg_layer_by_path(root, layerPath):
         nextLayer=None
         for child in currentLayer:
             if sanitizeTag(child.tag)!="g":continue
-            if('id' not in child.attrib): continue
-            if isSvgLayerEqual(child.attrib['id'],group):
+            #If the g node has no id, it's probably a mask, so we just replace it with its "true" layer child
+            if('id' not in child.attrib): 
+                gChild=child[0]
+                if(gChild==None): continue
+                if(sanitizeTag(gChild.tag)!="g"):continue
+                if('id' not in gChild.attrib):continue
+                child=gChild
+            #If there's a child data-name we can try it too for more accuracy
+            if isSvgLayerEqual(child.attrib['id'],group) or ("data-name" in child.attrib and child.attrib["data-name"]==group):
                 nextLayer=child
                 break
         if(nextLayer==None):
@@ -478,7 +489,43 @@ def get_svg_layer_by_path(root, layerPath):
         currentLayer=nextLayer
     return currentLayer
 
-def change_text_of_svg_layer(layer,text):
+def split_string_to_wrap_text(text:str, maxCharacters:int):
+    words=text.split(" ")
+    lines=[]
+    currentLine=""
+    while len(words)>0:
+        if(len(currentLine)+len(words[0])>maxCharacters):
+            #if current word is longer than a line, we need to cut it and fit it anyway
+            if(len(words[0])>maxCharacters):
+                freeSpaceOnCurrentLine=(maxCharacters-len(currentLine))
+                keptPart=words[0][0:freeSpaceOnCurrentLine]
+                words[0]=words[0][freeSpaceOnCurrentLine:len(words[0])]
+                currentLine+=" "+keptPart
+            lines.append(currentLine)
+            currentLine=""
+            continue
+        currentLine+=" "+words[0]
+        words.remove(words[0])
+    lines.append(currentLine)
+    return lines 
+
+def getFontSizeFromStyle(style:str):
+    pattern = r"font-size:\s*([\d.]+)px"
+    match = re.search(pattern, style)
+    fontSize=float(match.group(1))
+    return fontSize
+
+#Allow us to find the real biggest tspan even taking into account nesting
+def getTspanMaxLength(tspan, maxLengthSoFar):
+    if(tspan.text!=None and len(tspan.text)>maxLengthSoFar):
+        maxLengthSoFar=len(tspan.text)
+    for child in tspan:
+        if(sanitizeTag(child.tag)!="tspan"): continue
+        maxLengthSoFar=getTspanMaxLength(child, maxLengthSoFar)
+    return maxLengthSoFar
+
+def change_text_of_svg_layer(layer,text:str):
+    text=str(text)
     textDiv=None
     for child in layer:
         if sanitizeTag(child.tag)=="text":
@@ -486,7 +533,37 @@ def change_text_of_svg_layer(layer,text):
             break
     if(textDiv==None):
         print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
-    textDiv.text=text
+
+    #Now we check if textDiv contains tspans
+    hasTSpan=False
+    caracPerLine=0
+    for textDivChild in textDiv:
+        if sanitizeTag(textDivChild.tag)!="tspan":
+            continue
+        hasTSpan=True
+        if(textDivChild.text==None): 
+            continue
+        caracPerLine=max(caracPerLine,len(textDivChild.text))
+    #No tspan: We got a easy case here, the field is on a single line, our job is done, yay !
+    if(hasTSpan==False):
+        textDiv.text=text
+        return
+    caracPerLine=getTspanMaxLength(textDiv, caracPerLine)
+    #So, we have tspans, that means we are face to face with a multiline text, but we now how much caractere fits in a line, se we can use this
+    attributes=textDiv.attrib
+    textDiv.clear()
+    textDiv.attrib=attributes
+
+    lines=split_string_to_wrap_text(text, caracPerLine)
+    textDiv.text=lines[0]
+    lines.remove(lines[0])
+    i=0
+    while len(lines)>0:
+        i+=1
+        tspan=ET.SubElement(textDiv,nodeNamespace+"tspan")
+        tspan.attrib={"x":"0", "y":str(i*math.floor(getFontSizeFromStyle(textDiv.attrib["style"]))) }
+        tspan.text=lines[0]
+        lines.remove(lines[0])
 
 def toggle_svg_layer_visibility(layer, visibility:bool):
     notVisibleString="display:none;"
@@ -511,31 +588,73 @@ def toggle_svg_layer_visibility(layer, visibility:bool):
     
     layer.attrib["style"]=desiredString+layer.attrib["style"]
 
-#https://loonghao.github.io/photoshop-python-api/examples/#replace-images
-def replace_image(ps, layerToReplace, input_file):
-    active_layer = layerToReplace
-    ps.active_document.activeLayer=active_layer
-    bounds = active_layer.bounds
-    replace_contents = ps.app.stringIDToTypeID("placedLayerReplaceContents")
-    desc = ps.ActionDescriptor
-    idnull = ps.app.charIDToTypeID("null")
-    desc.putPath(idnull, input_file)
-    ps.app.executeAction(replace_contents, desc)
 
-    # replaced image.
-    current_bounds = active_layer.bounds
-    width = bounds[2] - bounds[0]
-    height = bounds[3] - bounds[1]
+#node.find doesn't work because the tags are prefixed with bullshit, so we made our own version
+def find_child_by_sanitize_tag(node, tag):
+    for child in node:
+        if(sanitizeTag(child.tag)==tag):
+            return child
+    return None
 
-    current_width = current_bounds[2] - current_bounds[0]
-    current_height = current_bounds[3] - current_bounds[1]
-    sizeMultiplier=width / current_width   
-    newHeight=sizeMultiplier*current_height
-    if(newHeight<height):
-        sizeMultiplier=height/current_height
+def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
+    #First we get and store the transform attribute
+    transform=node.attrib["transform"]
+    print("transform before translate "+transform)
+    # Extraire les valeurs de translation
+    translatePattern = r'translate\(([^)]+)\)'
+    translateMatch = re.search(translatePattern, transform)
 
-    new_size = sizeMultiplier * 100
-    active_layer.resize(new_size, new_size, ps.AnchorPosition.MiddleCenter)
+    scale_pattern = r'scale\(([^)]+)\)'
+    scale_match = re.search(scale_pattern, transform)
+    scaleFactor=1
+    if scale_match and relativeToScale:
+        scaleFactor = float(scale_match.group(1))
+    
+    values = translateMatch.group(1).split(" ")
+    x = float(values[0])
+    y = float(values[1]) if len(values) > 1 else 0.0
+    x += scaleFactor*deltaX
+    y += scaleFactor*deltaY
+
+    newTransformString=transform.replace(f"translate({translateMatch.group(1)})",f"translate({x} {y})")
+    node.attrib["transform"]=newTransformString
+    print("transform after translate "+newTransformString)
+    
+
+def replace_image_for_svg(root,layerToReplacePath, input_file):
+    layer=get_svg_layer_by_path(root,layerToReplacePath)
+    imageNode=find_child_by_sanitize_tag(layer,"image")
+    svgFolder=os.path.join(os.getcwd(),settings["GeneratedSvgsFolder"])
+    imageRelativePath=os.path.relpath(input_file,svgFolder)
+    imageNode.attrib[attribNamespace+"href"]=imageRelativePath
+
+    #we get the ratio of the new image using PILImage
+    newImageFile = Image.open(input_file)
+    width, height = newImageFile.size
+    ratio = float(width) / float(height)
+
+    referenceWidth=float(imageNode.attrib["width"])
+    referenceHeight=float(imageNode.attrib["height"])
+    referenceRatio=referenceWidth/referenceHeight
+    newReferenceWidth=referenceWidth
+    newReferenceHeight=referenceHeight
+
+    #if we're wider than the reference ratio, width is dictated by height
+    if(ratio>referenceRatio):
+        print("biggerRatio")
+        newReferenceWidth=ratio*referenceHeight
+    else:
+        print("smallerRatio")
+        print(ratio)
+        newReferenceHeight=referenceWidth/ratio
+    
+    widthDiff=newReferenceWidth-referenceWidth
+    heightDiff=newReferenceHeight-referenceHeight
+    translate_node(imageNode,-widthDiff/2,-heightDiff/2)
+
+    imageNode.attrib["width"]=str(math.ceil(newReferenceWidth))
+    imageNode.attrib["height"]=str(math.ceil(newReferenceHeight))
+
     
 #The tags are all prefixed by "{http://www.w3.org/2000/svg}", this function removes it
 def sanitizeTag(input:str):
@@ -578,6 +697,22 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     bottomTextLayer = get_svg_layer_by_path(root,settings["BottomTextLayer"])
     change_text_of_svg_layer(bottomTextLayer, "["+cardDatas["bottom_text_title"]+"] "+replacePingsByCardNames(cardDatas["bottom_text_content"]))
 
+    skill1Datas=get_skill_of_card(cardDatas,1)
+    skill1LayerPath=settings["Skill1Group"]
+    fill_layers_for_skill(root,skill1LayerPath,skill1Datas)
+
+    skill2Datas=get_skill_of_card(cardDatas,2)
+    skill2LayerPath=settings["Skill2Group"]
+    fill_layers_for_skill(root, skill2LayerPath,skill2Datas)
+
+    cardImagePath=os.path.join(os.getcwd(),settings["CardImagesFolder"],cardImagesName)
+    if os.path.exists(cardImagePath):
+        replace_image_for_svg(root,settings["CardImageLayer"],cardImagePath)
+
+    ownerPhotoPath=os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],cardImagesName)
+    if os.path.exists(ownerPhotoPath):
+        replace_image_for_svg(root,settings["OwnerPhotoLayer"],ownerPhotoPath)
+
     output = BytesIO()
     tree.write(output, encoding='utf-8', xml_declaration=True) 
     generatedSvgPath=os.path.join(os.getcwd(),settings["GeneratedSvgsFolder"],fileName+settings["GeneratedSvgsExtension"])
@@ -592,14 +727,18 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     return pngPath
 
 
-def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
-    skillDescLayer=skillLayerGroup.artLayers.getByName(settings["SkillDescLayerName"])
-    skillDescLayer.textItem.contents=replacePingsByCardNames(skillDatas["skill_desc"])
-    skillTitleLayer=skillLayerGroup.artLayers.getByName(settings["SkillTitleLayerName"])
-    skillTitleLayer.textItem.contents=replacePingsByCardNames(skillDatas["skill_name"])
-    skillCostLayer=skillLayerGroup.artLayers.getByName(settings["SkillCostLayerName"])
-    skillCostLayer.textItem.contents=str(skillDatas["skill_cost"])
+def fill_layers_for_skill(root,skillLayerGroupPath,skillDatas):
+    print(skillLayerGroupPath+"/"+settings["SkillDescLayerName"])
+    skillDescLayer=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["SkillDescLayerName"])
+    change_text_of_svg_layer(skillDescLayer,replacePingsByCardNames(skillDatas["skill_desc"]))
 
+    skillTitleLayer=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["SkillTitleLayerName"])
+    change_text_of_svg_layer(skillTitleLayer,skillDatas["skill_name"])
+
+    skillCostLayer=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["SkillCostLayerName"])
+    change_text_of_svg_layer(skillCostLayer,skillDatas["skill_cost"])
+
+    return
     spe1IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe1IconGroupName"])
     set_spe_image(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
 

@@ -90,10 +90,9 @@ def scanAllTextLayers(ps,parent, pathToParent):
         try:
             textAnchor=justificationToTextAnchor(photoshopLayer.textItem.justification)
             print("\t"+textAnchor)
-            #If it's already the text anchor we desire, we can just stop there
-            if(textComp.attrib["text-anchor"]==textAnchor):continue
+            # #If it's already the text anchor we desire, we can just stop there
+            # if(textComp.attrib["text-anchor"]==textAnchor):continue
             textComp.attrib["text-anchor"]=textAnchor
-            #Now that the anchor has been moved, we must move the element accordingly
         except:
             print("Couldn't get justification for "+pathToSelf)
 
