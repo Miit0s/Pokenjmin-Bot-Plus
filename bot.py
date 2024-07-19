@@ -14,6 +14,7 @@ from io import BytesIO
 import threading
 import asyncio
 
+#Only windows computer supports the photoshop api
 photoshopSupported=True
 try:
     from photoshop import Session

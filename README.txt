@@ -31,7 +31,9 @@ Tip: Shape with large strokes, like the yellow border, will probably break in Il
 The svg template is a little lossy (especially on the color) so it should probably only be used for the preview. 
 For the final export use the function of the bot that directly interacts with photoshop (so launch the bot from a Windows 10 computer)
 
-Once your template is exported, run "process_template.py", this script will modify the svg template to add some finishing touches. 
+Once your template is exported, run "process_template.py", this script will modify the svg template to add some finishing touches:
+	-Change the "text-anchor" property for each text node of the SVG to better reflect the original PSD (by default everything is right aligned)
+	-After changing the text-anchor it will translate to avoid shifting. The process is very "bruteforcy" for the moment, so you may want to look at it if you want fancy angles
 You must repeat the process for each new export
 
 
