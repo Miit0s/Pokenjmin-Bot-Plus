@@ -672,12 +672,15 @@ def isSvgLayerEqual(svgLayerId:str, target:str):
     #If the start of the layer id is the target id, then yes, it's the layer we're looking for (or a lookalike)
     return treatedId==target
 
-def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):
+def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):   
     svgTemplatePath=os.path.join(os.getcwd(),settings["TemplateSvgFile"])
     tree = ET.parse(svgTemplatePath)
 
     root = tree.getroot()
 
+    previewWatermark=get_svg_layer_by_path(root,settings["PreviewLayerGroup"])
+    toggle_svg_layer_visibility(previewWatermark,isPreview)
+    
     cardNameLayer = get_svg_layer_by_path(root,settings["CardNameLayer"])
     change_text_of_svg_layer(cardNameLayer,cardDatas["card_name"])
     print(cardDatas["card_name"])
@@ -712,6 +715,17 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     ownerPhotoPath=os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],cardImagesName)
     if os.path.exists(ownerPhotoPath):
         replace_image_for_svg(root,settings["OwnerPhotoLayer"],ownerPhotoPath)
+    
+    if(spe==None): spe=0
+
+    speIconLayerGroup=get_svg_layer_by_path(root,settings["SpeIconGroupName"])
+    set_spe_image_for_svg(speIconLayerGroup,spe,"IconLayerName")
+
+    backgroundLayerGroup=get_svg_layer_by_path(root,settings["BackgroundsGroupName"])
+    set_spe_image_for_svg(backgroundLayerGroup, spe,"BackgroundLayerName")
+
+    cohortNameLayer = get_svg_layer_by_path(root,settings["CohortNameValueLayer"])
+    change_text_of_svg_layer(cohortNameLayer,cohort)
 
     output = BytesIO()
     tree.write(output, encoding='utf-8', xml_declaration=True) 
@@ -738,19 +752,18 @@ def fill_layers_for_skill(root,skillLayerGroupPath,skillDatas):
     skillCostLayer=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["SkillCostLayerName"])
     change_text_of_svg_layer(skillCostLayer,skillDatas["skill_cost"])
 
+    spe1IconGroup= get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["Spe1IconGroupName"])
+    set_spe_image_for_svg(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
+
+    spe2IconGroup=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["Spe2IconGroupName"])
+    set_spe_image_for_svg(spe2IconGroup,skillDatas["spe2"],"IconLayerName")
+
+    spe3IconGroup=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["Spe3IconGroupName"])
+    set_spe_image_for_svg(spe3IconGroup,skillDatas["spe3"],"IconLayerName")
+
     return
-    spe1IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe1IconGroupName"])
-    set_spe_image(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
 
-    spe2IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe2IconGroupName"])
-    set_spe_image(spe2IconGroup,skillDatas["spe2"],"IconLayerName")
-
-    spe3IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe3IconGroupName"])
-    set_spe_image(spe3IconGroup,skillDatas["spe3"],"IconLayerName")
-
-    return
-
-def set_spe_image(speIconsGroup, speId, imageLayerKey):
+def set_spe_image_for_svg(speIconsGroup, speId, imageLayerKey):
     chosenSpe=None
     for spe in settings["Specialties"]:
         if spe["Id"]==speId:
@@ -758,11 +771,12 @@ def set_spe_image(speIconsGroup, speId, imageLayerKey):
             break
     
     if(chosenSpe==None):
-        speIconsGroup.visible=False
+        toggle_svg_layer_visibility(speIconsGroup,False)
         return
 
-    for iconLayer in speIconsGroup.artLayers:
-        iconLayer.visible=iconLayer.name==chosenSpe[imageLayerKey]
+    for iconLayer in speIconsGroup:
+        if sanitizeTag(iconLayer.tag) != "g":continue
+        toggle_svg_layer_visibility(iconLayer, sanitizeLayerId(iconLayer.attrib["id"])==chosenSpe[imageLayerKey])
 #endregion
 
 #region Bot management

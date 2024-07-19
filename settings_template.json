@@ -2,7 +2,11 @@
 	"Token":"[TOKEN-HERE]",
 
 	"TemplatePsdFile":"Template_Pokenjmin.psd",
-	"TemplateSvgFile":"Template_Pokenjmin.svg",
+	"TemplateSvgFile":"TemplateSVG/Template_Pokenjmin.svg",
+	"GeneratedSvgsFolder":"TemplateSVG",
+	"GeneratedSvgsExtension":".generated.svg",
+	"PreviewDPI":300,
+
 	"GeneratedPsdFolder":"Exports/GeneratedPSDs",
 	"ExportPngFolder":"Exports/PNG",
 
@@ -10,7 +14,6 @@
 	"CardImagesPreferredRatio":1.48,
 	"OwnerPhotosFolder":"Data/OwnerPhotos",
 	"OwnerPhotoPreferredRatio":1,
-
 
 	"Admins":
 	[
@@ -21,9 +24,9 @@
 		205322044047491074
 	],
 
-	"PreviewLayerGroup":"Preview Watermark",
-	"OwnerNameLayer":"Infos/Nom",
-	"CardNameLayer":"Infos/Nom de la carte",
+	"PreviewLayerGroup":"PreviewWatermark",
+	"OwnerNameLayer":"Infos/OwnerName",
+	"CardNameLayer":"Infos/CardName",
 	"DescriptionLayer":"Infos/Description",
 	"CPNameLayer":"Infos/CPNom",
 	"CPValueLayer":"Infos/CPValeur",
@@ -32,8 +35,8 @@
 	"CardImageLayer":"CardImageMask/CardImage",
 	"OwnerPhotoLayer":"OwnerPhotoMask/OwnerPhoto",
 
-	"Skill1Group":"Skill 1",
-	"Skill2Group":"Skill 2",
+	"Skill1Group":"Skill1",
+	"Skill2Group":"Skill2",
 	"SkillDescLayerName":"Desc",
 	"SkillTitleLayerName":"Title",
 	"SkillCostLayerName":"Cost",
