@@ -850,7 +850,7 @@ def getProgressionForUser(userid:str):
 )
 async def help(interaction):
     await interaction.response.send_message(settings["HelpMessage"],ephemeral=True)
-    if(interaction.user.id in settings["Admins"]):
+    if(str(interaction.user.id) in settings["Admins"]):
         await interaction.followup.send(settings["AdminHelpMessage"],ephemeral=True)
 
 @tree.command(
@@ -941,7 +941,7 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
     description="Create a legendary card"
 )
 async def createLegendary(interaction, card_name:str, owner_name:str):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
     user=create_legendary_user()
@@ -1010,7 +1010,7 @@ async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:s
 )
 @app_commands.choices(default_spe=specialtiesChoices)
 async def setServerSettings(interaction, default_spe:int, cohort:str):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
 
@@ -1026,7 +1026,7 @@ async def setServerSettings(interaction, default_spe:int, cohort:str):
 )
 @app_commands.choices(spe=specialtiesChoices)
 async def setRoleSettings(interaction, role:discord.Role, spe:int):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
 
@@ -1051,7 +1051,7 @@ async def getAdmins(interaction):
     guild=discord.Object(id=790626187944394772)
 )
 async def switchToUserCard(interaction, target:discord.User):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
    
@@ -1066,7 +1066,7 @@ async def switchToUserCard(interaction, target:discord.User):
     description="Allows you to set your current card to another user's one"
 )
 async def switchToLegendary(interaction, target_id:str):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
 
@@ -1087,7 +1087,7 @@ async def switchToLegendary(interaction, target_id:str):
     description="Set your current card as your own"
 )
 async def resetSwitch(interaction):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
     
@@ -1100,7 +1100,7 @@ async def resetSwitch(interaction):
     description="Get what card you are modifying"
 )
 async def getCurrentSwitch(interaction):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
     
@@ -1121,7 +1121,7 @@ async def getCurrentSwitch(interaction):
 @app_commands.describe(enumerate_partial="List the names of those who have a currently partially filled card")
 @app_commands.describe(enumerate_complete="List the names of those who have a completely filled card")
 async def getAdvancement(interaction, role:discord.Role, enumerate_empty:bool=True, enumerate_partial:bool=True, enumerate_complete:bool=False):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
     
