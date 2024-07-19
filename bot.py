@@ -29,7 +29,7 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 settingsFile= open('settings.json', encoding="utf-8")
 settings=json.load(settingsFile)
-con = sqlite3.connect("data.db")
+con = sqlite3.connect("Data/data.db")
 con.row_factory = sqlite3.Row
 
 #Node namespace, to add at the start of any node we create
