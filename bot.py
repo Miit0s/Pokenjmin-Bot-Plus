@@ -1242,5 +1242,6 @@ async def on_ready():
     await tree.sync()
     await tree.sync(guild=discord.Object(id=790626187944394772))
 
+print("esfijerighzegriuhzergiuhzegroihzerogiheroigjhsdfoijsdfgoivheroigherigheorighsdoifghseofigh")
 client.run(settings["Token"])
 #endregion
