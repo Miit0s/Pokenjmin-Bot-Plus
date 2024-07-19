@@ -5,7 +5,7 @@ import sqlite3
 import os
 from tempfile import mkdtemp
 from PIL import Image
-import cairosvg
+import subprocess
 from reportlab.graphics import renderPDF, renderPM
 import re
 import xml.etree.ElementTree as ET
@@ -424,7 +424,9 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     
     #now that we have the svg, we must convert it to jpeg
     pngPath = os.path.join(mkdtemp(),str(fileName)+".png")
-    cairosvg.svg2png(url=generatedSvgPath, write_to=pngPath)
+    #inkScape is the only software that respects our svg, so we'll just run it
+    inkscapeCommand="inkscape "+generatedSvgPath+" --export-filename="+pngPath+" --export-dpi"+str(settings["PreviewDPI"])
+    subprocess.run(["convert", generatedSvgPath, pngPath])
     return pngPath
 
 
