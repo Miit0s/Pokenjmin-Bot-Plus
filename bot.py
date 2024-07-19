@@ -14,6 +14,9 @@ from io import BytesIO
 import threading
 import asyncio
 
+os.environ['PYTHONUNBUFFERED'] = "1"
+
+
 #Only windows computer supports the photoshop api
 photoshopSupported=True
 try:
