@@ -791,7 +791,7 @@ for spe in settings["Specialties"]:
     specialtiesChoices.append(app_commands.Choice(name=spe["DisplayName"], value=spe["Id"]))
 
 def replacePingsByCardNames(startString:str):
-    matches=re.finditer("\<@([^\>\[]*)>",startString)
+    matches=re.finditer("\\<@([^\>\[]*)>",startString)
     for matchObject in matches:
         userId=matchObject.group().replace("<@","").replace(">","")
         user=get_user(userId)
