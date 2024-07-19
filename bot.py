@@ -468,7 +468,7 @@ def get_svg_layer_by_path(root, layerPath):
     subGroups=str(layerPath).split("/")
     currentLayer=root
     if(" " in layerPath or "_" in layerPath):
-        print("/!\\ Error: LayerPath that you want to get and modify cannot contain a \" \" or a \"_\"")
+        print("/!\\ Error: layerPath:"+layerPath+" contains a forbidden character: \" \" or a \"_\"")
 
     for group in subGroups:
         nextLayer=None
@@ -619,7 +619,7 @@ def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
 
     newTransformString=transform.replace(f"translate({translateMatch.group(1)})",f"translate({x} {y})")
     node.attrib["transform"]=newTransformString
-    
+
 def replace_image_for_svg(root,layerToReplacePath, input_file):
     layer=get_svg_layer_by_path(root,layerToReplacePath)
     imageNode=find_child_by_sanitize_tag(layer,"image")
@@ -666,7 +666,7 @@ def sanitizeLayerId(input:str):
 #since we mess with underscores and layer IDs in the SVG are suffixed with weird numbers, we can't just do ==, and yes, this raise the problem of false positivie, but it's an issue for a future programmer :)
 def isSvgLayerEqual(svgLayerId:str, target:str):
     if(" " in target or "_" in target):
-        print("/!\\ Error: LayerPath that you want to get and modify cannot contain a \" \" or a \"_\"")
+        print("/!\\ Error: layerPath:"+target+" contains a forbidden character: \" \" or a \"_\"")
     treatedId=sanitizeLayerId(svgLayerId)
     #If the start of the layer id is the target id, then yes, it's the layer we're looking for (or a lookalike)
     return treatedId==target
@@ -866,18 +866,18 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
 
     if(owner_image!=None):
         if owner_image.content_type.split("/")[0]!="image":
-            await interaction.response.send_message("Error: Card Image was not an image", ephemeral=True)
+            await interaction.response.send_message("Error: Owner Image was not an image", ephemeral=True)
             return
-        bruteImagePath=os.path.join(mkdtemp(),"cached_"+owner_image.filename)
-        await owner_image.save(bruteImagePath)
+        bruteOwnerImagePath=os.path.join(mkdtemp(),"cached_"+owner_image.filename)
+        await owner_image.save(bruteOwnerImagePath)
         try:
-            with Image.open(bruteImagePath) as im:
+            with Image.open(bruteOwnerImagePath) as im:
                 ratio= im.width/im.height
                 if(abs(ratio-settings["OwnerPhotoPreferredRatio"])>=0.005):
                     feedbackMessage+="owner_photo isn't in the preferred ratio "+str(settings["OwnerPhotoPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(1080)+"\\*"+str(math.ceil(1080*settings["OwnerPhotoPreferredRatio"]))+"\n"
                 im.save(os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],str(fileName)+".png"))
         except:
-            feedbackMessage+="There was an error converting the card_image, try exporting it to another format like png or jpg\n"
+            feedbackMessage+="There was an error converting the owner image, try exporting it to another format like png or jpg\n"
             error=True
 
     update_card(card)
@@ -919,6 +919,9 @@ async def listLegendaries(interaction):
         returnMessage+="Insertion text: "+"<@"+result["discord_id"]+">"
         returnMessage+="```"
         returnMessage+="\n"
+    
+    if returnMessage=="":
+        returnMessage+="There are currently no legendaries"
     await interaction.response.send_message(returnMessage,ephemeral=True)
 
 @tree.command(
@@ -1124,12 +1127,14 @@ async def send_message_with_preview(interaction, message):
         return
     
     spe=settings["LegendarySpeId"]
+    cohort=settings["LegendaryCohort"]
     if cardOwner["legendary_user"]==0 :
         memberRoles=client.get_guild(mainGuildOfUser).get_member(int(get_discord_id_of_card(card))).roles
         spe=get_spe_for_user(mainGuildOfUser,memberRoles)
+        cohort=serverSettings["server_cohort"]
     
     fileName=get_discord_id_of_card(card)
-    jpegPreviewPath=create_svg_card(card, serverSettings["server_cohort"], spe, fileName,str(fileName)+".png", True)
+    jpegPreviewPath=create_svg_card(card,  cohort, spe, fileName,str(fileName)+".png", True)
     currentDir=os.getcwd()
     os.chdir(os.path.dirname(jpegPreviewPath))
     await interaction.followup.send(message,ephemeral=True,file=discord.File(jpegPreviewPath))
