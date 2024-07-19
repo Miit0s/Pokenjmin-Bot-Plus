@@ -487,7 +487,6 @@ def change_text_of_svg_layer(layer,text):
     if(textDiv==None):
         print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
     textDiv.text=text
-    textDiv.attrib["text-anchor"]="middle"
 
 def toggle_svg_layer_visibility(layer, visibility:bool):
     notVisibleString="display:none;"
@@ -579,7 +578,6 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     bottomTextLayer = get_svg_layer_by_path(root,settings["BottomTextLayer"])
     change_text_of_svg_layer(bottomTextLayer, "["+cardDatas["bottom_text_title"]+"] "+replacePingsByCardNames(cardDatas["bottom_text_content"]))
 
-
     output = BytesIO()
     tree.write(output, encoding='utf-8', xml_declaration=True) 
     generatedSvgPath=os.path.join(os.getcwd(),settings["GeneratedSvgsFolder"],fileName+settings["GeneratedSvgsExtension"])
@@ -589,8 +587,8 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     #now that we have the svg, we must convert it to jpeg
     pngPath = os.path.join(mkdtemp(),str(fileName)+".png")
     #inkScape is the only software that respects our svg, so we'll just run it
-    inkscapeCommand="inkscape "+generatedSvgPath+" --export-filename="+pngPath+" --export-dpi"+str(settings["PreviewDPI"])
-    subprocess.run(["convert", generatedSvgPath, pngPath])
+    inkscapeCommand="inkscape "+os.path.relpath(generatedSvgPath, os.getcwd())+" --export-filename="+os.path.relpath(pngPath, os.getcwd())+" --export-dpi="+str(settings["PreviewDPI"])
+    os.system(inkscapeCommand)
     return pngPath
 
 
