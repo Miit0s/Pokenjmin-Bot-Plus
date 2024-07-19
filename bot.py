@@ -1059,3 +1059,189 @@ async def switchToUserCard(interaction, target:discord.User):
     await interaction.response.send_message("You are now modifying the card of <@"+str(target.id)+">", ephemeral=True)
 
 @tree.command(
+    name="switch_to_legendary",
+    description="Allows you to set your current card to another user's one"
+)
+async def switchToLegendary(interaction, target_id:str):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+
+    get_or_create_user(interaction.user.id, interaction.guild_id)
+    if(get_user(target_id)==None):
+        await interaction.response.send_message("Target id is either not existant or invalid", ephemeral=True)
+        return
+    
+    if(get_user(target_id)["legendary_user"]==False):
+        await interaction.response.send_message("If you want to switch to another user's card, use switch_to_user_card instead", ephemeral=True)
+        return
+
+    update_user_overwrite(interaction.user.id, target_id)
+    await interaction.response.send_message("You are now modifying the card of <@"+target_id+">", ephemeral=True)
+
+@tree.command(
+    name="reset_switch",
+    description="Set your current card as your own"
+)
+async def resetSwitch(interaction):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+    
+    user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    update_user_overwrite(interaction.user.id, None)
+    await interaction.response.send_message("Switch has been reset", ephemeral=True)
+
+@tree.command(
+    name="get_current_switch",
+    description="Get what card you are modifying"
+)
+async def getCurrentSwitch(interaction):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+    
+    user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    currentOverwrite=user["overwrite_discord_id"]
+    if(currentOverwrite==None):
+        await interaction.response.send_message("You are currently modifying your own card", ephemeral=True)
+        return 
+    
+    await interaction.response.send_message("You are currently modifying the card of <@"+currentOverwrite+">", ephemeral=True)
+
+@tree.command(
+    name="get_advancement",
+    description="Prints the advancement of all the people of a role in your server, who did their card and who didn't",
+    #guild=discord.Object(id=790626187944394772)
+)
+@app_commands.describe(enumerate_empty="List the names of those who have a currently empty card")
+@app_commands.describe(enumerate_partial="List the names of those who have a currently partially filled card")
+@app_commands.describe(enumerate_complete="List the names of those who have a completely filled card")
+async def getAdvancement(interaction, role:discord.Role, enumerate_empty:bool=True, enumerate_partial:bool=True, enumerate_complete:bool=False):
+    if(interaction.user.id not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+    
+    emptyUsers=[]
+    partialUsers=[]
+    completeUsers=[]
+    #We iterate over all the members of the discord but ignore all who don't have the role
+    for member in interaction.guild.members:
+        if(role not in member.roles): continue
+        progression:float=getProgressionForUser(str(member.id))
+
+        if(progression==0):
+            emptyUsers.append(member.id)
+            continue
+
+        if(progression==1):
+            completeUsers.append(member.id)
+            continue
+        
+        partialUsers.append({
+            "id":member.id,
+            "progression":progression
+        })
+    
+    returnString=""
+    totalCount=len(emptyUsers)+len(partialUsers)+len(completeUsers)
+    returnString+=f"Empty: {len(emptyUsers)}/{totalCount}\n"
+    if(enumerate_empty):
+        for emptyUser in emptyUsers:
+            returnString+=f"\t<@{emptyUser}>\n"
+    returnString+=f"Partial: {len(partialUsers)}/{totalCount}\n"
+    if(enumerate_partial):
+        for partialUser in partialUsers:
+            returnString+="\t<@"+partialUser["id"]+"}>: "+str(100*partialUser["progression"])+"%\n"
+    returnString+=f"Complete: {len(completeUsers)}/{totalCount}\n"
+    if(enumerate_empty):
+        for completeUser in completeUsers:
+            returnString+=f"\t<@{completeUser}>\n"
+
+    await interaction.response.send_message(returnString,ephemeral=True)
+
+@tree.command(
+    name="get",
+    description="Prints all the values of your card in a text format, quicker than a full preview"
+)
+async def get(interaction):
+    def skillToString(skillDatas):
+        returnString=""
+        returnString+="\tName: "+skillDatas["skill_name"]
+        returnString+="\n\tCost: "+str(skillDatas["skill_cost"])
+        returnString+="\n\tDesc: "+skillDatas["skill_desc"]
+        return returnString
+    
+    user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    card=get_or_create_card(user)
+    returnValue=""
+    #In most cases, cardOwner is the user, but it may be another user if the current user is an admin who used the switch feature to modify a legendary card or the card of someone else
+    cardOwner=get_owner_of_card(card)
+
+    returnValue+="Owner name: "+card["owner_name"]
+    returnValue+="\nCard name: "+card["card_name"]
+    returnValue+="\nDescription: "+card["card_description"]
+    returnValue+="\nHPs name: "+str(card["cp_name"]).upper()
+    returnValue+="\nHPs value: "+str(card["cp_value"])
+
+    bottomText = "["+card["bottom_text_title"]+"] "+card["bottom_text_content"]
+    returnValue+="\nBottom Text: "+bottomText
+    
+    returnValue+="\nSkill 1:\n"+skillToString(get_skill_of_card(card,1))
+    returnValue+="\nSkill 2:\n"+skillToString(get_skill_of_card(card,2))
+
+    files_to_send:list[discord.File] = []
+    ownerPhotoPath=os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],cardOwner["discord_id"]+".png")
+    cardImagePath=os.path.join(os.getcwd(),settings["CardImagesFolder"],cardOwner["discord_id"]+".png")
+
+    if os.path.exists(ownerPhotoPath):
+        files_to_send.append(discord.File(ownerPhotoPath))
+    if os.path.exists(cardImagePath):
+        files_to_send.append(discord.File(cardImagePath))
+
+    await interaction.response.send_message(returnValue,ephemeral=True, files=files_to_send)
+
+@tree.command(
+    name="preview",
+    description="Exports your card as a jpg"
+)
+async def preview(interaction):
+    await send_message_with_preview(interaction,"")
+
+async def send_message_with_preview(interaction, message):
+    await interaction.response.defer(ephemeral=True, thinking=True)
+    user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    card=get_or_create_card(user)
+    #In most cases, cardOwner is the user, but it may be another user if the current user is an admin who used the switch feature to modify a legendary card or the card of someone else
+    cardOwner=get_owner_of_card(card)
+
+    mainGuildOfUser=user["guild_id"]
+    serverSettings=get_server_settings(mainGuildOfUser)
+
+    if(serverSettings==None):
+        await interaction.followup.send("Your main server doesn't have settings, which are required to create a preview. Try making this server your main by using the set_current_server_as_main command, if its already the case, ask your local admin."
+                                        ,ephemeral=True)
+        return
+    
+    spe=settings["LegendarySpeId"]
+    cohort=settings["LegendaryCohort"]
+    if cardOwner["legendary_user"]==0 :
+        memberRoles=client.get_guild(mainGuildOfUser).get_member(int(get_discord_id_of_card(card))).roles
+        spe=get_spe_for_user(mainGuildOfUser,memberRoles)
+        cohort=serverSettings["server_cohort"]
+    
+    fileName=get_discord_id_of_card(card)
+    jpegPreviewPath=create_svg_card(card,  cohort, spe, fileName,str(fileName)+".png", True)
+    currentDir=os.getcwd()
+    os.chdir(os.path.dirname(jpegPreviewPath))
+    await interaction.followup.send(message,ephemeral=True,file=discord.File(jpegPreviewPath))
+    os.chdir(currentDir)
+
+@client.event
+async def on_ready():
+    await tree.sync()
+    await tree.sync(guild=discord.Object(id=790626187944394772))
+
+print("esfijerighzegriuhzergiuhzegroihzerogiheroigjhsdfoijsdfgoivheroigherigheorighsdoifghseofigh")
+client.run(settings["Token"])
+#endregion
