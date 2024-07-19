@@ -44,7 +44,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghcr.io/pordrack/pokenjmin-bot/pokenjmin-bot:${{ env.TIMESTAMP }}
+      run: docker build . --file Dockerfile --tag ghcr.io/pordrack/pokenjmin-bot/pokenjmin-bot:latest
 
     - name: Push the Docker image
-      run: docker push ghcr.io/pordrack/pokenjmin-bot/pokenjmin-bot:${{ env.TIMESTAMP }}
+      run: docker push ghcr.io/pordrack/pokenjmin-bot/pokenjmin-bot:latest
