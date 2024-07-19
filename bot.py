@@ -600,7 +600,6 @@ def find_child_by_sanitize_tag(node, tag):
 def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
     #First we get and store the transform attribute
     transform=node.attrib["transform"]
-    print("transform before translate "+transform)
     # Extraire les valeurs de translation
     translatePattern = r'translate\(([^)]+)\)'
     translateMatch = re.search(translatePattern, transform)
@@ -609,7 +608,8 @@ def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
     scale_match = re.search(scale_pattern, transform)
     scaleFactor=1
     if scale_match and relativeToScale:
-        scaleFactor = float(scale_match.group(1))
+        #sometime the scale is sliglty different on x and y, leading to 2 value, but we can afford to not care
+        scaleFactor = float(scale_match.group(1).split(" ")[0])
     
     values = translateMatch.group(1).split(" ")
     x = float(values[0])
@@ -619,9 +619,7 @@ def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
 
     newTransformString=transform.replace(f"translate({translateMatch.group(1)})",f"translate({x} {y})")
     node.attrib["transform"]=newTransformString
-    print("transform after translate "+newTransformString)
     
-
 def replace_image_for_svg(root,layerToReplacePath, input_file):
     layer=get_svg_layer_by_path(root,layerToReplacePath)
     imageNode=find_child_by_sanitize_tag(layer,"image")

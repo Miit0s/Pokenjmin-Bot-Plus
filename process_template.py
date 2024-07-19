@@ -42,7 +42,6 @@ def sanitizeTag(input:str):
 def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
     #First we get and store the transform attribute
     transform=node.attrib["transform"]
-    print("transform before translate "+transform)
     # Extraire les valeurs de translation
     translatePattern = r'translate\(([^)]+)\)'
     translateMatch = re.search(translatePattern, transform)
@@ -51,7 +50,8 @@ def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
     scale_match = re.search(scale_pattern, transform)
     scaleFactor=1
     if scale_match and relativeToScale:
-        scaleFactor = float(scale_match.group(1))
+        #sometime the scale is sliglty different on x and y, leading to 2 value, but we can afford to not care
+        scaleFactor = float(scale_match.group(1).split(" ")[0])
     
     values = translateMatch.group(1).split(" ")
     x = float(values[0])
@@ -61,12 +61,12 @@ def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
 
     newTransformString=transform.replace(f"translate({translateMatch.group(1)})",f"translate({x} {y})")
     node.attrib["transform"]=newTransformString
-    print("transform after translate "+newTransformString)
+    
 #endregion
 
 def get_rotation(node):
-    if("transform" not in node.attr): return 0
-    transform_string=node.attr["transform"]
+    if("transform" not in node.attrib): return 0
+    transform_string=node.attrib["transform"]
     # Utiliser une expression régulière pour trouver la valeur de rotation
     rotation_match = re.search(r'rotate\((\d+)\)', transform_string)
 
@@ -149,25 +149,27 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
         try:
             textAnchor=justificationToTextAnchor(photoshopLayer.textItem.justification)
             #now we must translate accordingly to corrate things
-            print("\t"+textAnchor)
-            layerBounds=photoshopLayer.bounds
-            layerWidth = layerBounds[2] - layerBounds[0]
-            layerHeight = layerBounds[3] - layerBounds[1]
-
-            deltaX=0
-            deltaY=0
-            if(textAnchor=="middle"):
-                deltaX=0.5
-            if(textAnchor=="end"):
-                deltaX=1
-
-            angle=get_rotation(textComp)
-            xr, yr=rotate_matrix(deltaX,deltaY,angle,0,0)
-            translate_node(textComp,xr*layerWidth*psdToSvgCoordinatesMultiplier,yr*layerWidth*psdToSvgCoordinatesMultiplier,True)
-
             textComp.attrib["text-anchor"]=textAnchor
+            print("\t"+textAnchor)
         except:
             print("Couldn't get justification for "+pathToSelf)
+            continue
+        
+        layerBounds=photoshopLayer.bounds
+        layerWidth = layerBounds[2] - layerBounds[0]
+        layerHeight = layerBounds[3] - layerBounds[1]
+
+        deltaX=0
+        deltaY=0
+        if(textAnchor=="middle"):
+            deltaX=0.5
+        if(textAnchor=="end"):
+            deltaX=1
+
+        angle=get_rotation(textComp)
+        xr, yr=rotate_matrix(deltaX,deltaY,angle,0,0)
+        print("Angle :"+str(angle)+" xr"+str(xr)+" yr"+str(yr))
+        translate_node(textComp,xr*layerWidth*psdToSvgCoordinatesMultiplier,yr*layerHeight*psdToSvgCoordinatesMultiplier,True)
 
 with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
     svgHeight=root.attrib["height"]

@@ -254,7 +254,7 @@
       <ns0:image id="Bg_Image-2" data-name="Bg Image" width="1103" height="141" transform="translate(32.88 364.32) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed66.png" />
     </ns0:g>
     <ns0:g id="BottomText">
-      <ns0:text id="BottomText-2" data-name="BottomText" transform="translate(39.03834 378.1959)" style="font-size: 10.199999809265137px;font-family: GillSansMT, Gill Sans MT">[Pré-prod]<ns0:tspan x="43.92773" y="0" style="font-size: 10.100000381469727px">eaentnieersesneaaletdepenesserleulneiemmsoloet</ns0:tspan><ns0:tspan style="font-size: 10.100000381469727px"><ns0:tspan x="0" y="10">natauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetu</ns0:tspan><ns0:tspan x="0" y="20">teimsritonea</ns0:tspan></ns0:tspan></ns0:text>
+      <ns0:text id="BottomText-2" data-name="BottomText" transform="translate(39.03834 378.1959)" style="font-size: 10.199999809265137px;font-family: GillSansMT, Gill Sans MT" text-anchor="start">[Pré-prod]<ns0:tspan x="43.92773" y="0" style="font-size: 10.100000381469727px">eaentnieersesneaaletdepenesserleulneiemmsoloet</ns0:tspan><ns0:tspan style="font-size: 10.100000381469727px"><ns0:tspan x="0" y="10">natauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetu</ns0:tspan><ns0:tspan x="0" y="20">teimsritonea</ns0:tspan></ns0:tspan></ns0:text>
     </ns0:g>
   </ns0:g>
   <ns0:g style="mask: url(#mask)">
@@ -295,19 +295,19 @@
       <ns0:text transform="translate(33.01393 53.75986) rotate(90) scale(0.99074 1)" style="font-size: 11.999990463256836px;font-family: GillSansMT, Gill Sans MT">P19</ns0:text>
     </ns0:g>
     <ns0:g id="CardName">
-      <ns0:text transform="translate(35.07447 42.23789)" style="font-size: 18.999990463256836px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700">Nom de la carte</ns0:text>
+      <ns0:text transform="translate(35.07447 42.23789)" style="font-size: 18.999990463256836px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700" text-anchor="start">Nom de la carte</ns0:text>
     </ns0:g>
     <ns0:g id="CPValeur">
-      <ns0:text transform="translate(235.83473 45.00107)" style="font-size: 21.999990463256836px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700"><ns0:tspan xml:space="preserve">100    </ns0:tspan></ns0:text>
+      <ns0:text transform="translate(235.83473 45.00107)" style="font-size: 21.999990463256836px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700" text-anchor="start"><ns0:tspan xml:space="preserve">100    </ns0:tspan></ns0:text>
     </ns0:g>
     <ns0:g id="CPNom">
-      <ns0:text transform="translate(222.02711 44.90146)" style="font-size: 12px;font-family: GillSansMT, Gill Sans MT">CP</ns0:text>
+      <ns0:text transform="translate(236.18711 44.90146)" style="font-size: 12px;font-family: GillSansMT, Gill Sans MT" text-anchor="end">CP</ns0:text>
     </ns0:g>
     <ns0:g id="Description">
-      <ns0:text transform="translate(160.92359 219.55625)" style="font-size: 10.100000381469727px;font-family: GillSansMT, Gill Sans MT">Description</ns0:text>
+      <ns0:text transform="translate(184.32359 219.55625)" style="font-size: 10.100000381469727px;font-family: GillSansMT, Gill Sans MT" text-anchor="middle">Description</ns0:text>
     </ns0:g>
     <ns0:g id="OwnerName">
-      <ns0:text transform="translate(33.01393 165.67979) rotate(90) scale(0.99074 1)" style="font-size: 11.999990463256836px;font-family: GillSansMT, Gill Sans MT">Nom</ns0:text>
+      <ns0:text transform="translate(33.01393 189.2197724) rotate(90) scale(0.99074 1)" style="font-size: 11.999990463256836px;font-family: GillSansMT, Gill Sans MT" text-anchor="end">Nom</ns0:text>
     </ns0:g>
   </ns0:g>
   <ns0:g id="PreviewWatermark" style="opacity: 0.290196078431373">
