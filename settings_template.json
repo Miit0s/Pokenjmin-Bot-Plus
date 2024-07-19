@@ -2,6 +2,7 @@
 	"Token":"[TOKEN-HERE]",
 
 	"TemplatePsdFile":"Template_Pokenjmin.psd",
+	"UnprocessedTemplateSvgFile":"TemplateSVG/Template_Pokenjmin_Unprocessed.svg",
 	"TemplateSvgFile":"TemplateSVG/Template_Pokenjmin.svg",
 	"GeneratedSvgsFolder":"TemplateSVG",
 	"GeneratedSvgsExtension":".generated.svg",
