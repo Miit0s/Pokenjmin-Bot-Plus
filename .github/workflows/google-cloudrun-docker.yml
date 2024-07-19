@@ -2,7 +2,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  job_id:    
+  build:    
     permissions:
       contents: 'read'
       id-token: 'write'
@@ -14,7 +14,7 @@ jobs:
 
     - uses: 'google-github-actions/auth@v2'
       with:
-        workload_identity_provider: 'projects/15451562113/locations/global/workloadIdentityPools/github-actions-pool'
+        workload_identity_provider: 'projects/15451562113/locations/global/workloadIdentityPools/github-actions-pool/attribute.repository/pokenjmin'
         service_account: 'pokenjmin-app-sa@bamboo-truck-429908-t3.iam.gserviceaccount.com'
 
     - id: 'deploy'
