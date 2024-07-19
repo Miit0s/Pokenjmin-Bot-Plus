@@ -813,10 +813,8 @@ def getProgressionForUser(userid:str):
     if(user==None): return 0
 
     card=get_or_create_card(user)
-    returnValue=""
 
-    totalFields+=6
-    if(isFilled(card["owner_name"])): filledFields+=1
+    totalFields+=5
     if(isFilled(card["owner_name"])): filledFields+=1
     if(isFilled(card["card_name"])): filledFields+=1
     if(isFilled(card["card_description"])): filledFields+=1
