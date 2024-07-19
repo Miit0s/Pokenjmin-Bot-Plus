@@ -4,6 +4,7 @@ discord.py: https://pypi.org/project/discord.py/; pip install discord.py
 pillow 10.4.0: https://pypi.org/project/pillow/; pip install pillow
 
 sudo apt install inkscape (if not on Linux, install inkscape and add it to your PATH variable, or use the WSL)
+You need to have the fonts in the fonts folder installed on your system. You can do it manually or use the .sh if on Linux
 
 HOW TO SETUP THE BOT:
 
@@ -18,14 +19,18 @@ In the Bot tab of the developper portal you'll see several switches describing "
 
 HOW TO SET UP THE TEMPLATE FILES:
 
-You should always make the psd in photoshop first, then you open it with Adobe Illstrator and export it to the .svg.
-/!\ Dynamic layers names can't contain underscore or spaces or it won't work
-Go to export (not save ! This won't produce the same kind of file) and choose export as SVG.
-Set the decimals to 5, the maximum value, choose Inline Style for styling, and "SVG" for fonts. For the images choose "Link"
-/!\ Only the visible layers will be exported to the svg, so make all the spe icons, watermarks, backgrounds etc. visible
-/!\ Sometime Illustrator will ignore the name given to a layer in photoshop, make sure every name are the same
 
-Exporting the svg directly from Photoshop will probably make a very broken svg.
+If you have any modification to make, modify the psd file. 
+/!\ Dynamic layers names can't contain underscore or spaces or it won't work
+
+Open the psd on Illustrator, 
+/!\ Sometime Illustrator will ignore the name given to a layer in photoshop, make sure every name are the same
+Go to export (not save ! This won't produce the same kind of file) and choose export as SVG.
+Set the decimals to 5, the maximum value, choose Inline Style for styling, and "SVG" for fonts. For the images choose "Link".
+Export the svg to TemplateSVG/Template_Pokenjmin_Unprocessed.svg, to avoid generated png bundling up we reccomend you clear the repository before every export.
+/!\ Only the visible layers will be exported to the svg, so make all the spe icons, watermarks, backgrounds etc. visible
+
+Exporting the svg directly from Photoshop would probably make a very broken svg.
 
 Tip: Shape with large strokes, like the yellow border, will probably break in Illustrator, rasterize them in photoshop beforehand.
 The svg template is a little lossy (especially on the color) so it should probably only be used for the preview. 
@@ -34,6 +39,8 @@ For the final export use the function of the bot that directly interacts with ph
 Once your template is exported, run "process_template.py", this script will modify the svg template to add some finishing touches:
 	-Change the "text-anchor" property for each text node of the SVG to better reflect the original PSD (by default everything is right aligned)
 	-After changing the text-anchor it will translate to avoid shifting. The process is very "bruteforcy" for the moment, so you may want to look at it if you want fancy angles
+
+The resulting SVG will be exported to TemplateSVG/Template_Pokenjmin.svg
 You must repeat the process for each new export
 
 
