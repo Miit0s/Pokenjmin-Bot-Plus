@@ -1048,7 +1048,6 @@ async def getAdmins(interaction):
 @tree.command(
     name="switch_to_user_card",
     description="Allows you to set your current card to another user's one",
-    guild=discord.Object(id=790626187944394772)
 )
 async def switchToUserCard(interaction, target:discord.User):
     if(str(interaction.user.id) not in settings["Admins"]):
