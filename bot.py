@@ -1154,7 +1154,7 @@ async def getAdvancement(interaction, role:discord.Role, enumerate_empty:bool=Tr
     returnString+=f"Partial: {len(partialUsers)}/{totalCount}\n"
     if(enumerate_partial):
         for partialUser in partialUsers:
-            returnString+="\t<@"+partialUser["id"]+"}>: "+str(100*partialUser["progression"])+"%\n"
+            returnString+="\t<@"+str(partialUser["id"])+">: "+str(100*partialUser["progression"])+"%\n"
     returnString+=f"Complete: {len(completeUsers)}/{totalCount}\n"
     if(enumerate_empty):
         for completeUser in completeUsers:
