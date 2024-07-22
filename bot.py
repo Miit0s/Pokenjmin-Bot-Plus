@@ -1253,6 +1253,8 @@ async def send_message_with_preview(interaction, message):
     spe=settings["LegendarySpeId"]
     cohort=settings["LegendaryCohort"]
     if cardOwner["legendary_user"]==0 :
+        print("main guild of user: "+str(mainGuildOfUser))
+        print("Discord Id Of card: "+str(int(get_discord_id_of_card(card))))
         memberRoles=client.get_guild(mainGuildOfUser).get_member(int(get_discord_id_of_card(card))).roles
         spe=get_spe_for_user(mainGuildOfUser,memberRoles)
         cohort=serverSettings["server_cohort"]
