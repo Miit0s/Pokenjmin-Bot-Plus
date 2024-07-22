@@ -178,6 +178,10 @@ def get_or_create_user(discordId, guildId):
     result=cursor.fetchone()
     if(result!=None): return sqlite3Row_to_dict(result)
 
+    #Cannot create user if guild id is none
+    if(guildId==None):
+        return None
+
     cursor=con.cursor()
     cursor.execute("INSERT INTO users (discord_id, guild_id) VALUES (?,?)",(discordId,guildId))
     cursor.execute("SELECT * from users WHERE discord_id=?",(discordId,))
@@ -872,6 +876,10 @@ async def setCurrentServerAsMain(interaction):
 async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
                   bottom_text_content:str=None, hp_value:int=None, card_image:discord.Attachment=None, owner_image:discord.Attachment=None):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
+    if(user==None):
+        await interaction.response.send_message("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
+        return
     card=get_or_create_card(user)
     feedbackMessage=""
     error=False
@@ -986,6 +994,10 @@ async def listLegendaries(interaction):
 @app_commands.choices(spe3=specialtiesChoices)
 async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:str=None, skill_cost:int=None, spe1:int=None, spe2:int=None, spe3:int=None):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
+    if(user==None):
+        await interaction.response.send_message("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
+        return
     card=get_or_create_card(user)
     skill=get_skill_of_card(card,skill_nbr)
     feedbackMessage=""
@@ -1173,8 +1185,15 @@ async def get(interaction):
         returnString+="\n\tCost: "+str(skillDatas["skill_cost"])
         returnString+="\n\tDesc: "+skillDatas["skill_desc"]
         return returnString
-    
+
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    
+    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
+    if(user==None):
+        await interaction.response.send_message("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
+        return
+
+
     card=get_or_create_card(user)
     returnValue=""
     #In most cases, cardOwner is the user, but it may be another user if the current user is an admin who used the switch feature to modify a legendary card or the card of someone else
@@ -1213,6 +1232,12 @@ async def preview(interaction):
 async def send_message_with_preview(interaction, message):
     await interaction.response.defer(ephemeral=True, thinking=True)
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
+
+    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
+    if(user==None):
+        await interaction.followup.send("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
+        return
+
     card=get_or_create_card(user)
     #In most cases, cardOwner is the user, but it may be another user if the current user is an admin who used the switch feature to modify a legendary card or the card of someone else
     cardOwner=get_owner_of_card(card)
