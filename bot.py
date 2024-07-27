@@ -68,6 +68,7 @@ def create_tables():
         """CREATE TABLE IF NOT EXISTS cards (
                 id INTEGER PRIMARY KEY,
                 card_name TEXT DEFAULT "" NOT NULL,
+                card_name_font_size REAL,
                 cp_name TEXT DEFAULT "" NOT NULL, 
                 owner_name TEXT DEFAULT "" NOT NULL,
                 card_description TEXT DEFAULT "" NOT NULL, 
@@ -280,6 +281,7 @@ def update_card(card):
                 UPDATE cards 
                 SET 
                     card_name=?,
+                    card_name_font_size=?,
                     owner_name=?,
                     cp_name=?,
                     card_description=?,
@@ -288,7 +290,7 @@ def update_card(card):
                     cp_value=?
                 WHERE
                     id=?
-                """,(card["card_name"],card["owner_name"],card["cp_name"],card["card_description"],card["bottom_text_title"],card["bottom_text_content"],card["cp_value"],card["id"]))
+                """,(card["card_name"],card["card_name_font_size"],card["owner_name"],card["cp_name"],card["card_description"],card["bottom_text_title"],card["bottom_text_content"],card["cp_value"],card["id"]))
     con.commit()
 
 def update_skill(skill):
@@ -376,6 +378,7 @@ if photoshopSupported:
 
             cardNameLayer = get_layer_by_path(ps,settings["CardNameLayer"])
             cardNameLayer.textItem.contents = cardDatas["card_name"]
+            cardNameLayer.textItem.size=cardDatas["card_name_font_size"]
 
             descriptionLayer = get_layer_by_path(ps,settings["DescriptionLayer"])
             descriptionLayer.textItem.contents = replacePingsByCardNames(cardDatas["card_description"])
@@ -529,6 +532,18 @@ def getFontSizeFromStyle(style:str):
     fontSize=float(match.group(1))
     return fontSize
 
+#Returns the new style
+def getStyleWithNewFontSize(style:str, newFontSize:float):
+    pattern=r"(font-size:[ ]*.*px;*)"
+    match=re.search(pattern, style)
+    style=style.replace(match.group(1),'')
+    if style=="":
+        style="font-size: "+str(newFontSize)+"px"
+    else:
+        style=style+";"+"font-size: "+str(newFontSize)+"px"
+    return style
+    
+
 #Allow us to find the real biggest tspan even taking into account nesting
 def getTspanMaxLength(tspan, maxLengthSoFar):
     if(tspan.text!=None and len(tspan.text)>maxLengthSoFar):
@@ -537,6 +552,15 @@ def getTspanMaxLength(tspan, maxLengthSoFar):
         if(sanitizeTag(child.tag)!="tspan"): continue
         maxLengthSoFar=getTspanMaxLength(child, maxLengthSoFar)
     return maxLengthSoFar
+
+def get_text_node_of_svg_layer(layer):
+    for child in layer:
+        if sanitizeTag(child.tag)=="text":
+            textDiv=child
+            break
+    if(textDiv==None):
+        print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
+    return textDiv
 
 def change_text_of_svg_layer(layer,text:str):
     text=str(text)
@@ -695,7 +719,9 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     
     cardNameLayer = get_svg_layer_by_path(root,settings["CardNameLayer"])
     change_text_of_svg_layer(cardNameLayer,cardDatas["card_name"])
-    print(cardDatas["card_name"])
+    if(cardDatas["card_name_font_size"]!=None):
+        cardNameLayerStyle=cardNameLayerTextNode.attrib["style"]
+        cardNameLayerTextNode.attrib["style"]=getStyleWithNewFontSize(cardNameLayerStyle, cardDatas["card_name_font_size"])
 
     ownerNameLayer = get_svg_layer_by_path(root,settings["OwnerNameLayer"])
     change_text_of_svg_layer(ownerNameLayer,cardDatas["owner_name"])
@@ -870,10 +896,11 @@ async def setCurrentServerAsMain(interaction):
     description="Set the value of one or more fields of your card"
 )
 @app_commands.describe(card_name="The name at the top of the card")
+@app_commands.describe(card_name_font_size="The font size of the name at the top of the card, leave empty in doubt")
 @app_commands.describe(owner_name="YOUR name, on the left side")
 @app_commands.describe(hp_name="The name beside the HP's value at the top of the card")
 @app_commands.describe(hp_value="HP's value at the top of the card")
-async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
+async def setCard(interaction, card_name:str=None, card_name_font_size:int=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
                   bottom_text_content:str=None, hp_value:int=None, card_image:discord.Attachment=None, owner_image:discord.Attachment=None):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
     #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
@@ -894,15 +921,24 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
 
     if hp_name!=None and len(hp_name)>3 : 
         feedbackMessage+="HP Name length is limited to 3 characters !\n"
+        hp_name=hp_name[0:3]
+
+    if card_name_font_size!=None and card_name_font_size>settings["CardNameFontSizeMax"]:
+        feedbackMessage+="Card name font size can't be higher than"+str(settings["CardNameFontSizeMax"])+" !\n"
+        card_name_font_size=settings["CardNameFontSizeMax"]
+
+    if card_name_font_size!=None and card_name_font_size<settings["CardNameFontSizeMin"]:
+        feedbackMessage+="Card name font size can't be lower than"+str(settings["CardNameFontSizeMin"])+" !\n"
+        card_name_font_size=settings["CardNameFontSizeMin"]
 
     if(card_name!=None): card["card_name"]=card_name
+    if(card_name_font_size!=None): card["card_name_font_size"]=card_name_font_size
     if(owner_name!=None): card["owner_name"]=owner_name
     if(hp_name!=None): card["cp_name"]=hp_name
     if(card_description!=None): card["card_description"]=card_description
     if(bottom_text_title!=None): card["bottom_text_title"]=bottom_text_title
     if(bottom_text_content!=None): card["bottom_text_content"]=bottom_text_content
     if(hp_value!=None): card["cp_value"]=hp_value
-
 
     fileName=get_discord_id_of_card(card)
     if(card_image!=None):
@@ -1271,6 +1307,6 @@ async def on_ready():
     await tree.sync()
     await tree.sync(guild=discord.Object(id=790626187944394772))
 
-print("This line was last modified on the 22/07/2024 at 13:21 by Jeremy (to test Docker Recreate)")
+print("This line was last modified on the 28/07/2024 at 00:46 by Jeremy (to test Docker Recreate)")
 client.run(settings["Token"])
 #endregion
