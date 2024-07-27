@@ -901,7 +901,7 @@ async def setCurrentServerAsMain(interaction):
 @app_commands.describe(owner_name="YOUR name, on the left side")
 @app_commands.describe(hp_name="The name beside the HP's value at the top of the card")
 @app_commands.describe(hp_value="HP's value at the top of the card")
-async def setCard(interaction, card_name:str=None, card_name_font_size:int=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
+async def setCard(interaction, card_name:str=None, card_name_font_size:float=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
                   bottom_text_content:str=None, hp_value:int=None, card_image:discord.Attachment=None, owner_image:discord.Attachment=None):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
     #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
