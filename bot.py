@@ -720,6 +720,7 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     cardNameLayer = get_svg_layer_by_path(root,settings["CardNameLayer"])
     change_text_of_svg_layer(cardNameLayer,cardDatas["card_name"])
     if(cardDatas["card_name_font_size"]!=None):
+        cardNameLayerTextNode=get_text_node_of_svg_layer(cardNameLayer)
         cardNameLayerStyle=cardNameLayerTextNode.attrib["style"]
         cardNameLayerTextNode.attrib["style"]=getStyleWithNewFontSize(cardNameLayerStyle, cardDatas["card_name_font_size"])
 
