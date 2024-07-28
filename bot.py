@@ -111,6 +111,25 @@ def create_tables():
 
 create_tables()
 
+def get_all_users_sorted(discordClient):
+    cursor = con.cursor()
+    cursor.execute("SELECT * from users")
+    results=cursor.fetchall()
+    users=[]
+    for r in results:
+        user=sqlite3Row_to_dict(r)
+        
+        user["overwrite_discord_id"]=None
+        guild=discordClient.get_guild(user["guild_id"])
+        if(guild==None): continue
+        member=guild.get_member(int(user["discord_id"]))
+        if(member==None): continue
+        memberRoles=member.roles
+        spe=get_spe_for_user(user["guild_id"],memberRoles)
+        user["spe"]=spe
+        users.append(user)
+    return users
+
 def get_or_create_server_settings(serverId):
     cursor = con.cursor()
     cursor.execute("SELECT * from server_settings WHERE server_id=?",(serverId,))
@@ -1225,6 +1244,22 @@ async def getAdvancement(interaction, role:discord.Role, enumerate_empty:bool=Tr
             returnString+=f"\t<@{completeUser}>\n"
 
     await interaction.response.send_message(returnString,ephemeral=True)
+
+@tree.command(
+    name="export_all",
+    description="Exports all the users cards",
+    guild=discord.Object(id=790626187944394772)
+)
+async def exportAll(interaction):
+    if(str(interaction.user.id) not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+    
+    users=get_all_users_sorted(client)
+    returnString=""
+    for user in users:
+        returnString+=str(user["discord_id"])+";"+str(user["spe"])+"\n"
+    await interaction.response.send_message(returnString)
 
 @tree.command(
     name="get",
