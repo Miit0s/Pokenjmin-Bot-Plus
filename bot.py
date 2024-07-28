@@ -418,6 +418,9 @@ if photoshopSupported:
             backgroundLayerGroup=ps.active_document.layerSets.getByName(settings["BackgroundsGroupName"])
             set_spe_image(backgroundLayerGroup, spe,"BackgroundLayerName")
 
+            watermarkLayerGroup=ps.active_document.layerSets.getByName(settings["WatermarkGroupName"])
+            set_spe_image(watermarkLayerGroup, spe,"WatermarkLayerName")
+
             cohortNameLayer = get_layer_by_path(ps,settings["CohortNameValueLayer"])
             cohortNameLayer.textItem.contents = cohort
 
@@ -762,6 +765,9 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
 
     backgroundLayerGroup=get_svg_layer_by_path(root,settings["BackgroundsGroupName"])
     set_spe_image_for_svg(backgroundLayerGroup, spe,"BackgroundLayerName")
+
+    watermarkLayerGroup=get_svg_layer_by_path(root,settings["WatermarkGroupName"])
+    set_spe_image_for_svg(watermarkLayerGroup, spe,"WatermarkLayerName")
 
     cohortNameLayer = get_svg_layer_by_path(root,settings["CohortNameValueLayer"])
     change_text_of_svg_layer(cohortNameLayer,cohort)
