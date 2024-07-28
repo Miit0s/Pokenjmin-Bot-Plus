@@ -452,7 +452,10 @@ if photoshopSupported:
         skillTitleLayer=skillLayerGroup.artLayers.getByName(settings["SkillTitleLayerName"])
         skillTitleLayer.textItem.contents=replacePingsByCardNames(skillDatas["skill_name"])
         skillCostLayer=skillLayerGroup.artLayers.getByName(settings["SkillCostLayerName"])
-        skillCostLayer.textItem.contents=str(skillDatas["skill_cost"])
+        skillCost=skillDatas["skill_cost"]
+        if(skillCost<-9999999):
+            skillCost=""
+        skillCostLayer.textItem.contents=str(skillCost)
 
         spe1IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe1IconGroupName"])
         set_spe_image(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
@@ -717,6 +720,9 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
 
     root = tree.getroot()
 
+    #Font size between photoshop and svg are not the same, but min and max font size in the settings are expressed for photoshop, so we get the ratio that was calculated when we processed the svg template with process_template.py
+    fontScaleRatio=float(tree.getroot().attrib["fontScaleRatio"])
+
     previewWatermark=get_svg_layer_by_path(root,settings["PreviewLayerGroup"])
     toggle_svg_layer_visibility(previewWatermark,isPreview)
     
@@ -725,7 +731,7 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     if(cardDatas["card_name_font_size"]!=None):
         cardNameLayerTextNode=get_text_node_of_svg_layer(cardNameLayer)
         cardNameLayerStyle=cardNameLayerTextNode.attrib["style"]
-        cardNameLayerTextNode.attrib["style"]=getStyleWithNewFontSize(cardNameLayerStyle, cardDatas["card_name_font_size"])
+        cardNameLayerTextNode.attrib["style"]=getStyleWithNewFontSize(cardNameLayerStyle, fontScaleRatio*cardDatas["card_name_font_size"])
 
     ownerNameLayer = get_svg_layer_by_path(root,settings["OwnerNameLayer"])
     change_text_of_svg_layer(ownerNameLayer,cardDatas["owner_name"])
@@ -795,7 +801,10 @@ def fill_layers_for_skill(root,skillLayerGroupPath,skillDatas):
     change_text_of_svg_layer(skillTitleLayer,skillDatas["skill_name"])
 
     skillCostLayer=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["SkillCostLayerName"])
-    change_text_of_svg_layer(skillCostLayer,skillDatas["skill_cost"])
+    skillCost=skillDatas["skill_cost"]
+    if(skillCost<-9999999):
+        skillCost=""
+    change_text_of_svg_layer(skillCostLayer,skillCost)
 
     spe1IconGroup= get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["Spe1IconGroupName"])
     set_spe_image_for_svg(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
@@ -931,11 +940,11 @@ async def setCard(interaction, card_name:str=None, card_name_font_size:float=Non
         hp_name=hp_name[0:3]
 
     if card_name_font_size!=None and card_name_font_size>settings["CardNameFontSizeMax"]:
-        feedbackMessage+="Card name font size can't be higher than"+str(settings["CardNameFontSizeMax"])+" !\n"
+        feedbackMessage+="Card name font size can't be higher than "+str(settings["CardNameFontSizeMax"])+" !\n"
         card_name_font_size=settings["CardNameFontSizeMax"]
 
     if card_name_font_size!=None and card_name_font_size<settings["CardNameFontSizeMin"]:
-        feedbackMessage+="Card name font size can't be lower than"+str(settings["CardNameFontSizeMin"])+" !\n"
+        feedbackMessage+="Card name font size can't be lower than "+str(settings["CardNameFontSizeMin"])+" !\n"
         card_name_font_size=settings["CardNameFontSizeMin"]
 
     if(card_name!=None): card["card_name"]=card_name

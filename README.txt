@@ -48,6 +48,7 @@ HOW TO SETUP THE SETTINGS:
 Copy and paste "settings_template.json" and rename it "settings.json", in the admins part of the json, paste all the Discord IDs (the big number you get by shift->right clicking on someone) of your admins there.
 The admins are the only persons allowed to modify legendary cards and other users cards, they are also responsible for setting up some settings.
 Get your bot Token in the "Bot" tab of the developer portal and past it as your Bot Token.
+"CardNameFontSize" Min and Max are expressed as px font size from the psd. /!\ The svg has completely different values for the font size, don't worry, the bot compensate for that by having process_template.py work out the ratio
 
 HOW TO DEPLOY:
 

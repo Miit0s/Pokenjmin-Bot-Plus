@@ -31,6 +31,12 @@ def get_layer_by_path(ps, layerPath):
 
     return layerGroup.artLayers.getByName(subGroups[len(subGroups)-1])
 
+def getFontSizeFromStyle(style:str):
+    pattern = r"font-size:\s*([\d.]+)px"
+    match = re.search(pattern, style)
+    fontSize=float(match.group(1))
+    return fontSize
+
 #Remove everything after a "_" in a layer id, keeping only the good part. But yes, it means we can't have "_" in the actual name of the id
 def sanitizeLayerId(input:str):
     return input.split("_")[0]
@@ -145,6 +151,13 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
 
         print("Text Layer: "+pathToSelf)
         photoshopLayer=get_layer_by_path(ps,pathToSelf)
+
+        #If we're on the card name layer we also calculate the multiplier from Photoshop's font size to svg font size, since it's the big zbeul
+        if(pathToSelf==settings["CardNameLayer"]):
+            svgFontSize=float(getFontSizeFromStyle(textComp.attrib["style"]))
+            psdFontSize=float(photoshopLayer.textItem.size)
+            scaleRatio=svgFontSize/psdFontSize
+            root.attrib["fontScaleRatio"]=str(scaleRatio)
 
         try:
             textAnchor=justificationToTextAnchor(photoshopLayer.textItem.justification)
