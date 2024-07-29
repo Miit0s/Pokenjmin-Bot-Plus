@@ -1261,18 +1261,35 @@ async def getAdvancement(interaction, role:discord.Role, enumerate_empty:bool=Tr
 @tree.command(
     name="export_all",
     description="Exports all the users cards",
-    guild=discord.Object(id=790626187944394772)
+    #guild=discord.Object(id=790626187944394772)
 )
-async def exportAll(interaction):
+@app_commands.choices(format=[
+    app_commands.Choice(name='PDF', value=0),
+    app_commands.Choice(name='JSON', value=1)
+])
+async def exportAll(interaction, format:int):
     if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
     
     await interaction.response.defer(ephemeral=True, thinking=True)
-    message="Here's your preview:"
-    
+
     users=get_all_users_sorted(client)
-    returnString=""
+    if(format==1): #export as json
+        for user in users:
+            user["card"]=get_or_create_card(user,True)
+        message="Use this json with an external script to generate PSD images etc."
+        jsonPath=os.path.join(mkdtemp(),"export.json")
+        with open(jsonPath, 'w') as f:
+            json.dump(users, f)
+        currentDir=os.getcwd()
+        os.chdir(os.path.dirname(jsonPath))
+        await interaction.followup.send(message,ephemeral=True,file=discord.File(jsonPath))
+        os.chdir(currentDir)
+        return
+
+    #export as pdf
+    message="/!\ This PDF has been generated using the SVG, not Photoshop, as such, it's not optimal. Please export to JSON then use the export script to get an optimal export"
     imagesPaths=[]
     for user in users:  
         card=get_or_create_card(user,True)
