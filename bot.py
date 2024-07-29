@@ -9,7 +9,6 @@ import re
 import xml.etree.ElementTree as ET
 import math
 from io import BytesIO
-from pypdf import PdfMerger
 
 os.environ['PYTHONUNBUFFERED'] = "1"
 
