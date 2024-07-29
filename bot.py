@@ -1277,11 +1277,14 @@ async def exportAll(interaction, format:int):
     users=get_all_users_sorted(client)
     if(format==1): #export as json
         for user in users:
-            user["card"]=get_or_create_card(user,True)
+            card=get_or_create_card(user,True)
+            user["card"]=card
+            user["card"]["skill1"]=get_skill_of_card(card,1)
+            user["card"]["skill1"]=get_skill_of_card(card,2)
         message="Use this json with an external script to generate PSD images etc."
         jsonPath=os.path.join(mkdtemp(),"export.json")
-        with open(jsonPath, 'w') as f:
-            json.dump(users, f)
+        with open(jsonPath, 'w', encoding='utf8') as f:
+            json.dump(users, f, ensure_ascii=False)
         currentDir=os.getcwd()
         os.chdir(os.path.dirname(jsonPath))
         await interaction.followup.send(message,ephemeral=True,file=discord.File(jsonPath))
