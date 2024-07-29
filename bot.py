@@ -5,14 +5,11 @@ import sqlite3
 import os
 from tempfile import mkdtemp
 from PIL import Image
-import subprocess
-from reportlab.graphics import renderPDF, renderPM
 import re
 import xml.etree.ElementTree as ET
 import math
 from io import BytesIO
-import threading
-import asyncio
+from pypdf import PdfMerger
 
 os.environ['PYTHONUNBUFFERED'] = "1"
 
@@ -111,6 +108,9 @@ def create_tables():
 
 create_tables()
 
+def sort_by_spe(userDict):
+    return  userDict["spe"]
+
 def get_all_users_sorted(discordClient):
     cursor = con.cursor()
     cursor.execute("SELECT * from users")
@@ -120,14 +120,24 @@ def get_all_users_sorted(discordClient):
         user=sqlite3Row_to_dict(r)
         
         user["overwrite_discord_id"]=None
-        guild=discordClient.get_guild(user["guild_id"])
-        if(guild==None): continue
-        member=guild.get_member(int(user["discord_id"]))
-        if(member==None): continue
-        memberRoles=member.roles
-        spe=get_spe_for_user(user["guild_id"],memberRoles)
+        spe=settings["LegendarySpeId"]
+        cohort=settings["LegendaryCohort"]
+        if(user["legendary_user"]==False):
+            guild=discordClient.get_guild(user["guild_id"])
+            if(guild==None): continue
+            member=guild.get_member(int(user["discord_id"]))
+            if(member==None): continue
+            memberRoles=member.roles
+            spe=get_spe_for_user(user["guild_id"],memberRoles)
+            mainGuildOfUser=user["guild_id"]
+            serverSettings=get_server_settings(mainGuildOfUser)
+            if(serverSettings==None): continue
+            cohort=serverSettings["server_cohort"]
+
         user["spe"]=spe
+        user["cohort"]=cohort
         users.append(user)
+    users.sort(key=sort_by_spe)
     return users
 
 def get_or_create_server_settings(serverId):
@@ -804,11 +814,14 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
         f.write(output.getbuffer())
     
     #now that we have the svg, we must convert it to jpeg
-    pngPath = os.path.join(mkdtemp(),str(fileName)+".png")
+    exportPath = os.path.join(mkdtemp(),str(fileName)+".png")
     #inkScape is the only software that respects our svg, so we'll just run it
-    inkscapeCommand="inkscape "+os.path.relpath(generatedSvgPath, os.getcwd())+" --export-filename="+os.path.relpath(pngPath, os.getcwd())+" --export-dpi="+str(settings["PreviewDPI"])
+    inkscapeCommand="inkscape "+os.path.relpath(generatedSvgPath, os.getcwd())+" --export-filename="+os.path.relpath(exportPath, os.getcwd())+" --export-dpi="+str(settings["PreviewDPI"])
+    if(isPreview):
+        exportPath = os.path.join(mkdtemp(),str(fileName)+".png")
+        inkscapeCommand="inkscape "+os.path.relpath(generatedSvgPath, os.getcwd())+" --export-filename="+os.path.relpath(exportPath, os.getcwd())+" --export-dpi="+str(settings["PreviewDPI"])
     os.system(inkscapeCommand)
-    return pngPath
+    return exportPath
 
 
 def fill_layers_for_skill(root,skillLayerGroupPath,skillDatas):
@@ -1255,11 +1268,43 @@ async def exportAll(interaction):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
     
+    await interaction.response.defer(ephemeral=True, thinking=True)
+    message="Here's your preview:"
+    
     users=get_all_users_sorted(client)
     returnString=""
-    for user in users:
-        returnString+=str(user["discord_id"])+";"+str(user["spe"])+"\n"
-    await interaction.response.send_message(returnString)
+    imagesPaths=[]
+    for user in users:  
+        card=get_or_create_card(user,True)
+        fileName=get_discord_id_of_card(card)
+        exportedImage=create_svg_card(card,user["cohort"],user["spe"],fileName,str(fileName)+".png",False)
+        imagesPaths.append(exportedImage)
+    
+    imagesAsJpegPaths=[]
+    i=0
+    for imagePath in imagesPaths:
+        im = Image.open(imagePath)
+        rgb_im = im.convert('RGB')
+        jpgExportPath=os.path.join(mkdtemp(),str(i)+".jpg")
+        rgb_im.save(jpgExportPath)
+        imagesAsJpegPaths.append(jpgExportPath)
+        i+=1
+
+    images = [
+        Image.open(f)
+        for f in imagesAsJpegPaths
+    ]
+
+    pdfExportPath=os.path.join(mkdtemp(),"export.pdf")
+        
+    images[0].save(
+        pdfExportPath, "PDF" ,resolution=100.0, save_all=True, append_images=images[1:]
+    )
+
+    currentDir=os.getcwd()
+    os.chdir(os.path.dirname(pdfExportPath))
+    await interaction.followup.send(message,ephemeral=True,file=discord.File(pdfExportPath))
+    os.chdir(currentDir)
 
 @tree.command(
     name="get",
@@ -1340,8 +1385,6 @@ async def send_message_with_preview(interaction, message):
     spe=settings["LegendarySpeId"]
     cohort=settings["LegendaryCohort"]
     if cardOwner["legendary_user"]==0 :
-        print("main guild of user: "+str(mainGuildOfUser))
-        print("Discord Id Of card: "+str(int(get_discord_id_of_card(card))))
         memberRoles=client.get_guild(mainGuildOfUser).get_member(int(get_discord_id_of_card(card))).roles
         spe=get_spe_for_user(mainGuildOfUser,memberRoles)
         cohort=serverSettings["server_cohort"]
