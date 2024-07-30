@@ -1,318 +1,324 @@
 <?xml version='1.0' encoding='utf-8'?>
-<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="http://www.w3.org/1999/xlink" width="319.68" height="430.8" viewBox="0 0 319.68 430.8">
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" xmlns:ns1="http://www.w3.org/1999/xlink" width="189.92136" height="263.63451" viewBox="0 0 189.92136 263.63451" fontScaleRatio="0.13752451204313734">
   <ns0:defs>
-    <ns0:mask id="mask" x="10.8" y="0" width="308.88" height="430.8" maskUnits="userSpaceOnUse">
-      <ns0:g transform="translate(10.8)">
-        <ns0:g id="CardImageMaskOpacity_Mask" data-name="CardImageMaskOpacity Mask">
-          <ns0:image id="CardImageMaskOpacity_Mask-2" data-name="CardImageMaskOpacity Mask" width="1287" height="1795" transform="scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed67.png" />
-        </ns0:g>
+    <ns0:mask id="mask" x="0" y="0" width="189.92136" height="263.63451" maskUnits="userSpaceOnUse">
+      <ns0:g id="CardImageMaskOpacity_Mask" data-name="CardImageMaskOpacity Mask">
+        <ns0:image id="CardImageMaskOpacity_Mask-2" data-name="CardImageMaskOpacity Mask" width="1381" height="1917" transform="scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed67.png" />
       </ns0:g>
     </ns0:mask>
-    <ns0:mask id="mask-2" x="10.8" y="0" width="308.88" height="430.8" maskUnits="userSpaceOnUse">
-      <ns0:g transform="translate(10.8)">
-        <ns0:g id="OwnerPhotoMaskOpacity_Mask" data-name="OwnerPhotoMaskOpacity Mask">
-          <ns0:image id="OwnerPhotoMaskOpacity_Mask-2" data-name="OwnerPhotoMaskOpacity Mask" width="1287" height="1795" transform="scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed73.png" />
-        </ns0:g>
+    <ns0:mask id="mask-2" x="0" y="0" width="189.92136" height="263.63451" maskUnits="userSpaceOnUse">
+      <ns0:g id="OwnerPhotoMaskOpacity_Mask" data-name="OwnerPhotoMaskOpacity Mask">
+        <ns0:image id="OwnerPhotoMaskOpacity_Mask-2" data-name="OwnerPhotoMaskOpacity Mask" width="1381" height="1917" transform="scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed73.png" />
       </ns0:g>
     </ns0:mask>
-  </ns0:defs>
+  <ns0:rect x="-848.3104514710485" y="183.0451397026604" width="1018.9783841314554" height="1006.8762261345853" id="rect1" /><ns0:rect x="50.058926259780904" y="183.59523779342723" width="1052.6718921909232" height="1007.1512751799687" id="rect2" /><ns0:rect x="39.60706253521127" y="192.5343317683881" width="129.27305133020343" height="1015.4027465414711" id="rect3" /><ns0:rect x="-848.3104514710485" y="146.87619023474178" width="1018.9783841314554" height="1006.8762261345853" id="rect4" /><ns0:rect x="50.058926259780904" y="147.70133737089202" width="1051.434171486698" height="1007.1512751799687" id="rect5" /><ns0:rect x="39.33201348982786" y="157.32805395931143" width="129.27305133020343" height="1015.4027465414711" id="rect6" /><ns0:rect x="22.82907076682316" y="221.0019079655712" width="144.12569978090767" height="1016.9155162910798" id="rect7" /><ns0:rect x="17.91256908059468" y="39.60706253521127" width="1004.8133582942097" height="1009.6267165884194" id="rect8" /><ns0:rect x="20.766202926447573" y="25.029463129890452" width="1055.8349562128326" height="1007.7013732707355" id="rect9" /><ns0:rect x="-861.1002320813772" y="25.44203669796557" width="1017.0530408137715" height="1008.9390939749609" id="rect10" /><ns0:rect x="-877.6031748043819" y="29.29272333333333" width="1013.0648296557121" height="1004.8133582942097" id="rect11" /><ns0:rect x="-907.0334226604069" y="130.23572298904537" width="2026.8172819248825" height="1005.3634563849765" id="rect12" /><ns0:rect x="17.91256908059468" y="-918.7230070892019" width="1004.8133582942097" height="1036.3064739906104" id="rect13" /></ns0:defs>
   <ns0:g id="Backgrounds">
     <ns0:g id="ErgoFond_Image" data-name="ErgoFond Image">
-      <ns0:image id="ErgoFond_Image-2" data-name="ErgoFond Image" width="1287" height="1795" transform="translate(10.8) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed1.png" />
+      <ns0:image id="ErgoFond_Image-2" data-name="ErgoFond Image" width="1287" height="1798" transform="translate(6.46365 8.11395) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed1.png" />
     </ns0:g>
     <ns0:g id="GDFond_Image" data-name="GDFond Image">
-      <ns0:image id="GDFond_Image-2" data-name="GDFond Image" width="1287" height="1795" transform="translate(10.8) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed2.png" />
+      <ns0:image id="GDFond_Image-2" data-name="GDFond Image" width="1287" height="1798" transform="translate(6.46365 8.11395) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed2.png" />
     </ns0:g>
     <ns0:g id="IEMFond_Image" data-name="IEMFond Image">
-      <ns0:image id="IEMFond_Image-2" data-name="IEMFond Image" width="1287" height="1795" transform="translate(10.8) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed3.png" />
+      <ns0:image id="IEMFond_Image-2" data-name="IEMFond Image" width="1287" height="1798" transform="translate(6.46365 8.11395) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed3.png" />
     </ns0:g>
     <ns0:g id="LegendeFond_Image" data-name="LegendeFond Image">
-      <ns0:image id="LegendeFond_Image-2" data-name="LegendeFond Image" width="1287" height="1795" transform="translate(10.8) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed4.png" />
+      <ns0:image id="LegendeFond_Image-2" data-name="LegendeFond Image" width="1287" height="1798" transform="translate(6.46365 8.11395) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed4.png" />
     </ns0:g>
     <ns0:g id="ProgFond_Image" data-name="ProgFond Image">
-      <ns0:image id="ProgFond_Image-2" data-name="ProgFond Image" width="1287" height="1795" transform="translate(10.8) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed5.png" />
+      <ns0:image id="ProgFond_Image-2" data-name="ProgFond Image" width="1287" height="1798" transform="translate(6.46365 8.11395) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed5.png" />
     </ns0:g>
     <ns0:g id="CDPFond_Image" data-name="CDPFond Image">
-      <ns0:image id="CDPFond_Image-2" data-name="CDPFond Image" width="1287" height="1795" transform="translate(10.8) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed6.png" />
+      <ns0:image id="CDPFond_Image-2" data-name="CDPFond Image" width="1287" height="1798" transform="translate(6.46365 8.11395) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed6.png" />
     </ns0:g>
     <ns0:g id="SonFond_Image" data-name="SonFond Image">
-      <ns0:image id="SonFond_Image-2" data-name="SonFond Image" width="1287" height="1795" transform="translate(10.8) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed7.png" />
+      <ns0:image id="SonFond_Image-2" data-name="SonFond Image" width="1288" height="1798" transform="translate(6.46365 8.389) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed7.png" />
     </ns0:g>
     <ns0:g id="GraphFond_Image" data-name="GraphFond Image">
-      <ns0:image id="GraphFond_Image-2" data-name="GraphFond Image" width="1287" height="1795" transform="translate(10.8) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed8.png" />
+      <ns0:image id="GraphFond_Image-2" data-name="GraphFond Image" width="1287" height="1798" transform="translate(6.46365 8.11395) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed8.png" />
     </ns0:g>
   </ns0:g>
   <ns0:g id="Spe_Icons" data-name="Spe Icons">
     <ns0:g id="Legende_Image" data-name="Legende Image">
-      <ns0:image id="Legende_Image-2" data-name="Legende Image" width="85" height="85" transform="translate(274.56 27.12) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed9.png" />
+      <ns0:image id="Legende_Image-2" data-name="Legende Image" width="85" height="85" transform="translate(157.6031 23.92927) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed9.png" />
     </ns0:g>
     <ns0:g id="Prog_Image" data-name="Prog Image">
-      <ns0:image id="Prog_Image-2" data-name="Prog Image" width="85" height="85" transform="translate(274.56 27.12) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed10.png" />
+      <ns0:image id="Prog_Image-2" data-name="Prog Image" width="85" height="85" transform="translate(157.6031 23.92927) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed10.png" />
     </ns0:g>
     <ns0:g id="CDP_Image" data-name="CDP Image">
-      <ns0:image id="CDP_Image-2" data-name="CDP Image" width="85" height="85" transform="translate(274.56 27.12) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed11.png" />
+      <ns0:image id="CDP_Image-2" data-name="CDP Image" width="85" height="85" transform="translate(157.6031 23.92927) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed11.png" />
     </ns0:g>
     <ns0:g id="Ergo_Image" data-name="Ergo Image">
-      <ns0:image id="Ergo_Image-2" data-name="Ergo Image" width="85" height="85" transform="translate(274.56 27.12) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed12.png" />
+      <ns0:image id="Ergo_Image-2" data-name="Ergo Image" width="85" height="85" transform="translate(157.6031 23.92927) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed12.png" />
     </ns0:g>
     <ns0:g id="GD2_Image" data-name="GD2 Image">
-      <ns0:image id="GD2_Image-2" data-name="GD2 Image" width="85" height="85" transform="translate(274.56 27.12) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed13.png" />
+      <ns0:image id="GD2_Image-2" data-name="GD2 Image" width="85" height="85" transform="translate(157.6031 23.92927) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed13.png" />
     </ns0:g>
     <ns0:g id="Graph_Image" data-name="Graph Image">
-      <ns0:image id="Graph_Image-2" data-name="Graph Image" width="85" height="85" transform="translate(274.56 27.12) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed14.png" />
+      <ns0:image id="Graph_Image-2" data-name="Graph Image" width="85" height="85" transform="translate(157.6031 23.92927) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed14.png" />
     </ns0:g>
     <ns0:g id="IEM_Image" data-name="IEM Image">
-      <ns0:image id="IEM_Image-2" data-name="IEM Image" width="85" height="85" transform="translate(274.56 27.12) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed15.png" />
+      <ns0:image id="IEM_Image-2" data-name="IEM Image" width="85" height="85" transform="translate(157.6031 23.92927) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed15.png" />
     </ns0:g>
     <ns0:g id="Son_Image" data-name="Son Image">
-      <ns0:image id="Son_Image-2" data-name="Son Image" width="85" height="85" transform="translate(274.56 27.12) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed16.png" />
+      <ns0:image id="Son_Image-2" data-name="Son Image" width="85" height="85" transform="translate(157.6031 23.92927) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed16.png" />
     </ns0:g>
   </ns0:g>
-  <ns0:g id="EmojiENJMIAOUN_Pro2_Image" data-name="EmojiENJMIAOUN_Pro2 Image" style="opacity: 0.349019607843137">
-    <ns0:image id="EmojiENJMIAOUN_Pro2_Image-2" data-name="EmojiENJMIAOUN_Pro2 Image" width="659" height="533" transform="translate(102.24 228.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed17.png" />
+  <ns0:g id="Watermarks" style="opacity: 0.3490196078431372">
+    <ns0:g id="Yeopote_Image" data-name="Yeopote Image">
+      <ns0:image id="Yeopote_Image-2" data-name="Yeopote Image" width="554" height="533" transform="translate(68.21216 139.58739) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed17.png" />
+    </ns0:g>
   </ns0:g>
   <ns0:g id="Skill2">
     <ns0:g id="Spe3">
       <ns0:g id="Legende_Image-3" data-name="Legende Image">
-        <ns0:image id="Legende_Image-4" data-name="Legende Image" width="63" height="63" transform="translate(32.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed18.png" />
+        <ns0:image id="Legende_Image-4" data-name="Legende Image" width="63" height="63" transform="translate(19.11591 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed18.png" />
       </ns0:g>
       <ns0:g id="Prog_Image-3" data-name="Prog Image">
-        <ns0:image id="Prog_Image-4" data-name="Prog Image" width="63" height="63" transform="translate(32.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed19.png" />
+        <ns0:image id="Prog_Image-4" data-name="Prog Image" width="63" height="63" transform="translate(19.11591 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed19.png" />
       </ns0:g>
       <ns0:g id="CDP_Image-3" data-name="CDP Image">
-        <ns0:image id="CDP_Image-4" data-name="CDP Image" width="63" height="63" transform="translate(32.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed20.png" />
+        <ns0:image id="CDP_Image-4" data-name="CDP Image" width="63" height="63" transform="translate(19.11591 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed20.png" />
       </ns0:g>
       <ns0:g id="Ergo_Image-3" data-name="Ergo Image">
-        <ns0:image id="Ergo_Image-4" data-name="Ergo Image" width="63" height="63" transform="translate(32.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed21.png" />
+        <ns0:image id="Ergo_Image-4" data-name="Ergo Image" width="63" height="63" transform="translate(19.11591 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed21.png" />
       </ns0:g>
       <ns0:g id="GD2_Image-3" data-name="GD2 Image">
-        <ns0:image id="GD2_Image-4" data-name="GD2 Image" width="63" height="63" transform="translate(32.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed22.png" />
+        <ns0:image id="GD2_Image-4" data-name="GD2 Image" width="63" height="63" transform="translate(19.11591 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed22.png" />
       </ns0:g>
       <ns0:g id="Graph_Image-3" data-name="Graph Image">
-        <ns0:image id="Graph_Image-4" data-name="Graph Image" width="63" height="63" transform="translate(32.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed23.png" />
+        <ns0:image id="Graph_Image-4" data-name="Graph Image" width="63" height="63" transform="translate(19.11591 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed23.png" />
       </ns0:g>
       <ns0:g id="IEM_Image-3" data-name="IEM Image">
-        <ns0:image id="IEM_Image-4" data-name="IEM Image" width="63" height="63" transform="translate(32.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed24.png" />
+        <ns0:image id="IEM_Image-4" data-name="IEM Image" width="63" height="63" transform="translate(19.11591 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed24.png" />
       </ns0:g>
       <ns0:g id="Son_Image-3" data-name="Son Image">
-        <ns0:image id="Son_Image-4" data-name="Son Image" width="63" height="63" transform="translate(32.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed25.png" />
+        <ns0:image id="Son_Image-4" data-name="Son Image" width="63" height="63" transform="translate(19.11591 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed25.png" />
       </ns0:g>
     </ns0:g>
     <ns0:g id="Spe2">
       <ns0:g id="Legende_Image-5" data-name="Legende Image">
-        <ns0:image id="Legende_Image-6" data-name="Legende Image" width="63" height="63" transform="translate(50.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed26.png" />
+        <ns0:image id="Legende_Image-6" data-name="Legende Image" width="63" height="63" transform="translate(29.43025 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed26.png" />
       </ns0:g>
       <ns0:g id="Prog_Image-5" data-name="Prog Image">
-        <ns0:image id="Prog_Image-6" data-name="Prog Image" width="63" height="63" transform="translate(50.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed27.png" />
+        <ns0:image id="Prog_Image-6" data-name="Prog Image" width="63" height="63" transform="translate(29.43025 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed27.png" />
       </ns0:g>
       <ns0:g id="CDP_Image-5" data-name="CDP Image">
-        <ns0:image id="CDP_Image-6" data-name="CDP Image" width="63" height="63" transform="translate(50.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed28.png" />
+        <ns0:image id="CDP_Image-6" data-name="CDP Image" width="63" height="63" transform="translate(29.43025 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed28.png" />
       </ns0:g>
       <ns0:g id="Ergo_Image-5" data-name="Ergo Image">
-        <ns0:image id="Ergo_Image-6" data-name="Ergo Image" width="63" height="63" transform="translate(50.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed29.png" />
+        <ns0:image id="Ergo_Image-6" data-name="Ergo Image" width="63" height="63" transform="translate(29.43025 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed29.png" />
       </ns0:g>
       <ns0:g id="GD2_Image-5" data-name="GD2 Image">
-        <ns0:image id="GD2_Image-6" data-name="GD2 Image" width="63" height="63" transform="translate(50.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed30.png" />
+        <ns0:image id="GD2_Image-6" data-name="GD2 Image" width="63" height="63" transform="translate(29.43025 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed30.png" />
       </ns0:g>
       <ns0:g id="Graph_Image-5" data-name="Graph Image">
-        <ns0:image id="Graph_Image-6" data-name="Graph Image" width="63" height="63" transform="translate(50.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed31.png" />
+        <ns0:image id="Graph_Image-6" data-name="Graph Image" width="63" height="63" transform="translate(29.43025 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed31.png" />
       </ns0:g>
       <ns0:g id="IEM_Image-5" data-name="IEM Image">
-        <ns0:image id="IEM_Image-6" data-name="IEM Image" width="63" height="63" transform="translate(50.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed32.png" />
+        <ns0:image id="IEM_Image-6" data-name="IEM Image" width="63" height="63" transform="translate(29.43025 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed32.png" />
       </ns0:g>
       <ns0:g id="Son_Image-5" data-name="Son Image">
-        <ns0:image id="Son_Image-6" data-name="Son Image" width="63" height="63" transform="translate(50.88 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed33.png" />
+        <ns0:image id="Son_Image-6" data-name="Son Image" width="63" height="63" transform="translate(29.43025 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed33.png" />
       </ns0:g>
     </ns0:g>
     <ns0:g id="Spe1">
       <ns0:g id="Legende_Image-7" data-name="Legende Image">
-        <ns0:image id="Legende_Image-8" data-name="Legende Image" width="63" height="63" transform="translate(68.4 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed34.png" />
+        <ns0:image id="Legende_Image-8" data-name="Legende Image" width="63" height="63" transform="translate(39.46954 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed34.png" />
       </ns0:g>
       <ns0:g id="Prog_Image-7" data-name="Prog Image">
-        <ns0:image id="Prog_Image-8" data-name="Prog Image" width="63" height="63" transform="translate(68.4 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed35.png" />
+        <ns0:image id="Prog_Image-8" data-name="Prog Image" width="63" height="63" transform="translate(39.46954 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed35.png" />
       </ns0:g>
       <ns0:g id="CDP_Image-7" data-name="CDP Image">
-        <ns0:image id="CDP_Image-8" data-name="CDP Image" width="63" height="63" transform="translate(68.4 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed36.png" />
+        <ns0:image id="CDP_Image-8" data-name="CDP Image" width="63" height="63" transform="translate(39.46954 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed36.png" />
       </ns0:g>
       <ns0:g id="Ergo_Image-7" data-name="Ergo Image">
-        <ns0:image id="Ergo_Image-8" data-name="Ergo Image" width="63" height="63" transform="translate(68.4 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed37.png" />
+        <ns0:image id="Ergo_Image-8" data-name="Ergo Image" width="63" height="63" transform="translate(39.46954 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed37.png" />
       </ns0:g>
       <ns0:g id="GD2_Image-7" data-name="GD2 Image">
-        <ns0:image id="GD2_Image-8" data-name="GD2 Image" width="63" height="63" transform="translate(68.4 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed38.png" />
+        <ns0:image id="GD2_Image-8" data-name="GD2 Image" width="63" height="63" transform="translate(39.46954 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed38.png" />
       </ns0:g>
       <ns0:g id="Graph_Image-7" data-name="Graph Image">
-        <ns0:image id="Graph_Image-8" data-name="Graph Image" width="63" height="63" transform="translate(68.4 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed39.png" />
+        <ns0:image id="Graph_Image-8" data-name="Graph Image" width="63" height="63" transform="translate(39.46954 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed39.png" />
       </ns0:g>
       <ns0:g id="IEM_Image-7" data-name="IEM Image">
-        <ns0:image id="IEM_Image-8" data-name="IEM Image" width="63" height="63" transform="translate(68.4 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed40.png" />
+        <ns0:image id="IEM_Image-8" data-name="IEM Image" width="63" height="63" transform="translate(39.46954 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed40.png" />
       </ns0:g>
       <ns0:g id="Son_Image-7" data-name="Son Image">
-        <ns0:image id="Son_Image-8" data-name="Son Image" width="63" height="63" transform="translate(68.4 302.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed41.png" />
+        <ns0:image id="Son_Image-8" data-name="Son Image" width="63" height="63" transform="translate(39.46954 181.94494) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed41.png" />
       </ns0:g>
     </ns0:g>
     <ns0:g id="Cost">
-      <ns0:text transform="translate(280.17067 316.6334)" style="font-size: 17px;font-family: GillSansMT, Gill Sans MT">50</ns0:text>
+      <ns0:text transform="" style="font-size: 9.741321563720703px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:right;white-space:pre;shape-inside:url(#rect1);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text1" label="TextBox1">Cost</ns0:text>
     </ns0:g>
     <ns0:g id="Title">
-      <ns0:text id="Title-2" data-name="Title" transform="translate(86.29029 315.1666)" style="font-size: 13.5px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700"><ns0:tspan xml:space="preserve">Compétence 2                      </ns0:tspan></ns0:text>
+      <ns0:text id="text2" data-name="Title" transform="" style="font-size: 7.735754013061523px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:0.8;text-align:left;white-space:pre;shape-inside:url(#rect2);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox2">Compétence 2                      </ns0:text>
     </ns0:g>
     <ns0:g id="Desc">
-      <ns0:text id="Desc-2" data-name="Desc" transform="translate(68.29029 328.20762)" style="font-size: 10.100000381469727px;font-family: GillSansMT, Gill Sans MT">eaentnieersesneaaletdepenesserleulneiemmsoloetnatau<ns0:tspan x="0" y="10">isissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaet</ns0:tspan><ns0:tspan x="0" y="20">uteimsritonea</ns0:tspan></ns0:text>
+      <ns0:text id="text3" data-name="Desc" transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:justify;white-space:pre;shape-inside:url(#rect3);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox3">eaentnieersesneaaletdepenesserleulneiemmsoloetnatauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetuteimsritonea</ns0:text>
     </ns0:g>
   </ns0:g>
   <ns0:g id="Skill1">
     <ns0:g id="Spe3-2" data-name="Spe3">
       <ns0:g id="Legende_Image-9" data-name="Legende Image">
-        <ns0:image id="Legende_Image-10" data-name="Legende Image" width="63" height="63" transform="translate(32.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed42.png" />
+        <ns0:image id="Legende_Image-10" data-name="Legende Image" width="63" height="63" transform="translate(19.11591 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed42.png" />
       </ns0:g>
       <ns0:g id="Prog_Image-9" data-name="Prog Image">
-        <ns0:image id="Prog_Image-10" data-name="Prog Image" width="63" height="63" transform="translate(32.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed43.png" />
+        <ns0:image id="Prog_Image-10" data-name="Prog Image" width="63" height="63" transform="translate(19.11591 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed43.png" />
       </ns0:g>
       <ns0:g id="CDP_Image-9" data-name="CDP Image">
-        <ns0:image id="CDP_Image-10" data-name="CDP Image" width="63" height="63" transform="translate(32.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed44.png" />
+        <ns0:image id="CDP_Image-10" data-name="CDP Image" width="63" height="63" transform="translate(19.11591 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed44.png" />
       </ns0:g>
       <ns0:g id="Ergo_Image-9" data-name="Ergo Image">
-        <ns0:image id="Ergo_Image-10" data-name="Ergo Image" width="63" height="63" transform="translate(32.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed45.png" />
+        <ns0:image id="Ergo_Image-10" data-name="Ergo Image" width="63" height="63" transform="translate(19.11591 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed45.png" />
       </ns0:g>
       <ns0:g id="GD2_Image-9" data-name="GD2 Image">
-        <ns0:image id="GD2_Image-10" data-name="GD2 Image" width="63" height="63" transform="translate(32.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed46.png" />
+        <ns0:image id="GD2_Image-10" data-name="GD2 Image" width="63" height="63" transform="translate(19.11591 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed46.png" />
       </ns0:g>
       <ns0:g id="Graph_Image-9" data-name="Graph Image">
-        <ns0:image id="Graph_Image-10" data-name="Graph Image" width="63" height="63" transform="translate(32.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed47.png" />
+        <ns0:image id="Graph_Image-10" data-name="Graph Image" width="63" height="63" transform="translate(19.11591 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed47.png" />
       </ns0:g>
       <ns0:g id="IEM_Image-9" data-name="IEM Image">
-        <ns0:image id="IEM_Image-10" data-name="IEM Image" width="63" height="63" transform="translate(32.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed48.png" />
+        <ns0:image id="IEM_Image-10" data-name="IEM Image" width="63" height="63" transform="translate(19.11591 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed48.png" />
       </ns0:g>
       <ns0:g id="Son_Image-9" data-name="Son Image">
-        <ns0:image id="Son_Image-10" data-name="Son Image" width="63" height="63" transform="translate(32.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed49.png" />
+        <ns0:image id="Son_Image-10" data-name="Son Image" width="63" height="63" transform="translate(19.11591 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed49.png" />
       </ns0:g>
     </ns0:g>
     <ns0:g id="Spe2-2" data-name="Spe2">
       <ns0:g id="Legende_Image-11" data-name="Legende Image">
-        <ns0:image id="Legende_Image-12" data-name="Legende Image" width="63" height="63" transform="translate(50.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed50.png" />
+        <ns0:image id="Legende_Image-12" data-name="Legende Image" width="63" height="63" transform="translate(29.43025 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed50.png" />
       </ns0:g>
       <ns0:g id="Prog_Image-11" data-name="Prog Image">
-        <ns0:image id="Prog_Image-12" data-name="Prog Image" width="63" height="63" transform="translate(50.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed51.png" />
+        <ns0:image id="Prog_Image-12" data-name="Prog Image" width="63" height="63" transform="translate(29.43025 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed51.png" />
       </ns0:g>
       <ns0:g id="CDP_Image-11" data-name="CDP Image">
-        <ns0:image id="CDP_Image-12" data-name="CDP Image" width="63" height="63" transform="translate(50.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed52.png" />
+        <ns0:image id="CDP_Image-12" data-name="CDP Image" width="63" height="63" transform="translate(29.43025 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed52.png" />
       </ns0:g>
       <ns0:g id="Ergo_Image-11" data-name="Ergo Image">
-        <ns0:image id="Ergo_Image-12" data-name="Ergo Image" width="63" height="63" transform="translate(50.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed53.png" />
+        <ns0:image id="Ergo_Image-12" data-name="Ergo Image" width="63" height="63" transform="translate(29.43025 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed53.png" />
       </ns0:g>
       <ns0:g id="GD2_Image-11" data-name="GD2 Image">
-        <ns0:image id="GD2_Image-12" data-name="GD2 Image" width="63" height="63" transform="translate(50.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed54.png" />
+        <ns0:image id="GD2_Image-12" data-name="GD2 Image" width="63" height="63" transform="translate(29.43025 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed54.png" />
       </ns0:g>
       <ns0:g id="Graph_Image-11" data-name="Graph Image">
-        <ns0:image id="Graph_Image-12" data-name="Graph Image" width="63" height="63" transform="translate(50.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed55.png" />
+        <ns0:image id="Graph_Image-12" data-name="Graph Image" width="63" height="63" transform="translate(29.43025 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed55.png" />
       </ns0:g>
       <ns0:g id="IEM_Image-11" data-name="IEM Image">
-        <ns0:image id="IEM_Image-12" data-name="IEM Image" width="63" height="63" transform="translate(50.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed56.png" />
+        <ns0:image id="IEM_Image-12" data-name="IEM Image" width="63" height="63" transform="translate(29.43025 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed56.png" />
       </ns0:g>
       <ns0:g id="Son_Image-11" data-name="Son Image">
-        <ns0:image id="Son_Image-12" data-name="Son Image" width="63" height="63" transform="translate(50.88 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed57.png" />
+        <ns0:image id="Son_Image-12" data-name="Son Image" width="63" height="63" transform="translate(29.43025 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed57.png" />
       </ns0:g>
     </ns0:g>
     <ns0:g id="Spe1-2" data-name="Spe1">
       <ns0:g id="Legende_Image-13" data-name="Legende Image">
-        <ns0:image id="Legende_Image-14" data-name="Legende Image" width="63" height="63" transform="translate(68.4 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed58.png" />
+        <ns0:image id="Legende_Image-14" data-name="Legende Image" width="63" height="63" transform="translate(39.46954 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed58.png" />
       </ns0:g>
       <ns0:g id="Prog_Image-13" data-name="Prog Image">
-        <ns0:image id="Prog_Image-14" data-name="Prog Image" width="63" height="63" transform="translate(68.4 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed59.png" />
+        <ns0:image id="Prog_Image-14" data-name="Prog Image" width="63" height="63" transform="translate(39.46954 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed59.png" />
       </ns0:g>
       <ns0:g id="CDP_Image-13" data-name="CDP Image">
-        <ns0:image id="CDP_Image-14" data-name="CDP Image" width="63" height="63" transform="translate(68.4 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed60.png" />
+        <ns0:image id="CDP_Image-14" data-name="CDP Image" width="63" height="63" transform="translate(39.46954 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed60.png" />
       </ns0:g>
       <ns0:g id="Ergo_Image-13" data-name="Ergo Image">
-        <ns0:image id="Ergo_Image-14" data-name="Ergo Image" width="63" height="63" transform="translate(68.4 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed61.png" />
+        <ns0:image id="Ergo_Image-14" data-name="Ergo Image" width="63" height="63" transform="translate(39.46954 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed61.png" />
       </ns0:g>
       <ns0:g id="GD2_Image-13" data-name="GD2 Image">
-        <ns0:image id="GD2_Image-14" data-name="GD2 Image" width="63" height="63" transform="translate(68.4 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed62.png" />
+        <ns0:image id="GD2_Image-14" data-name="GD2 Image" width="63" height="63" transform="translate(39.46954 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed62.png" />
       </ns0:g>
       <ns0:g id="Graph_Image-13" data-name="Graph Image">
-        <ns0:image id="Graph_Image-14" data-name="Graph Image" width="63" height="63" transform="translate(68.4 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed63.png" />
+        <ns0:image id="Graph_Image-14" data-name="Graph Image" width="63" height="63" transform="translate(39.46954 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed63.png" />
       </ns0:g>
       <ns0:g id="IEM_Image-13" data-name="IEM Image">
-        <ns0:image id="IEM_Image-14" data-name="IEM Image" width="63" height="63" transform="translate(68.4 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed64.png" />
+        <ns0:image id="IEM_Image-14" data-name="IEM Image" width="63" height="63" transform="translate(39.46954 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed64.png" />
       </ns0:g>
       <ns0:g id="Son_Image-13" data-name="Son Image">
-        <ns0:image id="Son_Image-14" data-name="Son Image" width="63" height="63" transform="translate(68.4 240.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed65.png" />
+        <ns0:image id="Son_Image-14" data-name="Son Image" width="63" height="63" transform="translate(39.46954 146.46361) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed65.png" />
       </ns0:g>
     </ns0:g>
     <ns0:g id="Cost-2" data-name="Cost">
-      <ns0:text transform="translate(280.17067 253.51328)" style="font-size: 17px;font-family: GillSansMT, Gill Sans MT">50</ns0:text>
+      <ns0:text transform="" style="font-size: 9.741321563720703px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:right;white-space:pre;shape-inside:url(#rect4);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text4" label="TextBox4">Cost</ns0:text>
     </ns0:g>
     <ns0:g id="Title-3" data-name="Title">
-      <ns0:text id="Title-4" data-name="Title" transform="translate(86.29029 252.52695)" style="font-size: 13.5px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700"><ns0:tspan xml:space="preserve">Compétence 1                      </ns0:tspan></ns0:text>
+      <ns0:text id="text5" data-name="Title" transform="" style="font-size: 7.735754013061523px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:0.8;text-align:left;white-space:pre;shape-inside:url(#rect5);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox5">Compétence 1                      </ns0:text>
     </ns0:g>
     <ns0:g id="Desc-3" data-name="Desc">
-      <ns0:text id="Desc-4" data-name="Desc" transform="translate(67.93043 266.76816)" style="font-size: 10.100000381469727px;font-family: GillSansMT, Gill Sans MT">eaentnieersesneaaletdepenesserleulneiemmsoloetnatau<ns0:tspan x="0" y="10">isissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaet</ns0:tspan><ns0:tspan x="0" y="20">uteimsritonea</ns0:tspan></ns0:text>
+      <ns0:text id="text6" data-name="Desc" transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:justify;white-space:pre;shape-inside:url(#rect6);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox6">eaentnieersesneaaletdepenesserleulneiemmsoloetnatauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetuteimsritonea</ns0:text>
     </ns0:g>
   </ns0:g>
   <ns0:g id="Passif">
-    <ns0:g id="Bg_Image" data-name="Bg Image" style="opacity: 0.701960784313726">
-      <ns0:image id="Bg_Image-2" data-name="Bg Image" width="1103" height="141" transform="translate(32.88 364.32) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed66.png" />
+    <ns0:g id="Bg_Image" data-name="Bg Image" style="opacity: 0.7019607843137254">
+      <ns0:image id="Bg_Image-2" data-name="Bg Image" width="1103" height="141" transform="translate(19.11591 217.15122) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed66.png" />
     </ns0:g>
     <ns0:g id="BottomText">
-      <ns0:text id="BottomText-2" data-name="BottomText" transform="translate(39.03834 378.1959)" style="font-size: 10.199999809265137px;font-family: GillSansMT, Gill Sans MT" text-anchor="start">[Pré-prod]<ns0:tspan x="43.92773" y="0" style="font-size: 10.100000381469727px">eaentnieersesneaaletdepenesserleulneiemmsoloet</ns0:tspan><ns0:tspan style="font-size: 10.100000381469727px"><ns0:tspan x="0" y="10">natauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetu</ns0:tspan><ns0:tspan x="0" y="20">teimsritonea</ns0:tspan></ns0:tspan></ns0:text>
+      <ns0:text id="text7" data-name="BottomText" transform="" style="font-size: 5.844791889190674px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:justify;white-space:pre;shape-inside:url(#rect7);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox7">[Pré-prod] eaentnieerse sneaaletdepenes serleulneiem msoloetna tauisissreltoeessne aernsetuiearrsouii esioetnlrsespneieiaetuteimsritonea</ns0:text>
     </ns0:g>
   </ns0:g>
   <ns0:g style="mask: url(#mask)">
     <ns0:g id="CardImageMask">
       <ns0:g id="CardImage_Image" data-name="CardImage Image">
-        <ns0:image id="CardImage_Image-2" data-name="CardImage Image" width="1007" height="674" transform="translate(47.52 50.16) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed68.png" />
+        <ns0:image id="CardImage_Image-2" data-name="CardImage Image" width="1007" height="674" transform="translate(27.5049 37.13162) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed68.png" />
       </ns0:g>
     </ns0:g>
   </ns0:g>
   <ns0:g id="Rect">
     <ns0:g id="Rectangle_3_Calque_4_Image" data-name="Rectangle 3 + Calque 4 Image">
-      <ns0:image id="Rectangle_3_Calque_4_Image-2" data-name="Rectangle 3 + Calque 4 Image" width="1027" height="167" transform="translate(18.72 11.52) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed69.png" />
+      <ns0:image id="Rectangle_3_Calque_4_Image-2" data-name="Rectangle 3 + Calque 4 Image" width="1027" height="167" transform="translate(11.00196 14.99017) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed69.png" />
     </ns0:g>
     <ns0:g id="Rectangle_2_Image" data-name="Rectangle 2 Image">
-      <ns0:image id="Rectangle_2_Image-2" data-name="Rectangle 2 Image" width="1027" height="688" transform="translate(44.88 48.72) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed70.png" />
+      <ns0:image id="Rectangle_2_Image-2" data-name="Rectangle 2 Image" width="1027" height="688" transform="translate(25.99213 36.30647) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed70.png" />
     </ns0:g>
   </ns0:g>
   <ns0:g id="Forms">
     <ns0:g id="Rectangle_4_Image" data-name="Rectangle 4 Image">
-      <ns0:image id="Rectangle_4_Image-2" data-name="Rectangle 4 Image" width="880" height="50" transform="translate(80.16 210.96) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed71.png" />
+      <ns0:image id="Rectangle_4_Image-2" data-name="Rectangle 4 Image" width="880" height="50" transform="translate(46.20824 129.27305) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed71.png" />
     </ns0:g>
     <ns0:g id="Rasterized_Rectangle_1_Image" data-name="Rasterized_Rectangle_1 Image">
-      <ns0:image id="Rasterized_Rectangle_1_Image-2" data-name="Rasterized_Rectangle_1 Image" width="1287" height="1795" transform="translate(10.8) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed72.png" />
+      <ns0:image id="Rasterized_Rectangle_1_Image-2" data-name="Rasterized_Rectangle_1 Image" width="1350" height="1833" transform="translate(2.06287 5.77603) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed72.png" />
     </ns0:g>
   </ns0:g>
   <ns0:g style="mask: url(#mask-2)">
     <ns0:g id="OwnerPhotoMask">
       <ns0:g id="OwnerPhoto_Image" data-name="OwnerPhoto Image">
-        <ns0:image id="OwnerPhoto_Image-2" data-name="OwnerPhoto Image" width="200" height="200" transform="translate(32.16 188.64) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed74.png" />
+        <ns0:image id="OwnerPhoto_Image-2" data-name="OwnerPhoto Image" width="200" height="200" transform="translate(18.70333 116.48327) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed74.png" />
       </ns0:g>
     </ns0:g>
   </ns0:g>
   <ns0:g id="Infos">
     <ns0:g id="Contour_Photo_Image" data-name="Contour Photo Image">
-      <ns0:image id="Contour_Photo_Image-2" data-name="Contour Photo Image" width="218" height="218" transform="translate(30 186.48) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed75.png" />
+      <ns0:image id="Contour_Photo_Image-2" data-name="Contour Photo Image" width="218" height="218" transform="translate(17.46561 115.24555) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed75.png" />
     </ns0:g>
     <ns0:g id="P19">
-      <ns0:text transform="translate(33.01393 53.75986) rotate(90) scale(0.99074 1)" style="font-size: 11.999990463256836px;font-family: GillSansMT, Gill Sans MT">P19</ns0:text>
+      <ns0:text transform="  scale(0.99074 1)" style="font-size: 6.876225471496582px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:left;white-space:pre;shape-inside:url(#rect8);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;writing-mode:vertical-lr" space="preserve" id="text8" label="TextBox8">P19</ns0:text>
     </ns0:g>
     <ns0:g id="CardName">
-      <ns0:text transform="translate(35.07447 42.23789)" style="font-size: 18.999990463256836px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700" text-anchor="start">Nom de la carte</ns0:text>
+      <ns0:text transform="" style="font-size: 10.88735580444336px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:0.8;text-align:left;white-space:pre;shape-inside:url(#rect9);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text9" label="TextBox9">CardName</ns0:text>
     </ns0:g>
     <ns0:g id="CPValeur">
-      <ns0:text transform="translate(235.83473 45.00107)" style="font-size: 21.999990463256836px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700" text-anchor="start"><ns0:tspan xml:space="preserve">100    </ns0:tspan></ns0:text>
+      <ns0:text transform="" style="font-size: 12.606412887573242px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:0.8;text-align:right;white-space:pre;shape-inside:url(#rect10);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text10" label="TextBox10">CPValeur</ns0:text>
     </ns0:g>
     <ns0:g id="CPNom">
-      <ns0:text transform="translate(236.18711 44.90146)" style="font-size: 12px;font-family: GillSansMT, Gill Sans MT" text-anchor="end">CP</ns0:text>
+      <ns0:text transform="" style="font-size: 6.87622594833374px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:right;white-space:pre;shape-inside:url(#rect11);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text11" label="TextBox11">CPNom</ns0:text>
     </ns0:g>
     <ns0:g id="Description">
-      <ns0:text transform="translate(184.32359 219.55625)" style="font-size: 10.100000381469727px;font-family: GillSansMT, Gill Sans MT" text-anchor="middle">Description</ns0:text>
+      <ns0:text transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:center;white-space:pre;shape-inside:url(#rect12);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text12" label="TextBox12">Description</ns0:text>
     </ns0:g>
     <ns0:g id="OwnerName">
-      <ns0:text transform="translate(33.01393 189.2197724) rotate(90) scale(0.99074 1)" style="font-size: 11.999990463256836px;font-family: GillSansMT, Gill Sans MT" text-anchor="end">Nom</ns0:text>
+      <ns0:text transform="  scale(0.99074 1)" style="font-size: 6.876225471496582px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:right;white-space:pre;shape-inside:url(#rect13);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;writing-mode:vertical-lr" space="preserve" id="text13" label="TextBox13">OwnerName</ns0:text>
     </ns0:g>
   </ns0:g>
-  <ns0:g id="PreviewWatermark" style="opacity: 0.290196078431373">
+  <ns0:g id="PreviewWatermark" style="opacity: 0.14117647058823526">
     <ns0:g id="RasterizedPreviewText_Image" data-name="RasterizedPreviewText Image">
-      <ns0:image id="RasterizedPreviewText_Image-2" data-name="RasterizedPreviewText Image" width="1189" height="1670" transform="translate(22.56 14.88) scale(0.24)" ns1:href="Template_Pokenjmin_Unprocessed76.png" />
+      <ns0:image id="RasterizedPreviewText_Image-2" data-name="RasterizedPreviewText Image" width="1189" height="1670" transform="translate(13.20235 16.91552) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed76.png" />
+    </ns0:g>
+  </ns0:g>
+  <ns0:g id="PrintingFormalities">
+    <ns0:g id="Yellow_Image" data-name="Yellow Image">
+      <ns0:image id="Yellow_Image-2" data-name="Yellow Image" width="1381" height="1917" transform="scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed77.png" />
+    </ns0:g>
+    <ns0:g id="Ligne_1_copie_3_Image" data-name="Ligne 1 copie 3 Image">
+      <ns0:image id="Ligne_1_copie_3_Image-2" data-name="Ligne 1 copie 3 Image" width="1381" height="1917" transform="scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed78.png" />
     </ns0:g>
   </ns0:g>
 </ns0:svg>

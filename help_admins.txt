@@ -1,0 +1,10 @@
+If you see this second help message, it means you're an admin, congratulation !
+
+You can modify other people cards using /switch_to_user_card, one you're switch, the /set_skill, /set_card and /preview commands will affect the other user's card. If you lose track of which card you're modifying, you can use the /get_current_switch command. You can reset your switch status with /reset_switch command.
+
+You can create lengdary cards using /create_legendary, once your legendary is created, get its id using /list_legendaries and switch to it using the /switch_to_legendary command. You can then modify it same as another user's card.
+
+You can export the full deck using /export_all, you can choose the format. PDF is very long may not work if there are too much cards, JSON can then be used with export_to_photoshop.py to generate the final cards
+
+You can also set things up for your server, like its cohort name and default specialty (useful if you're in a single specialty formation, like IEM or License) with /set_server_settings, if you're in a pluri-specialty formation, like Master JMIN, you can affect a specialty to different roles of your discord server, using /set_role_settings. These settings will fill fields of your server's members automaticly.
+Congratulation for your rank and make good use of your powers !

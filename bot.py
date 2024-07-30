@@ -5,14 +5,14 @@ import sqlite3
 import os
 from tempfile import mkdtemp
 from PIL import Image
-import subprocess
-from reportlab.graphics import renderPDF, renderPM
 import re
 import xml.etree.ElementTree as ET
 import math
 from io import BytesIO
-import threading
-import asyncio
+from pathlib import Path
+
+os.environ['PYTHONUNBUFFERED'] = "1"
+
 
 #Only windows computer supports the photoshop api
 photoshopSupported=True
@@ -28,8 +28,14 @@ intents.members=True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 settingsFile= open('settings.json', encoding="utf-8")
+
+print("Settings:")
+with open('settings.json', 'r') as fin:
+    print(fin.read())
+
+
 settings=json.load(settingsFile)
-con = sqlite3.connect("data.db")
+con = sqlite3.connect("Data/data.db")
 con.row_factory = sqlite3.Row
 
 #Node namespace, to add at the start of any node we create
@@ -59,6 +65,7 @@ def create_tables():
         """CREATE TABLE IF NOT EXISTS cards (
                 id INTEGER PRIMARY KEY,
                 card_name TEXT DEFAULT "" NOT NULL,
+                card_name_font_size REAL,
                 cp_name TEXT DEFAULT "" NOT NULL, 
                 owner_name TEXT DEFAULT "" NOT NULL,
                 card_description TEXT DEFAULT "" NOT NULL, 
@@ -100,6 +107,38 @@ def create_tables():
         cur.execute(statement)
 
 create_tables()
+
+def sort_by_spe(userDict):
+    return  userDict["spe"]
+
+def get_all_users_sorted(discordClient):
+    cursor = con.cursor()
+    cursor.execute("SELECT * from users")
+    results=cursor.fetchall()
+    users=[]
+    for r in results:
+        user=sqlite3Row_to_dict(r)
+        
+        user["overwrite_discord_id"]=None
+        spe=settings["LegendarySpeId"]
+        cohort=settings["LegendaryCohort"]
+        if(user["legendary_user"]==False):
+            guild=discordClient.get_guild(user["guild_id"])
+            if(guild==None): continue
+            member=guild.get_member(int(user["discord_id"]))
+            if(member==None): continue
+            memberRoles=member.roles
+            spe=get_spe_for_user(user["guild_id"],memberRoles)
+            mainGuildOfUser=user["guild_id"]
+            serverSettings=get_server_settings(mainGuildOfUser)
+            if(serverSettings==None): continue
+            cohort=serverSettings["server_cohort"]
+
+        user["spe"]=spe
+        user["cohort"]=cohort
+        users.append(user)
+    users.sort(key=sort_by_spe)
+    return users
 
 def get_or_create_server_settings(serverId):
     cursor = con.cursor()
@@ -168,6 +207,10 @@ def get_or_create_user(discordId, guildId):
     cursor.execute("SELECT * from users WHERE discord_id=?",(discordId,))
     result=cursor.fetchone()
     if(result!=None): return sqlite3Row_to_dict(result)
+
+    #Cannot create user if guild id is none
+    if(guildId==None):
+        return None
 
     cursor=con.cursor()
     cursor.execute("INSERT INTO users (discord_id, guild_id) VALUES (?,?)",(discordId,guildId))
@@ -267,6 +310,7 @@ def update_card(card):
                 UPDATE cards 
                 SET 
                     card_name=?,
+                    card_name_font_size=?,
                     owner_name=?,
                     cp_name=?,
                     card_description=?,
@@ -275,7 +319,7 @@ def update_card(card):
                     cp_value=?
                 WHERE
                     id=?
-                """,(card["card_name"],card["owner_name"],card["cp_name"],card["card_description"],card["bottom_text_title"],card["bottom_text_content"],card["cp_value"],card["id"]))
+                """,(card["card_name"],card["card_name_font_size"],card["owner_name"],card["cp_name"],card["card_description"],card["bottom_text_title"],card["bottom_text_content"],card["cp_value"],card["id"]))
     con.commit()
 
 def update_skill(skill):
@@ -307,160 +351,6 @@ def get_spe_for_user(guildId, userRoles):
 
 #endregion
 
-if photoshopSupported:
-    #region Photoshop management
-    #app = ps.Application()
-
-    #Get layer by path written as Group/Group/Layer, for exampel Infos/Name
-    def get_layer_by_path(ps, layerPath):
-        subGroups=str(layerPath).split("/")
-        if(len(subGroups)<=1):
-            return ps.active_document.artLayers.getByName(layerPath)
-        
-        i=0
-        layerGroup=ps.active_document
-        while(i<len(subGroups)-1):
-            layerGroup= layerGroup.layerSets.getByName(subGroups[i])
-            i+=1
-
-        return layerGroup.artLayers.getByName(subGroups[len(subGroups)-1])
-
-    #https://loonghao.github.io/photoshop-python-api/examples/#replace-images
-    def replace_image(ps, layerToReplace, input_file):
-        active_layer = layerToReplace
-        ps.active_document.activeLayer=active_layer
-        bounds = active_layer.bounds
-        replace_contents = ps.app.stringIDToTypeID("placedLayerReplaceContents")
-        desc = ps.ActionDescriptor
-        idnull = ps.app.charIDToTypeID("null")
-        desc.putPath(idnull, input_file)
-        ps.app.executeAction(replace_contents, desc)
-
-        # replaced image.
-        current_bounds = active_layer.bounds
-        width = bounds[2] - bounds[0]
-        height = bounds[3] - bounds[1]
-
-        current_width = current_bounds[2] - current_bounds[0]
-        current_height = current_bounds[3] - current_bounds[1]
-        sizeMultiplier=width / current_width   
-        newHeight=sizeMultiplier*current_height
-        if(newHeight<height):
-            sizeMultiplier=height/current_height
-
-        new_size = sizeMultiplier * 100
-        active_layer.resize(new_size, new_size, ps.AnchorPosition.MiddleCenter)
-
-    def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):
-        with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
-            i=0
-
-            previewWatermark=ps.active_document.layerSets.getByName(settings["PreviewLayerGroup"])
-            previewWatermark.visible=isPreview
-            
-            ownerNameLayer = get_layer_by_path(ps,settings["OwnerNameLayer"])
-            ownerNameLayer.textItem.contents = cardDatas["owner_name"]
-
-            cardNameLayer = get_layer_by_path(ps,settings["CardNameLayer"])
-            cardNameLayer.textItem.contents = cardDatas["card_name"]
-
-            descriptionLayer = get_layer_by_path(ps,settings["DescriptionLayer"])
-            descriptionLayer.textItem.contents = replacePingsByCardNames(cardDatas["card_description"])
-
-            cpNameLayer = get_layer_by_path(ps,settings["CPNameLayer"])
-            cpNameLayer.textItem.contents = str(cardDatas["cp_name"]).upper()
-
-            cpValueLayer = get_layer_by_path(ps,settings["CPValueLayer"])
-            cpValueLayer.textItem.contents = str(cardDatas["cp_value"])
-
-            bottomTextLayer = get_layer_by_path(ps,settings["BottomTextLayer"])
-            bottomTextLayer.textItem.contents = "["+cardDatas["bottom_text_title"]+"] "+replacePingsByCardNames(cardDatas["bottom_text_content"])
-
-            cardImagePath=os.path.join(os.getcwd(),settings["CardImagesFolder"],cardImagesName)
-            if os.path.exists(cardImagePath):
-                cardImageLayer=get_layer_by_path(ps,settings["CardImageLayer"])
-                replace_image(ps,cardImageLayer,cardImagePath)
-
-            ownerPhotoPath=os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],cardImagesName)
-            if os.path.exists(ownerPhotoPath):
-                ownerPhotoLayer=get_layer_by_path(ps,settings["OwnerPhotoLayer"])
-                replace_image(ps,ownerPhotoLayer,ownerPhotoPath)
-
-            skill1Datas=get_skill_of_card(cardDatas,1)
-            skill1LayerSet=ps.active_document.layerSets.getByName(settings["Skill1Group"])
-            fill_layers_for_skill(ps,skill1LayerSet,skill1Datas)
-
-            skill2Datas=get_skill_of_card(cardDatas,2)
-            skill2LayerSet=ps.active_document.layerSets.getByName(settings["Skill2Group"])
-            fill_layers_for_skill(ps,skill2LayerSet,skill2Datas)
-
-            if(spe==None): spe=0
-
-            speIconLayerGroup=ps.active_document.layerSets.getByName(settings["SpeIconGroupName"])
-            set_spe_image(speIconLayerGroup,spe,"IconLayerName")
-
-            backgroundLayerGroup=ps.active_document.layerSets.getByName(settings["BackgroundsGroupName"])
-            set_spe_image(backgroundLayerGroup, spe,"BackgroundLayerName")
-
-            cohortNameLayer = get_layer_by_path(ps,settings["CohortNameValueLayer"])
-            cohortNameLayer.textItem.contents = cohort
-
-            if isPreview:
-                option = ps.JPEGSaveOptions()
-                option.quality=1
-                #you can't change the "jpg" part of the export path (for jpeg for example), Photoshop would overwrite it
-                jpegPath = os.path.join(mkdtemp(),str(fileName)+".jpg")
-                ps.active_document.saveAs(jpegPath, option)
-                return jpegPath
-
-            #export the pdf
-            option = ps.PDFSaveOptions()
-            option.jpegQuality = 12
-            option.layers = True
-            option.view = False  # opens the saved PDF in Acrobat.
-            pdf = os.path.join(os.getcwd(),settings["ExportPngFolder"],fileName+".pdf")
-            ps.active_document.saveAs(pdf, option)
-
-            #save the psd
-            # psd_file = os.path.join(os.getcwd(),settings["GeneratedPsdFolder"],fileName+".psd")
-            # doc = ps.active_document
-            # options = ps.PhotoshopSaveOptions()
-            # doc.saveAs(psd_file, options, True)
-
-    def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
-        skillDescLayer=skillLayerGroup.artLayers.getByName(settings["SkillDescLayerName"])
-        skillDescLayer.textItem.contents=replacePingsByCardNames(skillDatas["skill_desc"])
-        skillTitleLayer=skillLayerGroup.artLayers.getByName(settings["SkillTitleLayerName"])
-        skillTitleLayer.textItem.contents=replacePingsByCardNames(skillDatas["skill_name"])
-        skillCostLayer=skillLayerGroup.artLayers.getByName(settings["SkillCostLayerName"])
-        skillCostLayer.textItem.contents=str(skillDatas["skill_cost"])
-
-        spe1IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe1IconGroupName"])
-        set_spe_image(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
-
-        spe2IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe2IconGroupName"])
-        set_spe_image(spe2IconGroup,skillDatas["spe2"],"IconLayerName")
-
-        spe3IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe3IconGroupName"])
-        set_spe_image(spe3IconGroup,skillDatas["spe3"],"IconLayerName")
-
-        return
-
-    def set_spe_image(speIconsGroup, speId, imageLayerKey):
-        chosenSpe=None
-        for spe in settings["Specialties"]:
-            if spe["Id"]==speId:
-                chosenSpe=spe
-                break
-        
-        if(chosenSpe==None):
-            speIconsGroup.visible=False
-            return
-
-        for iconLayer in speIconsGroup.artLayers:
-            iconLayer.visible=iconLayer.name==chosenSpe[imageLayerKey]
-    #endregion
-
 #region SVG management
 
 #Get layer by path written as Group/Group/Layer, for exampel Infos/Name
@@ -472,6 +362,7 @@ def get_svg_layer_by_path(root, layerPath):
 
     for group in subGroups:
         nextLayer=None
+        if(currentLayer==None):continue
         for child in currentLayer:
             if sanitizeTag(child.tag)!="g":continue
             #If the g node has no id, it's probably a mask, so we just replace it with its "true" layer child
@@ -490,40 +381,31 @@ def get_svg_layer_by_path(root, layerPath):
         currentLayer=nextLayer
     return currentLayer
 
-def split_string_to_wrap_text(text:str, maxCharacters:int):
-    words=text.split(" ")
-    lines=[]
-    currentLine=""
-    while len(words)>0:
-        if(len(currentLine)+len(words[0])>maxCharacters):
-            #if current word is longer than a line, we need to cut it and fit it anyway
-            if(len(words[0])>maxCharacters):
-                freeSpaceOnCurrentLine=(maxCharacters-len(currentLine))
-                keptPart=words[0][0:freeSpaceOnCurrentLine]
-                words[0]=words[0][freeSpaceOnCurrentLine:len(words[0])]
-                currentLine+=" "+keptPart
-            lines.append(currentLine)
-            currentLine=""
-            continue
-        currentLine+=" "+words[0]
-        words.remove(words[0])
-    lines.append(currentLine)
-    return lines 
-
 def getFontSizeFromStyle(style:str):
     pattern = r"font-size:\s*([\d.]+)px"
     match = re.search(pattern, style)
     fontSize=float(match.group(1))
     return fontSize
 
-#Allow us to find the real biggest tspan even taking into account nesting
-def getTspanMaxLength(tspan, maxLengthSoFar):
-    if(tspan.text!=None and len(tspan.text)>maxLengthSoFar):
-        maxLengthSoFar=len(tspan.text)
-    for child in tspan:
-        if(sanitizeTag(child.tag)!="tspan"): continue
-        maxLengthSoFar=getTspanMaxLength(child, maxLengthSoFar)
-    return maxLengthSoFar
+#Returns the new style
+def getStyleWithNewFontSize(style:str, newFontSize:float):
+    pattern=r"(font-size:[ ]*.*px;*)"
+    match=re.search(pattern, style)
+    style=style.replace(match.group(1),'')
+    if style=="":
+        style="font-size: "+str(newFontSize)+"px"
+    else:
+        style=style+";"+"font-size: "+str(newFontSize)+"px"
+    return style
+    
+def get_text_node_of_svg_layer(layer):
+    for child in layer:
+        if sanitizeTag(child.tag)=="text":
+            textDiv=child
+            break
+    if(textDiv==None):
+        print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
+    return textDiv
 
 def change_text_of_svg_layer(layer,text:str):
     text=str(text)
@@ -535,36 +417,7 @@ def change_text_of_svg_layer(layer,text:str):
     if(textDiv==None):
         print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
 
-    #Now we check if textDiv contains tspans
-    hasTSpan=False
-    caracPerLine=0
-    for textDivChild in textDiv:
-        if sanitizeTag(textDivChild.tag)!="tspan":
-            continue
-        hasTSpan=True
-        if(textDivChild.text==None): 
-            continue
-        caracPerLine=max(caracPerLine,len(textDivChild.text))
-    #No tspan: We got a easy case here, the field is on a single line, our job is done, yay !
-    if(hasTSpan==False):
-        textDiv.text=text
-        return
-    caracPerLine=getTspanMaxLength(textDiv, caracPerLine)
-    #So, we have tspans, that means we are face to face with a multiline text, but we now how much caractere fits in a line, se we can use this
-    attributes=textDiv.attrib
-    textDiv.clear()
-    textDiv.attrib=attributes
-
-    lines=split_string_to_wrap_text(text, caracPerLine)
-    textDiv.text=lines[0]
-    lines.remove(lines[0])
-    i=0
-    while len(lines)>0:
-        i+=1
-        tspan=ET.SubElement(textDiv,nodeNamespace+"tspan")
-        tspan.attrib={"x":"0", "y":str(i*math.floor(getFontSizeFromStyle(textDiv.attrib["style"]))) }
-        tspan.text=lines[0]
-        lines.remove(lines[0])
+    textDiv.text=text
 
 def toggle_svg_layer_visibility(layer, visibility:bool):
     notVisibleString="display:none;"
@@ -671,18 +524,26 @@ def isSvgLayerEqual(svgLayerId:str, target:str):
     #If the start of the layer id is the target id, then yes, it's the layer we're looking for (or a lookalike)
     return treatedId==target
 
+#Very close to export_to_photoshop.py's create_psd_card 
 def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):   
     svgTemplatePath=os.path.join(os.getcwd(),settings["TemplateSvgFile"])
-    tree = ET.parse(svgTemplatePath)
+    parser1 = ET.XMLParser(encoding="utf-8")
+    tree = ET.parse(svgTemplatePath,parser1)
 
     root = tree.getroot()
+
+    #Font size between photoshop and svg are not the same, but min and max font size in the settings are expressed for photoshop, so we get the ratio that was calculated when we processed the svg template with process_template.py
+    fontScaleRatio=float(tree.getroot().attrib["fontScaleRatio"])
 
     previewWatermark=get_svg_layer_by_path(root,settings["PreviewLayerGroup"])
     toggle_svg_layer_visibility(previewWatermark,isPreview)
     
     cardNameLayer = get_svg_layer_by_path(root,settings["CardNameLayer"])
     change_text_of_svg_layer(cardNameLayer,cardDatas["card_name"])
-    print(cardDatas["card_name"])
+    if(cardDatas["card_name_font_size"]!=None):
+        cardNameLayerTextNode=get_text_node_of_svg_layer(cardNameLayer)
+        cardNameLayerStyle=cardNameLayerTextNode.attrib["style"]
+        cardNameLayerTextNode.attrib["style"]=getStyleWithNewFontSize(cardNameLayerStyle, fontScaleRatio*cardDatas["card_name_font_size"])
 
     ownerNameLayer = get_svg_layer_by_path(root,settings["OwnerNameLayer"])
     change_text_of_svg_layer(ownerNameLayer,cardDatas["owner_name"])
@@ -723,6 +584,9 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     backgroundLayerGroup=get_svg_layer_by_path(root,settings["BackgroundsGroupName"])
     set_spe_image_for_svg(backgroundLayerGroup, spe,"BackgroundLayerName")
 
+    watermarkLayerGroup=get_svg_layer_by_path(root,settings["WatermarkGroupName"])
+    set_spe_image_for_svg(watermarkLayerGroup, spe,"WatermarkLayerName")
+
     cohortNameLayer = get_svg_layer_by_path(root,settings["CohortNameValueLayer"])
     change_text_of_svg_layer(cohortNameLayer,cohort)
 
@@ -733,11 +597,14 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
         f.write(output.getbuffer())
     
     #now that we have the svg, we must convert it to jpeg
-    pngPath = os.path.join(mkdtemp(),str(fileName)+".png")
+    exportPath = os.path.join(mkdtemp(),str(fileName)+".png")
     #inkScape is the only software that respects our svg, so we'll just run it
-    inkscapeCommand="inkscape "+os.path.relpath(generatedSvgPath, os.getcwd())+" --export-filename="+os.path.relpath(pngPath, os.getcwd())+" --export-dpi="+str(settings["PreviewDPI"])
+    inkscapeCommand="inkscape "+os.path.relpath(generatedSvgPath, os.getcwd())+" --export-filename="+os.path.relpath(exportPath, os.getcwd())+" --export-dpi="+str(settings["PreviewDPI"])
+    if(isPreview):
+        exportPath = os.path.join(mkdtemp(),str(fileName)+".png")
+        inkscapeCommand="inkscape "+os.path.relpath(generatedSvgPath, os.getcwd())+" --export-filename="+os.path.relpath(exportPath, os.getcwd())+" --export-dpi="+str(settings["PreviewDPI"])
     os.system(inkscapeCommand)
-    return pngPath
+    return exportPath
 
 
 def fill_layers_for_skill(root,skillLayerGroupPath,skillDatas):
@@ -749,7 +616,10 @@ def fill_layers_for_skill(root,skillLayerGroupPath,skillDatas):
     change_text_of_svg_layer(skillTitleLayer,skillDatas["skill_name"])
 
     skillCostLayer=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["SkillCostLayerName"])
-    change_text_of_svg_layer(skillCostLayer,skillDatas["skill_cost"])
+    skillCost=skillDatas["skill_cost"]
+    if(skillCost<-9999999):
+        skillCost=""
+    change_text_of_svg_layer(skillCostLayer,skillCost)
 
     spe1IconGroup= get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["Spe1IconGroupName"])
     set_spe_image_for_svg(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
@@ -785,7 +655,7 @@ for spe in settings["Specialties"]:
     specialtiesChoices.append(app_commands.Choice(name=spe["DisplayName"], value=spe["Id"]))
 
 def replacePingsByCardNames(startString:str):
-    matches=re.finditer("\<@([^\>\[]*)>",startString)
+    matches=re.finditer("\\<@([^\>\[]*)>",startString)
     for matchObject in matches:
         userId=matchObject.group().replace("<@","").replace(">","")
         user=get_user(userId)
@@ -840,9 +710,11 @@ def getProgressionForUser(userid:str):
     description="Get help with how to create Pokenjmin's cards using Mecha Buendia"
 )
 async def help(interaction):
-    await interaction.response.send_message(settings["HelpMessage"],ephemeral=True)
-    if(interaction.user.id in settings["Admins"]):
-        await interaction.followup.send(settings["AdminHelpMessage"],ephemeral=True)
+    helpTxt = Path(settings["HelpMessage"]).read_text()
+    adminHelpTxt=Path(settings["AdminHelpMessage"]).read_text()
+    await interaction.response.send_message(helpTxt,ephemeral=True)
+    if(str(interaction.user.id) in settings["Admins"]):
+        await interaction.followup.send(adminHelpTxt,ephemeral=True)
 
 @tree.command(
     name="set_current_server_as_main",
@@ -857,12 +729,17 @@ async def setCurrentServerAsMain(interaction):
     description="Set the value of one or more fields of your card"
 )
 @app_commands.describe(card_name="The name at the top of the card")
+@app_commands.describe(card_name_font_size="The font size of the name at the top of the card, leave empty in doubt")
 @app_commands.describe(owner_name="YOUR name, on the left side")
 @app_commands.describe(hp_name="The name beside the HP's value at the top of the card")
 @app_commands.describe(hp_value="HP's value at the top of the card")
-async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
+async def setCard(interaction, card_name:str=None, card_name_font_size:float=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
                   bottom_text_content:str=None, hp_value:int=None, card_image:discord.Attachment=None, owner_image:discord.Attachment=None):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
+    if(user==None):
+        await interaction.response.send_message("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
+        return
     card=get_or_create_card(user)
     feedbackMessage=""
     error=False
@@ -877,15 +754,24 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
 
     if hp_name!=None and len(hp_name)>3 : 
         feedbackMessage+="HP Name length is limited to 3 characters !\n"
+        hp_name=hp_name[0:3]
+
+    if card_name_font_size!=None and card_name_font_size>settings["CardNameFontSizeMax"]:
+        feedbackMessage+="Card name font size can't be higher than "+str(settings["CardNameFontSizeMax"])+" !\n"
+        card_name_font_size=settings["CardNameFontSizeMax"]
+
+    if card_name_font_size!=None and card_name_font_size<settings["CardNameFontSizeMin"]:
+        feedbackMessage+="Card name font size can't be lower than "+str(settings["CardNameFontSizeMin"])+" !\n"
+        card_name_font_size=settings["CardNameFontSizeMin"]
 
     if(card_name!=None): card["card_name"]=card_name
+    if(card_name_font_size!=None): card["card_name_font_size"]=card_name_font_size
     if(owner_name!=None): card["owner_name"]=owner_name
     if(hp_name!=None): card["cp_name"]=hp_name
     if(card_description!=None): card["card_description"]=card_description
     if(bottom_text_title!=None): card["bottom_text_title"]=bottom_text_title
     if(bottom_text_content!=None): card["bottom_text_content"]=bottom_text_content
     if(hp_value!=None): card["cp_value"]=hp_value
-
 
     fileName=get_discord_id_of_card(card)
     if(card_image!=None):
@@ -932,7 +818,7 @@ async def setCard(interaction, card_name:str=None, owner_name:str=None,hp_name:s
     description="Create a legendary card"
 )
 async def createLegendary(interaction, card_name:str, owner_name:str):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
     user=create_legendary_user()
@@ -977,6 +863,10 @@ async def listLegendaries(interaction):
 @app_commands.choices(spe3=specialtiesChoices)
 async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:str=None, skill_cost:int=None, spe1:int=None, spe2:int=None, spe3:int=None):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
+    if(user==None):
+        await interaction.response.send_message("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
+        return
     card=get_or_create_card(user)
     skill=get_skill_of_card(card,skill_nbr)
     feedbackMessage=""
@@ -1001,7 +891,7 @@ async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:s
 )
 @app_commands.choices(default_spe=specialtiesChoices)
 async def setServerSettings(interaction, default_spe:int, cohort:str):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
 
@@ -1017,7 +907,7 @@ async def setServerSettings(interaction, default_spe:int, cohort:str):
 )
 @app_commands.choices(spe=specialtiesChoices)
 async def setRoleSettings(interaction, role:discord.Role, spe:int):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
 
@@ -1039,10 +929,9 @@ async def getAdmins(interaction):
 @tree.command(
     name="switch_to_user_card",
     description="Allows you to set your current card to another user's one",
-    guild=discord.Object(id=790626187944394772)
 )
 async def switchToUserCard(interaction, target:discord.User):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
    
@@ -1057,7 +946,7 @@ async def switchToUserCard(interaction, target:discord.User):
     description="Allows you to set your current card to another user's one"
 )
 async def switchToLegendary(interaction, target_id:str):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
 
@@ -1078,7 +967,7 @@ async def switchToLegendary(interaction, target_id:str):
     description="Set your current card as your own"
 )
 async def resetSwitch(interaction):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
     
@@ -1091,7 +980,7 @@ async def resetSwitch(interaction):
     description="Get what card you are modifying"
 )
 async def getCurrentSwitch(interaction):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
     
@@ -1112,7 +1001,7 @@ async def getCurrentSwitch(interaction):
 @app_commands.describe(enumerate_partial="List the names of those who have a currently partially filled card")
 @app_commands.describe(enumerate_complete="List the names of those who have a completely filled card")
 async def getAdvancement(interaction, role:discord.Role, enumerate_empty:bool=True, enumerate_partial:bool=True, enumerate_complete:bool=False):
-    if(interaction.user.id not in settings["Admins"]):
+    if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
         return
     
@@ -1146,13 +1035,87 @@ async def getAdvancement(interaction, role:discord.Role, enumerate_empty:bool=Tr
     returnString+=f"Partial: {len(partialUsers)}/{totalCount}\n"
     if(enumerate_partial):
         for partialUser in partialUsers:
-            returnString+=f"\t<@{partialUser["id"]}>: {100*partialUser["progression"]}%\n"
+            returnString+="\t<@"+str(partialUser["id"])+">: "+str(100*partialUser["progression"])+"%\n"
     returnString+=f"Complete: {len(completeUsers)}/{totalCount}\n"
-    if(enumerate_empty):
+    if(enumerate_complete):
         for completeUser in completeUsers:
             returnString+=f"\t<@{completeUser}>\n"
 
     await interaction.response.send_message(returnString,ephemeral=True)
+
+@tree.command(
+    name="export_all",
+    description="Exports all the users cards",
+    #guild=discord.Object(id=790626187944394772)
+)
+@app_commands.choices(format=[
+    app_commands.Choice(name='PDF', value=0),
+    app_commands.Choice(name='JSON', value=1)
+])
+async def exportAll(interaction, format:int):
+    if(str(interaction.user.id) not in settings["Admins"]):
+        await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
+        return
+    
+    await interaction.response.defer(ephemeral=True, thinking=True)
+
+    users=get_all_users_sorted(client)
+    if(format==1): #export as json
+        for user in users:
+            card=get_or_create_card(user,True)
+            user["card"]=card
+            user["card"]["skill1"]=get_skill_of_card(card,1)
+            user["card"]["skill2"]=get_skill_of_card(card,2)
+            user["card"]["card_description"]=replacePingsByCardNames(user["card"]["card_description"])
+            user["card"]["bottom_text_content"]=replacePingsByCardNames(user["card"]["bottom_text_content"])
+            user["card"]["skill1"]["skill_desc"]=replacePingsByCardNames(user["card"]["skill1"]["skill_desc"])
+            user["card"]["skill2"]["skill_desc"]=replacePingsByCardNames(user["card"]["skill2"]["skill_desc"])
+            user["card"]["skill1"]["skill_name"]=replacePingsByCardNames(user["card"]["skill1"]["skill_name"])
+            user["card"]["skill2"]["skill_name"]=replacePingsByCardNames(user["card"]["skill2"]["skill_name"])
+        message="Use this json with an external script to generate PSD images etc."
+        jsonPath=os.path.join(mkdtemp(),"export.json")
+        with open(jsonPath, 'w', encoding='utf8') as f:
+            json.dump(users, f, ensure_ascii=False)
+        currentDir=os.getcwd()
+        os.chdir(os.path.dirname(jsonPath))
+        await interaction.followup.send(message,ephemeral=True,file=discord.File(jsonPath))
+        os.chdir(currentDir)
+        return
+
+    #export as pdf
+    message="/!\ This PDF has been generated using the SVG, not Photoshop, as such, it's not optimal. Please export to JSON then use the export script to get an optimal export"
+    imagesPaths=[]
+    for user in users:  
+        card=get_or_create_card(user,True)
+        fileName=get_discord_id_of_card(card)
+        exportedImage=create_svg_card(card,user["cohort"],user["spe"],fileName,str(fileName)+".png",False)
+        imagesPaths.append(exportedImage)
+    
+    imagesAsJpegPaths=[]
+    i=0
+    for imagePath in imagesPaths:
+        im = Image.open(imagePath)
+        rgb_im = im.convert('RGB')
+        jpgExportPath=os.path.join(mkdtemp(),str(i)+".jpg")
+        rgb_im.save(jpgExportPath)
+        imagesAsJpegPaths.append(jpgExportPath)
+        i+=1
+
+    images = [
+        Image.open(f)
+        for f in imagesAsJpegPaths
+    ]
+
+    pdfExportPath=os.path.join(mkdtemp(),"export.pdf")
+        
+    images[0].save(
+        pdfExportPath, "PDF" ,resolution=100.0, save_all=True, append_images=images[1:]
+    )
+
+    currentDir=os.getcwd()
+    os.chdir(os.path.dirname(pdfExportPath))
+    await interaction.followup.send(message,ephemeral=True,file=discord.File(pdfExportPath))
+    os.chdir(currentDir)
 
 @tree.command(
     name="get",
@@ -1165,8 +1128,15 @@ async def get(interaction):
         returnString+="\n\tCost: "+str(skillDatas["skill_cost"])
         returnString+="\n\tDesc: "+skillDatas["skill_desc"]
         return returnString
-    
+
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
+    
+    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
+    if(user==None):
+        await interaction.response.send_message("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
+        return
+
+
     card=get_or_create_card(user)
     returnValue=""
     #In most cases, cardOwner is the user, but it may be another user if the current user is an admin who used the switch feature to modify a legendary card or the card of someone else
@@ -1205,6 +1175,12 @@ async def preview(interaction):
 async def send_message_with_preview(interaction, message):
     await interaction.response.defer(ephemeral=True, thinking=True)
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
+
+    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
+    if(user==None):
+        await interaction.followup.send("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
+        return
+
     card=get_or_create_card(user)
     #In most cases, cardOwner is the user, but it may be another user if the current user is an admin who used the switch feature to modify a legendary card or the card of someone else
     cardOwner=get_owner_of_card(card)
@@ -1234,7 +1210,8 @@ async def send_message_with_preview(interaction, message):
 @client.event
 async def on_ready():
     await tree.sync()
-    await tree.sync(guild=discord.Object(id=790626187944394772))
+    #await tree.sync(guild=discord.Object(id=790626187944394772))
 
+print("This line was last modified on the 29/07/2024 at 19:18 by Jeremy (to test Docker Recreate)")
 client.run(settings["Token"])
 #endregion
