@@ -1089,14 +1089,14 @@ async def exportAll(interaction, format:int):
         
         try:
             await interaction.followup.send("Heres the Card Images, unzip them in your export scripts folder",ephemeral=True, file=discord.File(cardImagesZipPath))
-        except:
-            await interaction.followup.send("Cannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
+        except Exception as error:
+            await interaction.followup.send(str(error)+"\nCannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
 
         try:
             await interaction.followup.send("Heres the Owner Photos, unzip them in your export scripts folder",ephemeral=True, file=discord.File(ownerPhotosZipPath))
-        except:
-            await interaction.followup.send("Cannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
-            
+        except Exception as error:
+            await interaction.followup.send(str(error)+"\nCannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
+
         os.chdir(currentDir)
         return
 
