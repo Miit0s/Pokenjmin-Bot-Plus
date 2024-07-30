@@ -58,5 +58,17 @@ Alternatively you can just manually install the dependancies and run bot.py as i
 
 HOW TO EXPORT:
 
-Since the preview system that uses SVG is a bit hasardous and cause loss to the file, we reccomend you make the export using photoshop directly. It's very long, and it only works if the bot is running on a Windows PC with Photoshop installed.
-Pull the latest database, grab a coke, turn off the server's version of the bot, send a slash command and wait for about an hour (give or take).
+Since the preview system that uses SVG is a bit hasardous and cause loss to the file, we reccomend you make the export using photoshop directly.
+For that, use /export_all with the format parameter as JSON.
+Now, you also need to get the photos, for that, you'll need to connect yourself to the docker and copy the Data/CardImages and Data/OwnerPhotos folder on the main Google Cloud VM, then, you'll need to download those and paste them in your local repository:
+Connect through SSH to your Google cloud VM : 
+	docker ps ; To get the Docker's ID
+	sudo docker cp 9b27faa2de7d:/usr/src/app/Data/CardImages ./CardImages ; Replace 9b27faa2de7d by the id of your Docker 
+	sudo apt install zip; install zip 
+	sudo zip -r CardImages.zip ./CardImages
+	
+	sudo docker cp 9b27faa2de7d:/usr/src/app/Data/OwnerPhotos ./OwnerPhotos ; Replace 9b27faa2de7d by the id of your Docker 
+	sudo apt install zip; install zip 
+	sudo zip -r OwnerPhotos.zip ./OwnerPhotos
+	
+Then, run export_photoshop.py with the json as an argument.
