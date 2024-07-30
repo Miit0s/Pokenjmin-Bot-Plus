@@ -18,6 +18,7 @@ settings=json.load(settingsFile)
 
 #temp directory aren't liked by photoshop, so we save it in the working directory, in a temp folder ignored by git
 tempFolder=os.path.join(os.getcwd(),"temp")
+shutil.rmtree(tempFolder)
 if(os.path.exists(tempFolder)==False): os.mkdir(tempFolder)
 
 #Taken straight from bot.py, do not change code of functions here, change it in bot.py then copy paste it here
@@ -175,7 +176,7 @@ def exportSingleTextLayerWithNewContent(layerPath:str, textContent:str, newFontS
     output = BytesIO()
     tree.write(output, encoding='utf-8', xml_declaration=True) 
     fileName=str(generatedSvgsCounter)
-    generatedSvgPath=os.path.join(os.getcwd(),settings["GeneratedSvgsFolder"],fileName+settings["GeneratedSvgsExtension"])
+    generatedSvgPath=os.path.join(os.getcwd(),tempFolder,fileName+settings["GeneratedSvgsExtension"])
     with open(generatedSvgPath, "wb") as f:
         f.write(output.getbuffer())
     
@@ -184,8 +185,9 @@ def exportSingleTextLayerWithNewContent(layerPath:str, textContent:str, newFontS
     exportPath = os.path.join(tempFolder,str(fileName)+".png")
     #inkScape is the only software that respects our svg, so we'll just run it
     inkscapeCommand="inkscape \""+os.path.relpath(generatedSvgPath, os.getcwd())+"\" --export-filename=\""+os.path.relpath(exportPath, os.getcwd())+"\" --export-dpi="+str(settings["PreviewDPI"])
-    print(inkscapeCommand)
+    #print(inkscapeCommand)
     os.system(inkscapeCommand)
+    time.sleep(1)
     return exportPath
 
 #region Photoshop management
@@ -244,9 +246,15 @@ def replace_psd_text_layer(ps, layerPath, layer, newText, replaceTextsWithSvgExp
         return
     pngPath=exportSingleTextLayerWithNewContent(layerPath,newText, fontSizeInPx)
     #We resize the png using pillow because trying to have inkscape or photoshop do it is a pain
-    with Image.open(pngPath) as img:
-        resized_img = img.resize((int(ps.active_document.width), int(ps.active_document.height)),Image.LANCZOS)
-        resized_img.save(pngPath)
+    #I don't really know why but in this script os.system in export makes us wait until the file is created
+    while(True):
+        try:
+            with Image.open(pngPath) as img:
+                resized_img = img.resize((int(ps.active_document.width), int(ps.active_document.height)),Image.LANCZOS)
+                resized_img.save(pngPath)
+                break
+        except:
+            time.sleep(1)
 
     layer.textItem.contents=""
     desc = ps.ActionDescriptor
@@ -271,16 +279,17 @@ def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
         replace_psd_text_layer(ps,settings["CardNameLayer"],cardNameLayer,cardDatas["card_name"],replaceTextsWithSvgExports,cardDatas["card_name_font_size"])
 
         descriptionLayer = get_layer_by_path(ps,settings["DescriptionLayer"])
-        descriptionLayer.textItem.contents = cardDatas["card_description"]
+        replace_psd_text_layer(ps,settings["DescriptionLayer"],descriptionLayer,cardDatas["card_description"],replaceTextsWithSvgExports)
 
         cpNameLayer = get_layer_by_path(ps,settings["CPNameLayer"])
-        cpNameLayer.textItem.contents = str(cardDatas["cp_name"]).upper()
+        replace_psd_text_layer(ps,settings["CPNameLayer"],cpNameLayer, str(cardDatas["cp_name"]).upper(),replaceTextsWithSvgExports)
 
         cpValueLayer = get_layer_by_path(ps,settings["CPValueLayer"])
-        cpValueLayer.textItem.contents = str(cardDatas["cp_value"])
+        replace_psd_text_layer(ps,settings["CPValueLayer"],cpValueLayer,str(cardDatas["cp_value"]),replaceTextsWithSvgExports)
 
         bottomTextLayer = get_layer_by_path(ps,settings["BottomTextLayer"])
-        bottomTextLayer.textItem.contents = "["+cardDatas["bottom_text_title"]+"] "+cardDatas["bottom_text_content"]
+        bottomTextContent= "["+cardDatas["bottom_text_title"]+"] "+cardDatas["bottom_text_content"]
+        replace_psd_text_layer(ps,settings["BottomTextLayer"],bottomTextLayer,bottomTextContent,replaceTextsWithSvgExports)
 
         cardImagePath=os.path.join(os.getcwd(),settings["CardImagesFolder"],cardImagesName)
         if os.path.exists(cardImagePath):
@@ -294,11 +303,11 @@ def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
 
         skill1Datas=cardDatas["skill1"]
         skill1LayerSet=ps.active_document.layerSets.getByName(settings["Skill1Group"])
-        fill_layers_for_skill(ps,skill1LayerSet,skill1Datas)
+        fill_layers_for_skill(ps,settings["Skill1Group"],skill1LayerSet,skill1Datas)
 
         skill2Datas=cardDatas["skill2"]
         skill2LayerSet=ps.active_document.layerSets.getByName(settings["Skill2Group"])
-        fill_layers_for_skill(ps,skill2LayerSet,skill2Datas)
+        fill_layers_for_skill(ps,settings["Skill2Group"],skill2LayerSet,skill2Datas)
 
         if(spe==None): spe=0
 
@@ -312,7 +321,7 @@ def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
         set_spe_image(watermarkLayerGroup, spe,"WatermarkLayerName")
 
         cohortNameLayer = get_layer_by_path(ps,settings["CohortNameValueLayer"])
-        cohortNameLayer.textItem.contents = cohort
+        replace_psd_text_layer(ps,settings["CohortNameValueLayer"],cohortNameLayer,cohort,replaceTextsWithSvgExports)
 
         if isPreview:
             option = ps.JPEGSaveOptions()
@@ -331,16 +340,22 @@ def create_psd_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
         ps.active_document.saveAs(pdf, option)
         return pdf
 
-def fill_layers_for_skill(ps, skillLayerGroup, skillDatas):
-    skillDescLayer=skillLayerGroup.artLayers.getByName(settings["SkillDescLayerName"])
-    skillDescLayer.textItem.contents=skillDatas["skill_desc"]
-    skillTitleLayer=skillLayerGroup.artLayers.getByName(settings["SkillTitleLayerName"])
-    skillTitleLayer.textItem.contents=skillDatas["skill_name"]
-    skillCostLayer=skillLayerGroup.artLayers.getByName(settings["SkillCostLayerName"])
+def fill_layers_for_skill(ps, skillLayerGroupPath, skillLayerGroup, skillDatas):
+    skillDescLayerPath=skillLayerGroupPath+"/"+settings["SkillDescLayerName"]
+    skillDescLayer=get_layer_by_path(ps,skillDescLayerPath)
+    replace_psd_text_layer(ps,skillDescLayerPath,skillDescLayer,str(skillDatas["skill_desc"]))
+
+    skillTitleLayerPath=skillLayerGroupPath+"/"+settings["SkillDescLayerName"]
+    skillTitleLayer=get_layer_by_path(ps,skillTitleLayerPath)
+    replace_psd_text_layer(ps,skillTitleLayerPath,skillTitleLayer,str(skillDatas["skill_name"]))
+
+    skillCostLayerPath=skillLayerGroupPath+"/"+settings["SkillCostLayerName"]
+    skillCostLayer=get_layer_by_path(ps,skillCostLayerPath)
     skillCost=skillDatas["skill_cost"]
     if(skillCost<-9999999):
         skillCost=""
     skillCostLayer.textItem.contents=str(skillCost)
+    replace_psd_text_layer(ps,skillCostLayerPath,skillCostLayer,str(skillCost))
 
     spe1IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe1IconGroupName"])
     set_spe_image(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
