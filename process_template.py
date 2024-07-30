@@ -69,6 +69,33 @@ def get_rotation(node):
     
     return rotation_value
 
+def rotate_matrix (x, y, angle, x_shift=1, y_shift=1, units="DEGREES"):
+    """
+    Rotates a point in the xy-plane counterclockwise through an angle about the origin
+    https://en.wikipedia.org/wiki/Rotation_matrix
+    :param x: x coordinate
+    :param y: y coordinate
+    :param x_shift: x-axis shift from origin (0, 0)
+    :param y_shift: y-axis shift from origin (0, 0)
+    :param angle: The rotation angle in degrees
+    :param units: DEGREES (default) or RADIANS
+    :return: Tuple of rotated x and y
+    """
+
+    # Shift to origin (0,0)
+    x = x - x_shift
+    y = y - y_shift
+
+    # Convert degrees to radians
+    if units == "DEGREES":
+        angle = math.radians(angle)
+
+    # Rotation matrix multiplication to get rotated x & y
+    xr = (x * math.cos(angle)) - (y * math.sin(angle)) + x_shift
+    yr = (x * math.sin(angle)) + (y * math.cos(angle)) + y_shift
+
+    return xr, yr
+
 def remove_translation_from_node(node):
     #First we get and store the transform attribute
     transform=node.attrib["transform"]
@@ -78,6 +105,17 @@ def remove_translation_from_node(node):
     if(translateMatch==None or translateMatch==False): return
 
     newTransformString=transform.replace(f"translate({translateMatch.group(1)})",f"")
+    node.attrib["transform"]=newTransformString
+
+def remove_rotation_from_node(node):
+    #First we get and store the transform attribute
+    transform=node.attrib["transform"]
+    # Extraire les valeurs de translation
+    translatePattern = r'rotate\(([^)]+)\)'
+    translateMatch = re.search(translatePattern, transform)
+    if(translateMatch==None or translateMatch==False): return
+
+    newTransformString=transform.replace(f"rotate({translateMatch.group(1)})",f"")
     node.attrib["transform"]=newTransformString
 
 #Take in input the justification of Photoshop's artLayer's textContent, and output a value for the "text-anchor" of SVG
@@ -163,11 +201,23 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
             print("\tCouldn't get justification for "+pathToSelf)
         
         newStyle=oldStyle
-        newStyle+="font-stretch:condensed;line-height:1;text-align:"
+        newStyle+="font-stretch:condensed;line-height:0.8;text-align:"
         newStyle+=textAlign
         newStyle+=";white-space:pre;shape-inside:url(#"+"rect"+str(txtCounter)+");display:inline;fill:"
         newStyle+=psdColorToRgbHexCode(photoshopLayer.textItem.color)
         newStyle+=";fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
+        #Now we account for rotation
+        angle=get_rotation(textComp)
+        remove_rotation_from_node(textComp)
+        verticalLr=False
+        if(angle!=90 and angle!=0):
+            print("\t/!\Sadly the script doesnt support angle others than 90. It could tho, but you'll have to modify it and figure out how to apply a rotate transform with the good origin to not fuck up everything")
+        #transform:"rotate(x)" works, but it mess up the position, I tried setting a different rotation origin transfrom:"rotate(x,ox,oy)", with the origin being the rect position, but it was just a bit off.
+        #trying to compensate for it with a translate or by changing the rect position , but couldn't figure it out, so we just activate vertical lr mode if angle is equal to 90
+        elif(angle==90):
+            newStyle+=";writing-mode:vertical-lr"
+            verticalLr=True
+
         textComp.attrib["style"]=newStyle
         textComp.text=photoshopLayer.textItem.contents
         #Now that the text is bound to a rect, it doesnt need to be translated through transform attribute anymore.
@@ -180,6 +230,10 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
         layerWidth = psdToSvgCoordinatesMultiplier*layerBounds[2] - psdToSvgCoordinatesMultiplier*layerBounds[0]
         layerHeight = psdToSvgCoordinatesMultiplier*layerBounds[3] - psdToSvgCoordinatesMultiplier*layerBounds[1]
 
+        #once again the angle/verticalLr thing is very messy/bruteforcy
+        if(verticalLr):
+            layerX-=0.25*layerWidth
+
         #But the bounds are too restrictive for our usage, firstly they're just a little bit too narrow on the height, which fucks up text printing for some reasons, and they're close to the sample text
         #So we open up one of their end, depending on their aligment/if they're multined
         #The single lined are jsut made wider in their "expending" direction whule the multilines one or expended downwards !
@@ -187,6 +241,18 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
         expansionAmount=1000
         if(isMultiline):
             layerHeight+=expansionAmount
+        #The vertical LR thing for the rotation is a little dirty, so in this state the program probably wont handle multiline AND vertical
+        elif(verticalLr):
+            #Actually no matter what it's just easier if the height is bigger, that way we don't have problems where the height is too narrow to print the text in InkScape
+            layerHeight+=expansionAmount
+            if(textAlign=="left"):
+                layerWidth+=expansionAmount
+            elif(textAlign=="right"):
+                layerWidth+=expansionAmount
+                layerY-=expansionAmount
+            elif(textAlign=="center"):
+                layerWidth+=2*expansionAmount
+                layerX-=expansionAmount
         else:
             #Actually no matter what it's just easier if the height is bigger, that way we don't have problems where the height is too narrow to print the text in InkScape
             layerHeight+=expansionAmount
