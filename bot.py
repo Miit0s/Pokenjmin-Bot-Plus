@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 import math
 from io import BytesIO
 from pathlib import Path
+import shutil
 
 os.environ['PYTHONUNBUFFERED'] = "1"
 
@@ -1073,12 +1074,29 @@ async def exportAll(interaction, format:int):
             user["card"]["skill1"]["skill_name"]=replacePingsByCardNames(user["card"]["skill1"]["skill_name"])
             user["card"]["skill2"]["skill_name"]=replacePingsByCardNames(user["card"]["skill2"]["skill_name"])
         message="Use this json with an external script to generate PSD images etc."
-        jsonPath=os.path.join(mkdtemp(),"export.json")
+        exportFolder=mkdtemp()
+        jsonPath=os.path.join(exportFolder,"export.json")
+        cardImagesZipPath=os.path.join(exportFolder,"CardImages.zip")
+        shutil.make_archive(cardImagesZipPath, 'zip', settings["CardImagesFolder"])
+        ownerPhotosZipPath=os.path.join(exportFolder,"OwnerPhotos.zip")
+        shutil.make_archive(ownerPhotosZipPath, 'zip', settings["OwnerPhotosFolder"])
+        
         with open(jsonPath, 'w', encoding='utf8') as f:
             json.dump(users, f, ensure_ascii=False)
         currentDir=os.getcwd()
         os.chdir(os.path.dirname(jsonPath))
         await interaction.followup.send(message,ephemeral=True,file=discord.File(jsonPath))
+        
+        try:
+            await interaction.followup.send("Heres the Card Images, unzip them in your export scripts folder",ephemeral=True, file=discord.File(cardImagesZipPath))
+        except:
+            await interaction.followup.send("Cannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
+
+        try:
+            await interaction.followup.send("Heres the Owner Photos, unzip them in your export scripts folder",ephemeral=True, file=discord.File(ownerPhotosZipPath))
+        except:
+            await interaction.followup.send("Cannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
+            
         os.chdir(currentDir)
         return
 
