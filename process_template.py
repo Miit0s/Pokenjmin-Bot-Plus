@@ -233,6 +233,10 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
         #once again the angle/verticalLr thing is very messy/bruteforcy
         if(verticalLr):
             layerX-=0.25*layerWidth
+        else:
+            #So the y of texts are a little  bit offset, I offseted them back by hand, noted their font size and offset, and asked ChatGPT to come up with a formula to find the offset
+            yOffset=0.05*getFontSizeFromStyle(textComp.attrib["style"])+0.06
+            layerY-=yOffset
 
         #But the bounds are too restrictive for our usage, firstly they're just a little bit too narrow on the height, which fucks up text printing for some reasons, and they're close to the sample text
         #So we open up one of their end, depending on their aligment/if they're multined

@@ -11,7 +11,7 @@
         <ns0:image id="OwnerPhotoMaskOpacity_Mask-2" data-name="OwnerPhotoMaskOpacity Mask" width="1381" height="1917" transform="scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed73.png" />
       </ns0:g>
     </ns0:mask>
-  <ns0:rect x="-848.3104514710485" y="183.0451397026604" width="1018.9783841314554" height="1006.8762261345853" id="rect1" /><ns0:rect x="50.058926259780904" y="183.59523779342723" width="1052.6718921909232" height="1007.1512751799687" id="rect2" /><ns0:rect x="39.60706253521127" y="192.5343317683881" width="129.27305133020343" height="1015.4027465414711" id="rect3" /><ns0:rect x="-848.3104514710485" y="146.87619023474178" width="1018.9783841314554" height="1006.8762261345853" id="rect4" /><ns0:rect x="50.058926259780904" y="147.70133737089202" width="1051.434171486698" height="1007.1512751799687" id="rect5" /><ns0:rect x="39.33201348982786" y="157.32805395931143" width="129.27305133020343" height="1015.4027465414711" id="rect6" /><ns0:rect x="22.82907076682316" y="221.0019079655712" width="144.12569978090767" height="1016.9155162910798" id="rect7" /><ns0:rect x="17.91256908059468" y="39.60706253521127" width="1004.8133582942097" height="1009.6267165884194" id="rect8" /><ns0:rect x="20.766202926447573" y="25.029463129890452" width="1055.8349562128326" height="1007.7013732707355" id="rect9" /><ns0:rect x="-861.1002320813772" y="25.44203669796557" width="1017.0530408137715" height="1008.9390939749609" id="rect10" /><ns0:rect x="-877.6031748043819" y="29.29272333333333" width="1013.0648296557121" height="1004.8133582942097" id="rect11" /><ns0:rect x="-907.0334226604069" y="130.23572298904537" width="2026.8172819248825" height="1005.3634563849765" id="rect12" /><ns0:rect x="17.91256908059468" y="-918.7230070892019" width="1004.8133582942097" height="1036.3064739906104" id="rect13" /></ns0:defs>
+  <ns0:rect x="-848.3104514710485" y="182.49807362447436" width="1018.9783841314554" height="1006.8762261345853" id="rect1" /><ns0:rect x="50.058926259780904" y="183.14845009277414" width="1052.6718921909232" height="1007.1512751799687" id="rect2" /><ns0:rect x="39.60706253521127" y="192.18495729767736" width="129.27305133020343" height="1015.4027465414711" id="rect3" /><ns0:rect x="-848.3104514710485" y="146.32912415655574" width="1018.9783841314554" height="1006.8762261345853" id="rect4" /><ns0:rect x="50.058926259780904" y="147.25454967023893" width="1051.434171486698" height="1007.1512751799687" id="rect5" /><ns0:rect x="39.33201348982786" y="156.97867948860068" width="129.27305133020343" height="1015.4027465414711" id="rect6" /><ns0:rect x="22.82907076682316" y="220.64966837111166" width="144.12569978090767" height="1016.9155162910798" id="rect7" /><ns0:rect x="17.91256908059468" y="39.60706253521127" width="1004.8133582942097" height="1009.6267165884194" id="rect8" /><ns0:rect x="20.766202926447573" y="24.425095339668285" width="1055.8349562128326" height="1007.7013732707355" id="rect9" /><ns0:rect x="-861.1002320813772" y="24.751716053586907" width="1017.0530408137715" height="1008.9390939749609" id="rect10" /><ns0:rect x="-877.6031748043819" y="28.888912035916643" width="1013.0648296557121" height="1004.8133582942097" id="rect11" /><ns0:rect x="-907.0334226604069" y="129.88634851833461" width="2026.8172819248825" height="1005.3634563849765" id="rect12" /><ns0:rect x="17.91256908059468" y="-918.7230070892019" width="1004.8133582942097" height="1036.3064739906104" id="rect13" /></ns0:defs>
   <ns0:g id="Backgrounds">
     <ns0:g id="ErgoFond_Image" data-name="ErgoFond Image">
       <ns0:image id="ErgoFond_Image-2" data-name="ErgoFond Image" width="1287" height="1798" transform="translate(6.46365 8.11395) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed1.png" />
@@ -149,13 +149,13 @@
       </ns0:g>
     </ns0:g>
     <ns0:g id="Cost">
-      <ns0:text transform="" style="font-size: 9.741321563720703px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:right;white-space:pre;shape-inside:url(#rect1);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text1" label="TextBox1">Cost</ns0:text>
+      <ns0:text transform="" style="font-size: 9.741321563720703px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect1);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text1" label="TextBox1">Cost</ns0:text>
     </ns0:g>
     <ns0:g id="Title">
-      <ns0:text id="text2" data-name="Title" transform="" style="font-size: 7.735754013061523px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:0.8;text-align:left;white-space:pre;shape-inside:url(#rect2);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox2">Compétence 2                      </ns0:text>
+      <ns0:text id="text2" data-name="Title" transform="" style="font-size: 7.735754013061523px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect2);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox2">Compétence 2                      </ns0:text>
     </ns0:g>
     <ns0:g id="Desc">
-      <ns0:text id="text3" data-name="Desc" transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:justify;white-space:pre;shape-inside:url(#rect3);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox3">eaentnieersesneaaletdepenesserleulneiemmsoloetnatauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetuteimsritonea</ns0:text>
+      <ns0:text id="text3" data-name="Desc" transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:justify;white-space:pre;shape-inside:url(#rect3);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox3">eaentnieersesneaaletdepenesserleulneiemmsoloetnatauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetuteimsritonea</ns0:text>
     </ns0:g>
   </ns0:g>
   <ns0:g id="Skill1">
@@ -238,13 +238,13 @@
       </ns0:g>
     </ns0:g>
     <ns0:g id="Cost-2" data-name="Cost">
-      <ns0:text transform="" style="font-size: 9.741321563720703px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:right;white-space:pre;shape-inside:url(#rect4);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text4" label="TextBox4">Cost</ns0:text>
+      <ns0:text transform="" style="font-size: 9.741321563720703px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect4);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text4" label="TextBox4">Cost</ns0:text>
     </ns0:g>
     <ns0:g id="Title-3" data-name="Title">
-      <ns0:text id="text5" data-name="Title" transform="" style="font-size: 7.735754013061523px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:0.8;text-align:left;white-space:pre;shape-inside:url(#rect5);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox5">Compétence 1                      </ns0:text>
+      <ns0:text id="text5" data-name="Title" transform="" style="font-size: 7.735754013061523px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect5);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox5">Compétence 1                      </ns0:text>
     </ns0:g>
     <ns0:g id="Desc-3" data-name="Desc">
-      <ns0:text id="text6" data-name="Desc" transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:justify;white-space:pre;shape-inside:url(#rect6);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox6">eaentnieersesneaaletdepenesserleulneiemmsoloetnatauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetuteimsritonea</ns0:text>
+      <ns0:text id="text6" data-name="Desc" transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:justify;white-space:pre;shape-inside:url(#rect6);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox6">eaentnieersesneaaletdepenesserleulneiemmsoloetnatauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetuteimsritonea</ns0:text>
     </ns0:g>
   </ns0:g>
   <ns0:g id="Passif">
@@ -252,7 +252,7 @@
       <ns0:image id="Bg_Image-2" data-name="Bg Image" width="1103" height="141" transform="translate(19.11591 217.15122) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed66.png" />
     </ns0:g>
     <ns0:g id="BottomText">
-      <ns0:text id="text7" data-name="BottomText" transform="" style="font-size: 5.844791889190674px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:justify;white-space:pre;shape-inside:url(#rect7);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox7">[Pré-prod] eaentnieerse sneaaletdepenes serleulneiem msoloetna tauisissreltoeessne aernsetuiearrsouii esioetnlrsespneieiaetuteimsritonea</ns0:text>
+      <ns0:text id="text7" data-name="BottomText" transform="" style="font-size: 5.844791889190674px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:justify;white-space:pre;shape-inside:url(#rect7);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox7">[Pré-prod] eaentnieerse sneaaletdepenes serleulneiem msoloetna tauisissreltoeessne aernsetuiearrsouii esioetnlrsespneieiaetuteimsritonea</ns0:text>
     </ns0:g>
   </ns0:g>
   <ns0:g style="mask: url(#mask)">
@@ -290,22 +290,22 @@
       <ns0:image id="Contour_Photo_Image-2" data-name="Contour Photo Image" width="218" height="218" transform="translate(17.46561 115.24555) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed75.png" />
     </ns0:g>
     <ns0:g id="P19">
-      <ns0:text transform="  scale(0.99074 1)" style="font-size: 6.876225471496582px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:left;white-space:pre;shape-inside:url(#rect8);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;writing-mode:vertical-lr" space="preserve" id="text8" label="TextBox8">P19</ns0:text>
+      <ns0:text transform="  scale(0.99074 1)" style="font-size: 6.876225471496582px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect8);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;writing-mode:vertical-lr" space="preserve" id="text8" label="TextBox8">P19</ns0:text>
     </ns0:g>
     <ns0:g id="CardName">
-      <ns0:text transform="" style="font-size: 10.88735580444336px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:0.8;text-align:left;white-space:pre;shape-inside:url(#rect9);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text9" label="TextBox9">CardName</ns0:text>
+      <ns0:text transform="" style="font-size: 10.88735580444336px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect9);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text9" label="TextBox9">CardName</ns0:text>
     </ns0:g>
     <ns0:g id="CPValeur">
-      <ns0:text transform="" style="font-size: 12.606412887573242px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:0.8;text-align:right;white-space:pre;shape-inside:url(#rect10);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text10" label="TextBox10">CPValeur</ns0:text>
+      <ns0:text transform="" style="font-size: 12.606412887573242px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect10);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text10" label="TextBox10">CPValeur</ns0:text>
     </ns0:g>
     <ns0:g id="CPNom">
-      <ns0:text transform="" style="font-size: 6.87622594833374px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:right;white-space:pre;shape-inside:url(#rect11);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text11" label="TextBox11">CPNom</ns0:text>
+      <ns0:text transform="" style="font-size: 6.87622594833374px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect11);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text11" label="TextBox11">CPNom</ns0:text>
     </ns0:g>
     <ns0:g id="Description">
-      <ns0:text transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:center;white-space:pre;shape-inside:url(#rect12);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text12" label="TextBox12">Description</ns0:text>
+      <ns0:text transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:center;white-space:pre;shape-inside:url(#rect12);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text12" label="TextBox12">Description</ns0:text>
     </ns0:g>
     <ns0:g id="OwnerName">
-      <ns0:text transform="  scale(0.99074 1)" style="font-size: 6.876225471496582px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:0.8;text-align:right;white-space:pre;shape-inside:url(#rect13);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;writing-mode:vertical-lr" space="preserve" id="text13" label="TextBox13">OwnerName</ns0:text>
+      <ns0:text transform="  scale(0.99074 1)" style="font-size: 6.876225471496582px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect13);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;writing-mode:vertical-lr" space="preserve" id="text13" label="TextBox13">OwnerName</ns0:text>
     </ns0:g>
   </ns0:g>
   <ns0:g id="PreviewWatermark" style="opacity: 0.14117647058823526">
