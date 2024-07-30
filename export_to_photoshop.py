@@ -345,7 +345,7 @@ def fill_layers_for_skill(ps, skillLayerGroupPath, skillLayerGroup, skillDatas):
     skillDescLayer=get_layer_by_path(ps,skillDescLayerPath)
     replace_psd_text_layer(ps,skillDescLayerPath,skillDescLayer,str(skillDatas["skill_desc"]))
 
-    skillTitleLayerPath=skillLayerGroupPath+"/"+settings["SkillDescLayerName"]
+    skillTitleLayerPath=skillLayerGroupPath+"/"+settings["SkillTitleLayerName"]
     skillTitleLayer=get_layer_by_path(ps,skillTitleLayerPath)
     replace_psd_text_layer(ps,skillTitleLayerPath,skillTitleLayer,str(skillDatas["skill_name"]))
 
