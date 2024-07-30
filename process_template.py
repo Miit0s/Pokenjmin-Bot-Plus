@@ -201,7 +201,7 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
             print("\tCouldn't get justification for "+pathToSelf)
         
         newStyle=oldStyle
-        newStyle+="font-stretch:condensed;line-height:0.8;text-align:"
+        newStyle+="font-stretch:condensed;line-height:1;text-align:"
         newStyle+=textAlign
         newStyle+=";white-space:pre;shape-inside:url(#"+"rect"+str(txtCounter)+");display:inline;fill:"
         newStyle+=psdColorToRgbHexCode(photoshopLayer.textItem.color)
