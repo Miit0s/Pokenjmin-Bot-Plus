@@ -8,8 +8,7 @@
 	"GeneratedSvgsExtension":".generated.svg",
 	"PreviewDPI":523.543,
 
-	"GeneratedPsdFolder":"Exports/GeneratedPSDs",
-	"ExportPngFolder":"Exports/PNG",
+	"ExportPdfFolder":"Exports/PDF",
 
 	"CardImagesFolder":"Data/CardImages",
 	"CardImagesPreferredRatio":1.48,
