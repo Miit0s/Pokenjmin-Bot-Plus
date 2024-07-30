@@ -1087,15 +1087,15 @@ async def exportAll(interaction, format:int):
         os.chdir(os.path.dirname(jsonPath))
         await interaction.followup.send(message,ephemeral=True,file=discord.File(jsonPath))
         
-        try:
-            await interaction.followup.send("Heres the Card Images, unzip them in your export scripts folder",ephemeral=True, file=discord.File(cardImagesZipPath))
-        except Exception as error:
-            await interaction.followup.send(str(error)+"\nCannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
+        # try:
+        await interaction.followup.send("Heres the Card Images, unzip them in your export scripts folder",ephemeral=True, file=discord.File(cardImagesZipPath))
+        # except Exception as error:
+        #     await interaction.followup.send(str(error)+"\nCannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
 
-        try:
-            await interaction.followup.send("Heres the Owner Photos, unzip them in your export scripts folder",ephemeral=True, file=discord.File(ownerPhotosZipPath))
-        except Exception as error:
-            await interaction.followup.send(str(error)+"\nCannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
+        # try:
+        await interaction.followup.send("Heres the Owner Photos, unzip them in your export scripts folder",ephemeral=True, file=discord.File(ownerPhotosZipPath))
+        # except Exception as error:
+        #     await interaction.followup.send(str(error)+"\nCannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
 
         os.chdir(currentDir)
         return
@@ -1230,6 +1230,6 @@ async def on_ready():
     await tree.sync()
     #await tree.sync(guild=discord.Object(id=790626187944394772))
 
-print("This line was last modified on the 30/07/2024 at 15:16 by Jeremy (to test Docker Recreate)")
+print("This line was last modified on the 30/07/2024 at 16:54 by Jeremy (to test Docker Recreate)")
 client.run(settings["Token"])
 #endregion
