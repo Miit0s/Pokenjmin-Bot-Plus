@@ -19,7 +19,7 @@ nodeNamespace="ns0:"
 attribNamespace="ns1:"
 root = tree.getroot()
 
-#region Functions pasted from bot.py, code duplication is a bad habit, but I didn't have the heart to refacto all the project when I realised the bot couldn't be "self suficient"
+#region Functions pasted from bot.py or export_to_photoshop, code duplication is a bad habit, but I didn't have the heart to refacto all the project when I realised the bot couldn't be "self suficient"
 #Get layer by path written as Group/Group/Layer, for exampel Infos/Name
 def get_layer_by_path(ps, layerPath):
     subGroups=str(layerPath).split("/")
