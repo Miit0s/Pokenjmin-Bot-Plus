@@ -1235,6 +1235,6 @@ async def on_ready():
     await tree.sync()
     #await tree.sync(guild=discord.Object(id=790626187944394772))
 
-print("This line was last modified on the 30/07/2024 at 16:54 by Jeremy (to test Docker Recreate)")
+print("This line was last modified on the 31/07/2024 at 1:52 by Jeremy (to test Docker Recreate)")
 client.run(settings["Token"])
 #endregion
