@@ -30,10 +30,12 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 settingsFile= open('settings.json', encoding="utf-8")
 
-print("Settings:")
-with open('settings.json', 'r') as fin:
-    print(fin.read())
-
+try:
+    print("Settings:")
+    with open('settings.json', 'r') as fin:
+        print(fin.read())
+except:
+    print("Couldnt print settings")
 
 settings=json.load(settingsFile)
 con = sqlite3.connect("Data/data.db")
@@ -1076,10 +1078,13 @@ async def exportAll(interaction, format:int):
         message="Use this json with an external script to generate PSD images etc."
         exportFolder=mkdtemp()
         jsonPath=os.path.join(exportFolder,"export.json")
-        cardImagesZipPath=os.path.join(exportFolder,"CardImages.zip")
+        cardImagesZipPath=os.path.join(exportFolder,"CardImages")
         shutil.make_archive(cardImagesZipPath, 'zip', settings["CardImagesFolder"])
-        ownerPhotosZipPath=os.path.join(exportFolder,"OwnerPhotos.zip")
+        ownerPhotosZipPath=os.path.join(exportFolder,"OwnerPhotos")
         shutil.make_archive(ownerPhotosZipPath, 'zip', settings["OwnerPhotosFolder"])
+        #shutil adds the .zip on its own, so we must add it afters it's done cooking, else with have double .zip
+        cardImagesZipPath+=".zip"
+        ownerPhotosZipPath+=".zip"
         
         with open(jsonPath, 'w', encoding='utf8') as f:
             json.dump(users, f, ensure_ascii=False)
@@ -1092,10 +1097,10 @@ async def exportAll(interaction, format:int):
         # except Exception as error:
         #     await interaction.followup.send(str(error)+"\nCannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
 
-        # try:
-        await interaction.followup.send("Heres the Owner Photos, unzip them in your export scripts folder",ephemeral=True, file=discord.File(ownerPhotosZipPath))
-        # except Exception as error:
-        #     await interaction.followup.send(str(error)+"\nCannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
+        try:
+            await interaction.followup.send("Heres the Owner Photos, unzip them in your export scripts folder",ephemeral=True, file=discord.File(ownerPhotosZipPath))
+        except Exception as error:
+             await interaction.followup.send(str(error)+"\nCannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
 
         os.chdir(currentDir)
         return

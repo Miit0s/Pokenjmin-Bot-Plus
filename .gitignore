@@ -162,4 +162,7 @@ Settings.json
 
 *.generated.pdf
 *.generated.svg
+Data/CardImages/*.png
+Data/OwnerPhotos/*.png
+
 Ignore/*
