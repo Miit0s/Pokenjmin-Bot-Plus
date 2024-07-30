@@ -186,9 +186,9 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
         for child in list(textComp):
             textComp.remove(child)
         #All this attrib where copied from a text box created on InkScape, some of them may be useless
-        textComp.attrib["xml:space"]="preserve"
+        textComp.attrib["space"]="preserve"
         textComp.attrib["id"]="text"+str(txtCounter)
-        textComp.attrib["inkscape:label"]="TextBox"+str(txtCounter)
+        textComp.attrib["label"]="TextBox"+str(txtCounter)
         oldStyle=textComp.attrib["style"]
         if(oldStyle==None): oldStyle=""
         if(oldStyle!=""): oldStyle+=";"

@@ -522,6 +522,7 @@ def get_svg_layer_by_path(root, layerPath):
 
     for group in subGroups:
         nextLayer=None
+        if(currentLayer==None):continue
         for child in currentLayer:
             if sanitizeTag(child.tag)!="g":continue
             #If the g node has no id, it's probably a mask, so we just replace it with its "true" layer child
@@ -540,26 +541,6 @@ def get_svg_layer_by_path(root, layerPath):
         currentLayer=nextLayer
     return currentLayer
 
-def split_string_to_wrap_text(text:str, maxCharacters:int):
-    words=text.split(" ")
-    lines=[]
-    currentLine=""
-    while len(words)>0:
-        if(len(currentLine)+len(words[0])>maxCharacters):
-            #if current word is longer than a line, we need to cut it and fit it anyway
-            if(len(words[0])>maxCharacters):
-                freeSpaceOnCurrentLine=(maxCharacters-len(currentLine))
-                keptPart=words[0][0:freeSpaceOnCurrentLine]
-                words[0]=words[0][freeSpaceOnCurrentLine:len(words[0])]
-                currentLine+=" "+keptPart
-            lines.append(currentLine)
-            currentLine=""
-            continue
-        currentLine+=" "+words[0]
-        words.remove(words[0])
-    lines.append(currentLine)
-    return lines 
-
 def getFontSizeFromStyle(style:str):
     pattern = r"font-size:\s*([\d.]+)px"
     match = re.search(pattern, style)
@@ -577,16 +558,6 @@ def getStyleWithNewFontSize(style:str, newFontSize:float):
         style=style+";"+"font-size: "+str(newFontSize)+"px"
     return style
     
-
-#Allow us to find the real biggest tspan even taking into account nesting
-def getTspanMaxLength(tspan, maxLengthSoFar):
-    if(tspan.text!=None and len(tspan.text)>maxLengthSoFar):
-        maxLengthSoFar=len(tspan.text)
-    for child in tspan:
-        if(sanitizeTag(child.tag)!="tspan"): continue
-        maxLengthSoFar=getTspanMaxLength(child, maxLengthSoFar)
-    return maxLengthSoFar
-
 def get_text_node_of_svg_layer(layer):
     for child in layer:
         if sanitizeTag(child.tag)=="text":
@@ -606,36 +577,7 @@ def change_text_of_svg_layer(layer,text:str):
     if(textDiv==None):
         print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
 
-    #Now we check if textDiv contains tspans
-    hasTSpan=False
-    caracPerLine=0
-    for textDivChild in textDiv:
-        if sanitizeTag(textDivChild.tag)!="tspan":
-            continue
-        hasTSpan=True
-        if(textDivChild.text==None): 
-            continue
-        caracPerLine=max(caracPerLine,len(textDivChild.text))
-    #No tspan: We got a easy case here, the field is on a single line, our job is done, yay !
-    if(hasTSpan==False):
-        textDiv.text=text
-        return
-    caracPerLine=getTspanMaxLength(textDiv, caracPerLine)
-    #So, we have tspans, that means we are face to face with a multiline text, but we now how much caractere fits in a line, se we can use this
-    attributes=textDiv.attrib
-    textDiv.clear()
-    textDiv.attrib=attributes
-
-    lines=split_string_to_wrap_text(text, caracPerLine)
-    textDiv.text=lines[0]
-    lines.remove(lines[0])
-    i=0
-    while len(lines)>0:
-        i+=1
-        tspan=ET.SubElement(textDiv,nodeNamespace+"tspan")
-        tspan.attrib={"x":"0", "y":str(i*math.floor(getFontSizeFromStyle(textDiv.attrib["style"]))) }
-        tspan.text=lines[0]
-        lines.remove(lines[0])
+    textDiv.text=text
 
 def toggle_svg_layer_visibility(layer, visibility:bool):
     notVisibleString="display:none;"
@@ -744,7 +686,8 @@ def isSvgLayerEqual(svgLayerId:str, target:str):
 
 def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):   
     svgTemplatePath=os.path.join(os.getcwd(),settings["TemplateSvgFile"])
-    tree = ET.parse(svgTemplatePath)
+    parser1 = ET.XMLParser(encoding="utf-8")
+    tree = ET.parse(svgTemplatePath,parser1)
 
     root = tree.getroot()
 
