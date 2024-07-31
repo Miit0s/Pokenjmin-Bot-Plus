@@ -435,7 +435,8 @@ def change_font_size_of_svg_layer(layer,sizeInPx:float, fontScaleRatio, psdToSvg
     oldFontSize=getFontSizeFromStyle(style)
     newFontSize=fontScaleRatio*sizeInPx
     textDiv.attrib["style"]=getStyleWithNewFontSize(style, newFontSize)
-    translate_node(textDiv, 0, -0.5*(oldFontSize-newFontSize))
+    #It makes the text "centered" on its resize, only works for horizontal texts, if in the future you want scalable vertical text, you'll have to change things here
+    translate_node(textDiv, 0, 0.5*(oldFontSize-newFontSize))
 
 
 def toggle_svg_layer_visibility(layer, visibility:bool):
