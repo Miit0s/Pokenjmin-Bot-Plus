@@ -1124,30 +1124,79 @@ async def exportAll(interaction, format:int):
         message="Use this json with an external script to generate PSD images etc."
         exportFolder=mkdtemp()
         jsonPath=os.path.join(exportFolder,"export.json")
-        cardImagesZipPath=os.path.join(exportFolder,"CardImages")
-        shutil.make_archive(cardImagesZipPath, 'zip', settings["CardImagesFolder"])
-        ownerPhotosZipPath=os.path.join(exportFolder,"OwnerPhotos")
-        shutil.make_archive(ownerPhotosZipPath, 'zip', settings["OwnerPhotosFolder"])
-        #shutil adds the .zip on its own, so we must add it afters it's done cooking, else with have double .zip
-        cardImagesZipPath+=".zip"
-        ownerPhotosZipPath+=".zip"
         
         with open(jsonPath, 'w', encoding='utf8') as f:
             json.dump(users, f, ensure_ascii=False)
         currentDir=os.getcwd()
         os.chdir(os.path.dirname(jsonPath))
+        message+="\nThe images are coming in multiple zip files, starting with the card images"
         await interaction.followup.send(message,ephemeral=True,file=discord.File(jsonPath))
-        
-        try:
-            await interaction.followup.send("Heres the Card Images, unzip them in your export scripts folder",ephemeral=True, file=discord.File(cardImagesZipPath))
-        except Exception as error:
-            await interaction.followup.send(str(error)+"\nCannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
 
-        try:
-            await interaction.followup.send("Heres the Owner Photos, unzip them in your export scripts folder",ephemeral=True, file=discord.File(ownerPhotosZipPath))
-        except Exception as error:
-             await interaction.followup.send(str(error)+"\nCannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory",ephemeral=True)
+        #We copy the card images, then the owner photos, to a temp folder, once its big enough, we send it. this avoid sending files too big for discord
 
+        tempZipFolder=mkdtemp()
+        zipNbr=0
+
+        async def sendZip(interaction, zipName:str, folderToZip:str, successMessage, fallbackMessage:str):
+            nonlocal tempZipFolder
+            nonlocal zipNbr
+            zipNbr+=1
+            zipPath=os.path.join(tempZipFolder,zipName+str(zipNbr))
+            shutil.make_archive(zipPath, 'zip', destFolder)
+            #shutil adds the .zip on its own, so we must add it afters it's done cooking, else with have double .zip
+            zipPath+=".zip"
+            os.chdir(tempZipFolder)
+            try:
+                await interaction.followup.send(successMessage,ephemeral=True, file=discord.File(zipPath))
+            except Exception as error:
+                await interaction.followup.send(str(error)+"\n"+fallbackMessage,ephemeral=True)
+            tempZipFolder=mkdtemp()
+            
+        imagePath=""
+        destFolder=""
+        for name in os.listdir(os.path.join(currentDir,settings["CardImagesFolder"])):
+            # Open file
+            imagePath=os.path.join(currentDir,settings["CardImagesFolder"], name)
+            destFolder=os.path.join(tempZipFolder, os.path.basename(settings["CardImagesFolder"]))
+            if(os.path.exists(os.path.join(tempZipFolder, os.path.basename(settings["CardImagesFolder"])))==False):
+                os.mkdir(destFolder)
+            destPath=os.path.join(destFolder,name)
+            shutil.copy(imagePath,destPath)
+            # get size
+            size=0
+            for path, dirs, files in os.walk(tempZipFolder):
+                for f in files:
+                    fp = os.path.join(path, f)
+                    size += os.path.getsize(fp)
+            #if size is superior to 8MB, we send the content of the temp folder, then we create a new temp folder
+            if(size>8000000):
+                await sendZip(interaction,"CardImages",destFolder,"Here is a part of Owner Photos, unzip them in your export scripts folder","\nCannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory")
+                
+        await sendZip(interaction,"CardImages",destFolder,"Here is a part of Owner Photos, unzip them in your export scripts folder","\nCannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory")       
+        await interaction.followup.send("This was the last zip for card images, moving to owner images",ephemeral=True)
+
+        tempZipFolder=mkdtemp()
+        zipNbr=0
+        for name in os.listdir(os.path.join(currentDir,settings["OwnerPhotosFolder"])):
+            # Open file
+            imagePath=os.path.join(currentDir,settings["OwnerPhotosFolder"], name)
+            destFolder=os.path.join(tempZipFolder, os.path.basename(settings["OwnerPhotosFolder"]))
+            if(os.path.exists(os.path.join(tempZipFolder, os.path.basename(settings["OwnerPhotosFolder"])))==False):
+                os.mkdir(destFolder)
+            destPath=os.path.join(destFolder,name)
+            shutil.copy(imagePath,destPath)
+            # get size
+            size=0
+            for path, dirs, files in os.walk(tempZipFolder):
+                for f in files:
+                    fp = os.path.join(path, f)
+                    size += os.path.getsize(fp)
+            #if size is superior to 8MB, we send the content of the temp folder, then we create a new temp folder
+            if(size>8000000):
+                await sendZip(interaction,"OwnerPhotos",destFolder,"Here is a part of Owner Photos, unzip them in your export scripts folder","\nCannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory")
+
+        await sendZip(interaction,"OwnerPhotos",destFolder,"Here is a part of Owner Photos, unzip them in your export scripts folder","\nCannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory")   
+        await interaction.followup.send("Export over !",ephemeral=True)
         os.chdir(currentDir)
         return
 
