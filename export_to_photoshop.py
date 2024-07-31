@@ -455,7 +455,7 @@ for user in users:
     print("Card "+str(i)+"/"+str(nbrOfUsers)+" - Owner:"+card["owner_name"]+" - Card name:"+card["card_name"])
     start=time.perf_counter()
     pngImagesName=str(user["discord_id"])+".png"
-    fileName=(str(user["cohort"])+"-"+str(user["spe"])+"-"+str(i)+card["owner_name"])+".generated"
+    fileName=(str(user["cohort"])+"-"+str(user["spe"])+"-"+str(i))+".generated"
     merger.append(create_psd_card(card,user["cohort"],user["spe"],fileName,pngImagesName,False))
     end=time.perf_counter()
     print("\tFinished in "+str(end-start)+"s")
