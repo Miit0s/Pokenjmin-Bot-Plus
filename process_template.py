@@ -278,9 +278,14 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
         rect=ET.SubElement(defsNode,nodeNamespace+"rect")
         rect.attrib={"x":str(layerX),"y":str(layerY),"width":str(layerWidth),"height":str(layerHeight),"id":("rect"+str(txtCounter))}
 
+def getRootHeight(rootNode):
+    if("height" in rootNode.attrib): return root.attrib["height"]
+    else:
+        return root.attrib["viewBox"].split(" ")[3]
+
 with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open", auto_close=True) as ps:
-    svgHeight=root.attrib["height"]
     psdHeight=ps.active_document.height
+    svgHeight=getRootHeight(root)
     #layer=ps.active_document.artLayers[0]
     psdToSvgCoordinatesMultiplier=float(svgHeight)/float(psdHeight)
     root.attrib["psdToSvgCoordinatesMultiplier"]=str(psdToSvgCoordinatesMultiplier)
