@@ -423,7 +423,6 @@ def change_text_of_svg_layer(layer,text:str):
     textDiv.text=text
 
 def change_font_size_of_svg_layer(layer,sizeInPx:float, fontScaleRatio, psdToSvgCoordinatesMultiplier):
-    text=str(text)
     textDiv=None
     for child in layer:
         if sanitizeTag(child.tag)=="text":
