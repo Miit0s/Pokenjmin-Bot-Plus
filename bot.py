@@ -434,7 +434,7 @@ def change_font_size_of_svg_layer(layer,sizeInPx:float, fontScaleRatio, psdToSvg
     style=textDiv.attrib["style"]
     oldFontSize=getFontSizeFromStyle(style)
     newFontSize=fontScaleRatio*sizeInPx
-    textDiv.attrib["style"]=getStyleWithNewFontSize(style, )
+    textDiv.attrib["style"]=getStyleWithNewFontSize(style, newFontSize)
     translate_node(textDiv, 0, -0.5*(oldFontSize-newFontSize))
 
 
