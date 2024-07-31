@@ -228,12 +228,25 @@ def create_legendary_user():
     nbrOfLegendaries=cursor.fetchone()["count"]
 
     id="leg"+str(nbrOfLegendaries)
+    cursor=con.cursor()
+    cursor.execute("SELECT count(*) as count FROM users WHERE legendary_user=TRUE and discord_id=?",(id,))
+    while(cursor.fetchone()["count"]>0):
+        nbrOfLegendaries+=1
+        id="leg"+str(nbrOfLegendaries)
+        cursor=con.cursor()
+        cursor.execute("SELECT count(*) as count FROM users WHERE legendary_user=TRUE and discord_id=?",(id,))
+
     cursor = con.cursor()
     cursor.execute("INSERT INTO users (discord_id, guild_id, legendary_user) VALUES (?,?, TRUE)",(id,0))
     cursor.execute("SELECT * from users WHERE discord_id=?",(id,))
     con.commit()
     result=cursor.fetchone()
     return sqlite3Row_to_dict(result)
+
+def delete_legendary_user(id:str):
+    cursor = con.cursor()
+    cursor.execute("DELETE FROM users WHERE legendary_user=TRUE and discord_id=?",(id,))
+    con.commit()
 
 def list_legendary_cards():
     cursor=con.cursor()
@@ -856,6 +869,15 @@ async def createLegendary(interaction, card_name:str, owner_name:str):
     update_card(card)
     feedbackMessage="All field successfully setted !"
     await interaction.response.send_message(feedbackMessage,ephemeral=True)
+
+@tree.command(
+    name="delete_legendary",
+    description="Delete a legendary card",
+    #guild=discord.Object(id=790626187944394772)
+)
+async def deleteLegendary(interaction, id:str):
+    delete_legendary_user(id)
+    await interaction.response.send_message("Legendary deleted !",ephemeral=True)
 
 @tree.command(
     name="list_legendaries",
