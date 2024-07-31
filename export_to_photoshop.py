@@ -18,7 +18,7 @@ settings=json.load(settingsFile)
 
 #temp directory aren't liked by photoshop, so we save it in the working directory, in a temp folder ignored by git
 tempFolder=os.path.join(os.getcwd(),"temp")
-shutil.rmtree(tempFolder)
+if(os.path.exists(tempFolder)): shutil.rmtree(tempFolder)
 if(os.path.exists(tempFolder)==False): os.mkdir(tempFolder)
 
 #Taken straight from bot.py, do not change code of functions here, change it in bot.py then copy paste it here
