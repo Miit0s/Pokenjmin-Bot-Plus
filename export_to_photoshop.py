@@ -24,6 +24,54 @@ if(os.path.exists(tempFolder)==False): os.mkdir(tempFolder)
 #Taken straight from bot.py, do not change code of functions here, change it in bot.py then copy paste it here
 #region SVG management
 
+def change_font_size_of_svg_layer(layer,sizeInPx:float, fontScaleRatio, psdToSvgCoordinatesMultiplier):
+    textDiv=None
+    for child in layer:
+        if sanitizeTag(child.tag)=="text":
+            textDiv=child
+            break
+    if(textDiv==None):
+        print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
+
+    style=textDiv.attrib["style"]
+    oldFontSize=getFontSizeFromStyle(style)
+    newFontSize=fontScaleRatio*sizeInPx
+    textDiv.attrib["style"]=getStyleWithNewFontSize(style, newFontSize)
+    #It makes the text "centered" on its resize, only works for horizontal texts, if in the future you want scalable vertical text, you'll have to change things here
+    translate_node(textDiv, 0, 0.5*(oldFontSize-newFontSize))
+
+
+def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
+    #First we get and store the transform attribute
+    
+    if("transform" not in node.attrib): 
+        transform="translate(0 0)"
+    else:
+        transform=node.attrib["transform"]
+
+    if(transform=="" or transform==None):
+        transform="translate(0 0)"
+
+    # Extraire les valeurs de translation
+    translatePattern = r'translate\(([^)]+)\)'
+    translateMatch = re.search(translatePattern, transform)
+
+    scale_pattern = r'scale\(([^)]+)\)'
+    scale_match = re.search(scale_pattern, transform)
+    scaleFactor=1
+    if scale_match and relativeToScale:
+        #sometime the scale is sliglty different on x and y, leading to 2 value, but we can afford to not care
+        scaleFactor = float(scale_match.group(1).split(" ")[0])
+    
+    values = translateMatch.group(1).split(" ")
+    x = float(values[0])
+    y = float(values[1]) if len(values) > 1 else 0.0
+    x += scaleFactor*deltaX
+    y += scaleFactor*deltaY
+
+    newTransformString=transform.replace(f"translate({translateMatch.group(1)})",f"translate({x} {y})")
+    node.attrib["transform"]=newTransformString
+
 #Get layer by path written as Group/Group/Layer, for exampel Infos/Name
 def get_svg_layer_by_path(root, layerPath):
     subGroups=str(layerPath).split("/")
@@ -160,6 +208,8 @@ def exportSingleTextLayerWithNewContent(layerPath:str, textContent:str, newFontS
     root = tree.getroot()
     #Font size between photoshop and svg are not the same, but min and max font size in the settings are expressed for photoshop, so we get the ratio that was calculated when we processed the svg template with process_template.py
     fontScaleRatio=float(tree.getroot().attrib["fontScaleRatio"])
+    psdToSvgCoordinatesMultiplier=float(tree.getroot().attrib["psdToSvgCoordinatesMultiplier"])
+    
     childCount=0
     for child in root:
         childCount+=1
@@ -169,9 +219,7 @@ def exportSingleTextLayerWithNewContent(layerPath:str, textContent:str, newFontS
     toggle_visibility_of_parent_and_self_recursively(chosenOne, True)
     change_text_of_svg_layer(chosenOne, textContent)
     if(newFontSize!=None): 
-        textNode=get_text_node_of_svg_layer(chosenOne)
-        style=textNode.attrib["style"]
-        textNode.attrib["style"]=getStyleWithNewFontSize(style, fontScaleRatio*newFontSize)
+        change_font_size_of_svg_layer(chosenOne,newFontSize,fontScaleRatio,psdToSvgCoordinatesMultiplier)
 
     output = BytesIO()
     tree.write(output, encoding='utf-8', xml_declaration=True) 
