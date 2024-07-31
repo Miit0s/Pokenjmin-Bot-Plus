@@ -20,6 +20,12 @@ attribNamespace="ns1:"
 root = tree.getroot()
 
 #region Functions pasted from bot.py or export_to_photoshop, code duplication is a bad habit, but I didn't have the heart to refacto all the project when I realised the bot couldn't be "self suficient"
+def ptToPx(pt:float):
+    return (settings["PreviewDPI"]/72) * pt
+
+def pxToPt(px:float):
+    return (72/settings["PreviewDPI"]) * px
+
 #Get layer by path written as Group/Group/Layer, for exampel Infos/Name
 def get_layer_by_path(ps, layerPath):
     subGroups=str(layerPath).split("/")
@@ -170,7 +176,7 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
         #If we're on the card name layer we also calculate the multiplier from Photoshop's font size to svg font size, since it's the big zbeul
         if(pathToSelf==settings["CardNameLayer"]):
             svgFontSize=float(getFontSizeFromStyle(textComp.attrib["style"]))
-            psdFontSize=float(photoshopLayer.textItem.size)
+            psdFontSize= ptToPx(float(photoshopLayer.textItem.size))
             scaleRatio=svgFontSize/psdFontSize
             root.attrib["fontScaleRatio"]=str(scaleRatio)
 
@@ -276,7 +282,9 @@ with Session(os.path.join(os.getcwd(),settings["TemplatePsdFile"]), action="open
     svgHeight=root.attrib["height"]
     psdHeight=ps.active_document.height
     #layer=ps.active_document.artLayers[0]
-    scanAllTextLayers(ps,root,"",float(svgHeight)/float(psdHeight))
+    psdToSvgCoordinatesMultiplier=float(svgHeight)/float(psdHeight)
+    root.attrib["psdToSvgCoordinatesMultiplier"]=str(psdToSvgCoordinatesMultiplier)
+    scanAllTextLayers(ps,root,"",psdToSvgCoordinatesMultiplier)
 
 output = BytesIO()
 tree.write(output, encoding='utf-8', xml_declaration=True) 

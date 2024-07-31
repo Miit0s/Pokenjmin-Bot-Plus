@@ -422,6 +422,23 @@ def change_text_of_svg_layer(layer,text:str):
 
     textDiv.text=text
 
+def change_font_size_of_svg_layer(layer,sizeInPx:float, fontScaleRatio, psdToSvgCoordinatesMultiplier):
+    text=str(text)
+    textDiv=None
+    for child in layer:
+        if sanitizeTag(child.tag)=="text":
+            textDiv=child
+            break
+    if(textDiv==None):
+        print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
+
+    style=textDiv.attrib["style"]
+    oldFontSize=getFontSizeFromStyle(style)
+    newFontSize=fontScaleRatio*sizeInPx
+    textDiv.attrib["style"]=getStyleWithNewFontSize(style, )
+    translate_node(textDiv, 0, -0.5*(oldFontSize-newFontSize))
+
+
 def toggle_svg_layer_visibility(layer, visibility:bool):
     notVisibleString="display:none;"
     visibleString="display:inline;"
@@ -455,7 +472,15 @@ def find_child_by_sanitize_tag(node, tag):
 
 def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
     #First we get and store the transform attribute
-    transform=node.attrib["transform"]
+    
+    if("transform" not in node.attrib): 
+        transform="translate(0 0)"
+    else:
+        transform=node.attrib["transform"]
+
+    if(transform=="" or transform==None):
+        transform="translate(0 0)"
+
     # Extraire les valeurs de translation
     translatePattern = r'translate\(([^)]+)\)'
     translateMatch = re.search(translatePattern, transform)
@@ -537,6 +562,7 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
 
     #Font size between photoshop and svg are not the same, but min and max font size in the settings are expressed for photoshop, so we get the ratio that was calculated when we processed the svg template with process_template.py
     fontScaleRatio=float(tree.getroot().attrib["fontScaleRatio"])
+    psdToSvgCoordinatesMultiplier=float(tree.getroot().attrib["psdToSvgCoordinatesMultiplier"])
 
     previewWatermark=get_svg_layer_by_path(root,settings["PreviewLayerGroup"])
     toggle_svg_layer_visibility(previewWatermark,isPreview)
@@ -544,9 +570,7 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     cardNameLayer = get_svg_layer_by_path(root,settings["CardNameLayer"])
     change_text_of_svg_layer(cardNameLayer,cardDatas["card_name"])
     if(cardDatas["card_name_font_size"]!=None):
-        cardNameLayerTextNode=get_text_node_of_svg_layer(cardNameLayer)
-        cardNameLayerStyle=cardNameLayerTextNode.attrib["style"]
-        cardNameLayerTextNode.attrib["style"]=getStyleWithNewFontSize(cardNameLayerStyle, fontScaleRatio*cardDatas["card_name_font_size"])
+        change_font_size_of_svg_layer(cardNameLayer,cardDatas["card_name_font_size"],fontScaleRatio,psdToSvgCoordinatesMultiplier)
 
     ownerNameLayer = get_svg_layer_by_path(root,settings["OwnerNameLayer"])
     change_text_of_svg_layer(ownerNameLayer,cardDatas["owner_name"])
@@ -1235,6 +1259,6 @@ async def on_ready():
     await tree.sync()
     #await tree.sync(guild=discord.Object(id=790626187944394772))
 
-print("This line was last modified on the 31/07/2024 at 1:52 by Jeremy (to test Docker Recreate)")
+print("This line was last modified on the 31/07/2024 at 14:38 by Jeremy (to test Docker Recreate)")
 client.run(settings["Token"])
 #endregion
