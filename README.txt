@@ -62,7 +62,9 @@ Since the preview system that uses SVG is a bit hasardous and cause loss to the 
 To export, you'll need a Windows computer with Python 3.12 or upper installed, Photoshop 2020 installed, and Inkscape installed and in PATH (you can either add it manually, or use Chocolatey (https://community.chocolatey.org/packages/InkScape) to install Inkscape which will automaticly add it to path).
 
 For that, use /export_all with the format parameter as JSON.
-Now, you also need to get the photos, for that, you'll need to connect yourself to the docker and copy the Data/CardImages and Data/OwnerPhotos folder on the main Google Cloud VM, then, you'll need to download those and paste them in your local repository:
+
+The bot will also send you the pictures as zip, you need to extract them in the Data/CardImages and Data/OwnerPhotos folder, if one of the zip is mising, you'll need to manually download the images from the docker:	
+You'll need to connect yourself to the docker and copy the Data/CardImages and Data/OwnerPhotos folder on the main Google Cloud VM, then, you'll need to download those and paste them in your local repository:
 Connect through SSH to your Google cloud VM : 
 	docker ps ; To get the Docker's ID
 	sudo docker cp 9b27faa2de7d:/usr/src/app/Data/CardImages ./CardImages ; Replace 9b27faa2de7d by the id of your Docker 
