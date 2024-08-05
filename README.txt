@@ -39,7 +39,7 @@ For the final export use the function of the bot that directly interacts with ph
 Once your template is exported, run "process_template.py", this script will modify the svg template to add some finishing touches:
 	-Change the "text-anchor" property for each text node of the SVG to better reflect the original PSD (by default everything is right aligned)
 	-After changing the text-anchor it will translate to avoid shifting. The process is very "bruteforcy" for the moment, so you may want to look at it if you want fancy angles
-	/!\ Go to Preferences->Rulers and units and verify that the unit is set to "point", else it won't work properly
+	/!\ Go to Preferences->Rulers and units and verify that the unit is set to "point", or else the texts with dynamic font sizes won't work properly, the ratio to go from Photoshop's font size to SVG font size won't work
 
 The resulting SVG will be exported to TemplateSVG/Template_Pokenjmin.svg
 You must repeat the process for each new export
