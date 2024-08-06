@@ -43,7 +43,7 @@ Once your template is exported, run "process_template.py", this script will modi
 
 The resulting SVG will be exported to TemplateSVG/Template_Pokenjmin.svg
 You must repeat the process for each new export
-
+,
 
 HOW TO SETUP THE SETTINGS:
 Copy and paste "settings_template.json" and rename it "settings.json", in the admins part of the json, paste all the Discord IDs (the big number you get by shift->right clicking on someone) of your admins there.

@@ -722,7 +722,7 @@ def getProgressionForUser(userid:str):
     user=get_user(userid)
     if(user==None): return 0
 
-    card=get_or_create_card(user)
+    card=get_or_create_card(user, True)
 
     totalFields+=5
     if(isFilled(card["owner_name"])): filledFields+=1
