@@ -13,7 +13,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 	
 #Remove all installed font to have a clean slate
-RUN rm -rf /usr/share/fonts/
+RUN rm -rf /usr/share/fonts/ && \
+	rm -rf /usr/share/font-droid-fallback/ &&\
+	rm -rf /usr/share/fontconfig/
 
 #Install some default fonts
 RUN apt-get update && \
