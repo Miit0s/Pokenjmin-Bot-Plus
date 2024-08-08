@@ -16,7 +16,8 @@ RUN apt-get update && \
 RUN rm -rf /usr/share/fonts/
 
 #Install some default fonts
-RUN apt reinstall fonts-dejavu fonts-dejavu-core fonts-liberation -y
+RUN apt-get update && \
+	apt reinstall fonts-dejavu fonts-dejavu-core fonts-liberation -y
 
 # Create a directory for fonts
 RUN mkdir -p /usr/share/fonts/truetype/
