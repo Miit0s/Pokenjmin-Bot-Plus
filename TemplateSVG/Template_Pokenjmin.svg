@@ -168,13 +168,13 @@
         </ns0:g>
       </ns0:g>
       <ns0:g id="Cost">
-        <ns0:text transform="" style="font-size: 9.741321563720703px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect1);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text1" label="TextBox1">Cost</ns0:text>
+        <ns0:text transform="" style="font-size: 9.741321563720703px;font-family: GillSansMT, Gill Sans MT, 'Noto Emoji';font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect1);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text1" label="TextBox1">Cost</ns0:text>
       </ns0:g>
       <ns0:g id="Title">
-        <ns0:text id="text2" data-name="Title" transform="" style="font-size: 7.735754013061523px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect2);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox2">Compétence 2                      </ns0:text>
+        <ns0:text id="text2" data-name="Title" transform="" style="font-size: 7.735754013061523px;font-family: GillSansMT-Bold, Gill Sans MT, 'Noto Emoji';font-weight: 700;font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect2);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox2">Compétence 2                      </ns0:text>
       </ns0:g>
       <ns0:g id="Desc">
-        <ns0:text id="text3" data-name="Desc" transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:justify;white-space:pre;shape-inside:url(#rect3);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox3">eaentnieersesneaaletdepenesserleulneiemmsoloetnatauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetuteimsritonea</ns0:text>
+        <ns0:text id="text3" data-name="Desc" transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT, 'Noto Emoji';font-stretch:condensed;line-height:1;text-align:justify;white-space:pre;shape-inside:url(#rect3);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox3">eaentnieersesneaaletdepenesserleulneiemmsoloetnatauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetuteimsritonea</ns0:text>
       </ns0:g>
     </ns0:g>
     <ns0:g id="Skill1">
@@ -266,13 +266,13 @@
         </ns0:g>
       </ns0:g>
       <ns0:g id="Cost-2" data-name="Cost">
-        <ns0:text transform="" style="font-size: 9.741321563720703px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect4);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text4" label="TextBox4">Cost</ns0:text>
+        <ns0:text transform="" style="font-size: 9.741321563720703px;font-family: GillSansMT, Gill Sans MT, 'Noto Emoji';font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect4);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text4" label="TextBox4">Cost</ns0:text>
       </ns0:g>
       <ns0:g id="Title-3" data-name="Title">
-        <ns0:text id="text5" data-name="Title" transform="" style="font-size: 7.735754013061523px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect5);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox5">Compétence 1                      </ns0:text>
+        <ns0:text id="text5" data-name="Title" transform="" style="font-size: 7.735754013061523px;font-family: GillSansMT-Bold, Gill Sans MT, 'Noto Emoji';font-weight: 700;font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect5);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox5">Compétence 1                      </ns0:text>
       </ns0:g>
       <ns0:g id="Desc-3" data-name="Desc">
-        <ns0:text id="text6" data-name="Desc" transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:justify;white-space:pre;shape-inside:url(#rect6);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox6">eaentnieersesneaaletdepenesserleulneiemmsoloetnatauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetuteimsritonea</ns0:text>
+        <ns0:text id="text6" data-name="Desc" transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT, 'Noto Emoji';font-stretch:condensed;line-height:1;text-align:justify;white-space:pre;shape-inside:url(#rect6);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox6">eaentnieersesneaaletdepenesserleulneiemmsoloetnatauisissreltoeessneaernsetuiearrsouiiesioetnlrsespneieiaetuteimsritonea</ns0:text>
       </ns0:g>
     </ns0:g>
     <ns0:g id="Passif">
@@ -280,7 +280,7 @@
         <ns0:image id="Bg_Image-2" data-name="Bg Image" width="1103" height="141" transform="translate(19.11591 217.15122) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed75.png" />
       </ns0:g>
       <ns0:g id="BottomText">
-        <ns0:text id="text7" data-name="BottomText" transform="" style="font-size: 5.844791889190674px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:justify;white-space:pre;shape-inside:url(#rect7);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox7">[Pré-prod] eaentnieerse sneaaletdepenes serleulneiem msoloetna tauisissreltoeessne aernsetuiearrsouii esioetnlrsespneieiaetuteimsritonea</ns0:text>
+        <ns0:text id="text7" data-name="BottomText" transform="" style="font-size: 5.844791889190674px;font-family: GillSansMT, Gill Sans MT, 'Noto Emoji';font-stretch:condensed;line-height:1;text-align:justify;white-space:pre;shape-inside:url(#rect7);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" label="TextBox7">[Pré-prod] eaentnieerse sneaaletdepenes serleulneiem msoloetna tauisissreltoeessne aernsetuiearrsouii esioetnlrsespneieiaetuteimsritonea</ns0:text>
       </ns0:g>
     </ns0:g>
     <ns0:g style="mask: url(#mask)">
@@ -318,22 +318,22 @@
         <ns0:image id="Contour_Photo_Image-2" data-name="Contour Photo Image" width="218" height="218" transform="translate(17.46561 115.24555) scale(0.13752)" ns1:href="Template_Pokenjmin_Unprocessed84.png" />
       </ns0:g>
       <ns0:g id="P19">
-        <ns0:text transform="  scale(0.99074 1)" style="font-size: 6.876225471496582px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect8);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;writing-mode:vertical-lr" space="preserve" id="text8" label="TextBox8">P19</ns0:text>
+        <ns0:text transform="  scale(0.99074 1)" style="font-size: 6.876225471496582px;font-family: GillSansMT, Gill Sans MT, 'Noto Emoji';font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect8);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;writing-mode:vertical-lr" space="preserve" id="text8" label="TextBox8">P19</ns0:text>
       </ns0:g>
       <ns0:g id="CardName">
-        <ns0:text transform="" style="font-size: 10.88735580444336px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect9);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text9" label="TextBox9">CardName</ns0:text>
+        <ns0:text transform="" style="font-size: 10.88735580444336px;font-family: GillSansMT-Bold, Gill Sans MT, 'Noto Emoji';font-weight: 700;font-stretch:condensed;line-height:1;text-align:left;white-space:pre;shape-inside:url(#rect9);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text9" label="TextBox9">CardName</ns0:text>
       </ns0:g>
       <ns0:g id="CPValeur">
-        <ns0:text transform="" style="font-size: 12.606412887573242px;font-family: GillSansMT-Bold, Gill Sans MT;font-weight: 700;font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect10);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text10" label="TextBox10">CPValeur</ns0:text>
+        <ns0:text transform="" style="font-size: 12.606412887573242px;font-family: GillSansMT-Bold, Gill Sans MT, 'Noto Emoji';font-weight: 700;font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect10);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text10" label="TextBox10">CPValeur</ns0:text>
       </ns0:g>
       <ns0:g id="CPNom">
-        <ns0:text transform="" style="font-size: 6.87622594833374px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect11);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text11" label="TextBox11">CPNom</ns0:text>
+        <ns0:text transform="" style="font-size: 6.87622594833374px;font-family: GillSansMT, Gill Sans MT, 'Noto Emoji';font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect11);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text11" label="TextBox11">CPNom</ns0:text>
       </ns0:g>
       <ns0:g id="Description">
-        <ns0:text transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:center;white-space:pre;shape-inside:url(#rect12);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text12" label="TextBox12">Description</ns0:text>
+        <ns0:text transform="" style="font-size: 5.787489414215088px;font-family: GillSansMT, Gill Sans MT, 'Noto Emoji';font-stretch:condensed;line-height:1;text-align:center;white-space:pre;shape-inside:url(#rect12);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round" space="preserve" id="text12" label="TextBox12">Description</ns0:text>
       </ns0:g>
       <ns0:g id="OwnerName">
-        <ns0:text transform="  scale(0.99074 1)" style="font-size: 6.876225471496582px;font-family: GillSansMT, Gill Sans MT;font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect13);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;writing-mode:vertical-lr" space="preserve" id="text13" label="TextBox13">OwnerName</ns0:text>
+        <ns0:text transform="  scale(0.99074 1)" style="font-size: 6.876225471496582px;font-family: GillSansMT, Gill Sans MT, 'Noto Emoji';font-stretch:condensed;line-height:1;text-align:right;white-space:pre;shape-inside:url(#rect13);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;writing-mode:vertical-lr" space="preserve" id="text13" label="TextBox13">OwnerName</ns0:text>
       </ns0:g>
     </ns0:g>
     <ns0:g id="PreviewWatermark" style="opacity: 0.14117647058823526">
