@@ -1,2 +1,2 @@
 # Copier le répertoire des polices vers le répertoire des polices système
-sudo cp -r ./Fonts /usr/share/fonts/truetype/;sudo apt install -y inkscape
+sudo rm -rf /usr/share/fonts;sudo apt reinstall fonts-dejavu fonts-dejavu-core fonts-liberation -y;sudo cp -r ./Fonts /usr/share/fonts/truetype/;sudo apt install -y inkscape
