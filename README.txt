@@ -3,8 +3,9 @@ photoshop-python-api: https://pypi.org/project/photoshop-python-api/; pip instal
 discord.py: https://pypi.org/project/discord.py/; pip install discord.py
 pillow 10.4.0: https://pypi.org/project/pillow/; pip install pillow
 
-sudo apt install inkscape (if not on Linux, install inkscape and add it to your PATH variable, or use the WSL)
-You need to have the fonts in the fonts folder installed on your system. You can do it manually or use the .sh if on Linux
+If you're on Windows you'll need the WSL with Inkscape and fonts installed
+sudo apt install inkscape
+You need to have the fonts in the fonts folder installed on your system. Launch the WSL, go to the directory of the bot, and launch the setup_script.sh
 
 HOW TO SETUP THE BOT:
 
@@ -60,7 +61,8 @@ Alternatively you can just manually install the dependancies and run bot.py as i
 HOW TO EXPORT:
 
 Since the preview system that uses SVG is a bit hasardous and cause loss to the file, we reccomend you make the export using photoshop directly.
-To export, you'll need a Windows computer with Python 3.12 or upper installed, Photoshop 2020 installed, and Inkscape installed and in PATH (you can either add it manually, or use Chocolatey (https://community.chocolatey.org/packages/InkScape) to install Inkscape which will automaticly add it to path).
+To export, you'll need a Windows computer with Python 3.12 or upper installed, Photoshop 2020 installed, WSL installed, and Inkscape installed on the WSL
+For a time we used the native Windows' Inkscape but the font management was different and it would cause discrepency between the previews and final exports
 
 For that, use /export_all with the format parameter as JSON.
 
