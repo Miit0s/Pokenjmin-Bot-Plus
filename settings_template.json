@@ -114,9 +114,9 @@
 		{
 			"Id":8,
 			"DisplayName":"❔License",
-			"IconLayerName":"Son",
-			"BackgroundLayerName":"GraphFond",
-			"WatermarkLayerName":"None"
+			"IconLayerName":"License",
+			"BackgroundLayerName":"LicenseFond",
+			"WatermarkLayerName":"PCAT"
 		},
 		{
 			"Id":9,

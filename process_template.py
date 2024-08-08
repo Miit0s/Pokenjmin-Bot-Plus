@@ -147,7 +147,17 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
     for child in parent:
         tag=sanitizeTag(child.tag)
         if(tag!="g"): continue
-        if("id" not in child.attrib): continue
+
+        if("id" not in child.attrib): 
+            if(sanitizeTag(child.tag)!="g"): 
+                continue
+            if("style" not in child.attrib): 
+                continue
+            if("isolation" not in child.attrib["style"]): 
+                continue
+            #Sometimes the Gs are contained in another G that only has a "isolation:isolate" style attribute, this avoid getting stuck because of
+            scanAllTextLayers(ps, child, pathToParent, psdToSvgCoordinatesMultiplier)
+            break
 
         id=sanitizeLayerId(child.attrib["id"])
 

@@ -577,6 +577,21 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     fontScaleRatio=float(tree.getroot().attrib["fontScaleRatio"])
     psdToSvgCoordinatesMultiplier=float(tree.getroot().attrib["psdToSvgCoordinatesMultiplier"])
 
+    for child in root:
+        tag=sanitizeTag(child.tag)
+        if(tag!="g"): continue
+
+        if("id" not in child.attrib): 
+            if(sanitizeTag(child.tag)!="g"): 
+                continue
+            if("style" not in child.attrib): 
+                continue
+            if("isolation" not in child.attrib["style"]): 
+                continue
+            #Sometimes the Gs are contained in another G that only has a "isolation:isolate" style attribute, this avoid getting stuck because of this
+            root=child
+            break
+
     previewWatermark=get_svg_layer_by_path(root,settings["PreviewLayerGroup"])
     toggle_svg_layer_visibility(previewWatermark,isPreview)
     
