@@ -217,19 +217,6 @@ def scanAllTextLayers(ps,parent, pathToParent, psdToSvgCoordinatesMultiplier:flo
             print("\tCouldn't get justification for "+pathToSelf)
         
         newStyle=oldStyle
-
-        #We add fallback fonts to get the same emojis no matter the platform we're generating cards on
-        fontFamilyPattern = r'font-family:\s([^;]+);'
-        fontFamilyMatch = re.search(fontFamilyPattern, newStyle)
-        if(fontFamilyMatch==None or fontFamilyMatch==False): 
-            print("\t Couldnt add fallback fonts to this layer")
-        else:
-            fontsString=fontFamilyMatch.group(1)
-            for font in settings["FallbackFonts"]:
-                if(fontsString!=""):fontsString+=","
-                fontsString+=" '"+font+"'"
-            newStyle=newStyle.replace(fontFamilyMatch.group(1), fontsString)
-
         newStyle+="font-stretch:condensed;line-height:1;text-align:"
         newStyle+=textAlign
         newStyle+=";white-space:pre;shape-inside:url(#"+"rect"+str(txtCounter)+");display:inline;fill:"

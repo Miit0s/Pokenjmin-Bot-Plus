@@ -17,10 +17,6 @@
 	"CardNameFontSizeMin":48,
 	"CardNameFontSizeMax":79.17,
 
-	"FallbackFonts":[
-		"Noto Emoji"
-	],
-
 	"Admins":
 	[
 		"368497205889204225",
