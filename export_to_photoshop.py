@@ -206,6 +206,22 @@ def exportSingleTextLayerWithNewContent(layerPath:str, textContent:str, newFontS
     parser1 = ET.XMLParser(encoding="utf-8")
     tree = ET.parse(svgTemplatePath,parser1)
     root = tree.getroot()
+
+    for child in root:
+        tag=sanitizeTag(child.tag)
+        if(tag!="g"): continue
+
+        if("id" not in child.attrib): 
+            if(sanitizeTag(child.tag)!="g"): 
+                continue
+            if("style" not in child.attrib): 
+                continue
+            if("isolation" not in child.attrib["style"]): 
+                continue
+            #Sometimes the Gs are contained in another G that only has a "isolation:isolate" style attribute, this avoid getting stuck because of this
+            root=child
+            break
+
     #Font size between photoshop and svg are not the same, but min and max font size in the settings are expressed for photoshop, so we get the ratio that was calculated when we processed the svg template with process_template.py
     fontScaleRatio=float(tree.getroot().attrib["fontScaleRatio"])
     psdToSvgCoordinatesMultiplier=float(tree.getroot().attrib["psdToSvgCoordinatesMultiplier"])
@@ -234,6 +250,7 @@ def exportSingleTextLayerWithNewContent(layerPath:str, textContent:str, newFontS
     #inkScape is the only software that respects our svg, so we'll just run it
     inkscapeCommand="inkscape \""+os.path.relpath(generatedSvgPath, os.getcwd())+"\" --export-filename=\""+os.path.relpath(exportPath, os.getcwd())+"\" --export-dpi="+str(settings["PreviewDPI"])
     #print(inkscapeCommand)
+    #print(generatedSvgPath)
     os.system(inkscapeCommand)
     time.sleep(1)
     return exportPath
@@ -298,7 +315,9 @@ def replace_psd_text_layer(ps, layerPath, layer, newText, replaceTextsWithSvgExp
     while(True):
         try:
             with Image.open(pngPath) as img:
-                resized_img = img.resize((int(ps.active_document.width), int(ps.active_document.height)),Image.LANCZOS)
+                width=int(ptToPx(ps.active_document.width))
+                height=int(ptToPx(ps.active_document.height))
+                resized_img = img.resize((width, height),Image.LANCZOS)
                 resized_img.save(pngPath)
                 break
         except:
