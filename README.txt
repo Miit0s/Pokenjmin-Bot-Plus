@@ -6,6 +6,7 @@ pillow 10.4.0: https://pypi.org/project/pillow/; pip install pillow
 If you're on Windows you'll need the WSL with Inkscape and fonts installed
 sudo apt install inkscape
 You need to have the fonts in the fonts folder installed on your system. Launch the WSL, go to the directory of the bot, and launch the setup_script.sh
+If you want to have COMPLETE correspondance between preview and export, even if a prankster or 2 uses Zalgo text, consider following this tutorial: https://youtu.be/vgCkjPBL6Yk to have the WSL be a copy of your Container
 
 HOW TO SETUP THE BOT:
 
