@@ -11,15 +11,6 @@ COPY . .
 RUN apt-get update && \
     apt-get install -y libcairo2-dev inkscape && \
     rm -rf /var/lib/apt/lists/*
-	
-#Remove all installed font to have a clean slate
-RUN rm -rf /usr/share/fonts/ && \
-	rm -rf /usr/share/font-droid-fallback/ &&\
-	rm -rf /usr/share/fontconfig/
-
-#Install some default fonts
-RUN apt-get update && \
-	apt reinstall fonts-dejavu fonts-dejavu-core fonts-liberation -y
 
 # Create a directory for fonts
 RUN mkdir -p /usr/share/fonts/truetype/
