@@ -1348,7 +1348,8 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if(random.randint(0,20)>0): return
+    if(random.randint(0,4)>0): return
+    if(message.author.id!=317408530422562827):   return
     await message.add_reaction("🙄")
 
 print("This line was last modified on the 31/07/2024 at 14:38 by Jeremy (to test Docker Recreate)")
