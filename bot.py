@@ -11,6 +11,7 @@ import math
 from io import BytesIO
 from pathlib import Path
 import shutil
+import random
 
 os.environ['PYTHONUNBUFFERED'] = "1"
 
@@ -1347,6 +1348,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    if(random.randint(0,20)>0): return
     await message.add_reaction("🙄")
 
 print("This line was last modified on the 31/07/2024 at 14:38 by Jeremy (to test Docker Recreate)")
