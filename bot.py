@@ -1347,7 +1347,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    message.add_reaction("🙄")
+    await message.add_reaction("🙄")
 
 print("This line was last modified on the 31/07/2024 at 14:38 by Jeremy (to test Docker Recreate)")
 client.run(settings["Token"])
