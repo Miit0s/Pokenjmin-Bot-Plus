@@ -482,6 +482,7 @@ merger = PdfWriter()
 for user in users:
     i+=1
     card=user["card"]
+    #if(i!=38): continue
     print("Card "+str(i)+"/"+str(nbrOfUsers)+" - Owner:"+card["owner_name"]+" - Card name:"+card["card_name"])
     start=time.perf_counter()
     pngImagesName=str(user["discord_id"])+".png"
