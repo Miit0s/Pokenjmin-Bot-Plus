@@ -46,7 +46,7 @@
 	"Skill2Group":"Skill2",
 	"SkillDescLayerName":"Desc",
 	"SkillTitleLayerName":"Title",
-	"SkillCostLayerName":"Cost",
+	"SkillPowerLayerName":"Power",
 	"Spe1IconGroupName":"Spe1",
 	"Spe2IconGroupName":"Spe2",
 	"Spe3IconGroupName":"Spe3",

@@ -50,7 +50,7 @@ def create_tables():
                 id INTEGER PRIMARY KEY,
                 skill_name  TEXT DEFAULT "" NOT NULL,
                 skill_desc  TEXT DEFAULT "" NOT NULL,
-                skill_cost INTEGER DEFAULT 0 NOT NULL,
+                skill_power INTEGER DEFAULT 0 NOT NULL,
                 spe1 INTEGER,
                 spe2 INTEGER,
                 spe3 INTEGER
@@ -331,13 +331,13 @@ def update_skill(skill):
                 SET 
                     skill_name=?,
                     skill_desc=?,
-                    skill_cost=?,
+                    skill_power=?,
                     spe1=?,
                     spe2=?,
                     spe3=?
                 WHERE
                     id=?
-                """,(skill["skill_name"],skill["skill_desc"],skill["skill_cost"],skill["spe1"],skill["spe2"],skill["spe3"],skill["id"]))
+                """,(skill["skill_name"],skill["skill_desc"],skill["skill_power"],skill["spe1"],skill["spe2"],skill["spe3"],skill["id"]))
     con.commit()
 
 def get_spe_for_user(guildId, userRoles):
@@ -619,7 +619,7 @@ def fill_layers_for_skill(root,skillLayerGroupPath,skillDatas):
     change_text_of_svg_layer(skillTitleLayer,skillDatas["skill_name"])
 
     skillCostLayer=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["SkillCostLayerName"])
-    skillCost=skillDatas["skill_cost"]
+    skillCost=skillDatas["skill_power"]
     if(skillCost<-9999999):
         skillCost=""
     change_text_of_svg_layer(skillCostLayer,skillCost)
@@ -868,7 +868,7 @@ async def listLegendaries(interaction):
 @app_commands.choices(spe1=specialtiesChoices)
 @app_commands.choices(spe2=specialtiesChoices)
 @app_commands.choices(spe3=specialtiesChoices)
-async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:str=None, skill_cost:int=None, spe1:int=None, spe2:int=None, spe3:int=None):
+async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:str=None, skill_power:int=None, spe1:int=None, spe2:int=None, spe3:int=None):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
     if(user==None):
         await interaction.response.send_message("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
@@ -880,7 +880,7 @@ async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:s
 
     if(skill_name!=None): skill["skill_name"]=skill_name
     if(skill_desc!=None): skill["skill_desc"]=skill_desc
-    if(skill_cost!=None): skill["skill_cost"]=skill_cost
+    if(skill_power!=None): skill["skill_power"]=skill_power
     if(spe1!=None): skill["spe1"]=spe1
     if(spe2!=None): skill["spe2"]=spe2
     if(spe3!=None): skill["spe3"]=spe3
@@ -1189,7 +1189,7 @@ async def get(interaction):
     def skillToString(skillDatas):
         returnString=""
         returnString+="\tName: "+skillDatas["skill_name"]
-        returnString+="\n\tCost: "+str(skillDatas["skill_cost"])
+        returnString+="\n\tCost: "+str(skillDatas["skill_power"])
         returnString+="\n\tDesc: "+skillDatas["skill_desc"]
         return returnString
 

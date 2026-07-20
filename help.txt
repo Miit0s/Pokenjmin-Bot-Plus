@@ -1,20 +1,21 @@
-You can create your own pokenjmin card using commands.
-To set your card's data, use /set_card and fill the parameters as you wish.
-If your card name overflows on the preview, it will overflows on the real card. You can change its font-size with the parameter "card_name_font_size"
-To set your skills data, use /set_skill, chose one of your skills, and fill the parameters as you wish.
-The "cost" parameter is in fact the "power" of your attack, is was misnamed early in the bot's conception and would be too difficult to rename now.
-If you want to have no skill cost, set a skill cost inferior to -9 999 999
-You can change any number of parameters in one go. Here's a map of what fields goes where on the final card: 
-https://media.discordapp.net/attachments/1099874959876182047/1263170782415028366/PokenjminTuto.jpg
+You can create your own Pokenjmin card using the following commands:
 
-Every change made will send you a new preview that only you can see, we kindly ask that you don't share this preview publicly, to keep an element of surprise for everybody.
-If you want to see your card's preview without changing anything, you can use the /preview command.
+## Card Customization
+* **`/set_card`** : Set your card's general data. Fill the parameters as you wish.
+  > *Note: If your card name overflows on the preview, it will overflow on the real card. You can change its size with the parameter `card_name_font_size`.*
+* **`/set_skill`** : Set your skills data. Choose one of your skills and fill the parameters as you wish.
 
-If you prefer to get the parameters of your card in a text format, type /get
+## Previews & Info
+Every change made will send you a new preview that **only you can see**. We kindly ask that you don't share this preview publicly to keep an element of surprise for everybody!
+* **`/preview`** : View your card's preview without changing anything.
+* **`/get`** : Get all the parameters of your card in a clean text format.
 
-You can reference a friend's card in your skills description, card description, or bottom text. To do it, ping your friend in the corresponding text. Please don't add any quotes or formating around the ping, as the bot will add its own formating, ensuring a consistent deck.
+## Mentions & References
+You can reference other cards in your skills description, card description, or bottom text:
+* **Friends:** Ping your friend directly in the text. *Please don't add any quotes or formatting around the ping*; the bot will add its own formatting to ensure a consistent deck.
+* **Legendaries:** Use **`/list_legendaries`** to see all legendary cards and their "Insertion text". Copy-paste this text and it will act as if you "pinged" the legendary card.
 
-If you wish to reference a legendary card's name instead, type the command /list_legendaries, and it will list you all of the legendary cards and their corresponding "Insertion text", copy past this insertion text and it will act as if you "pinged" the legendary card.
-
-The preferred ratio for the owner_image is 1:1, we recommend you use a resolution of at least 1080\*1080 pixels. 
-The preferred ratio for the card_image is 1.48:1, we reccommend you use a resolution of at least 1080\*1523 pixels.
+## Image Recommendations
+To ensure your card looks perfect, please follow these guidelines:
+* **`owner_image`** : Preferred ratio is **1:1**. We recommend a resolution of at least `1080x1080` pixels.
+* **`card_image`** : Preferred ratio is **1.48:1**. We recommend a resolution of at least `1080x1523` pixels.

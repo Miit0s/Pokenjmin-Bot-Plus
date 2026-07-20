@@ -427,13 +427,13 @@ def fill_layers_for_skill(ps, skillLayerGroupPath, skillLayerGroup, skillDatas):
     skillTitleLayer=get_layer_by_path(ps,skillTitleLayerPath)
     replace_psd_text_layer(ps,skillTitleLayerPath,skillTitleLayer,str(skillDatas["skill_name"]))
 
-    skillCostLayerPath=skillLayerGroupPath+"/"+settings["SkillCostLayerName"]
-    skillCostLayer=get_layer_by_path(ps,skillCostLayerPath)
-    skillCost=skillDatas["skill_cost"]
-    if(skillCost<-9999999):
-        skillCost=""
-    skillCostLayer.textItem.contents=str(skillCost)
-    replace_psd_text_layer(ps,skillCostLayerPath,skillCostLayer,str(skillCost))
+    skillPowerLayerPath=skillLayerGroupPath+"/"+settings["SkillPowerLayerName"]
+    skillPowerLayer=get_layer_by_path(ps,skillPowerLayerPath)
+    skillPower=skillDatas["skill_power"]
+    if(skillPower<-9999999):
+        skillPower=""
+    skillPowerLayer.textItem.contents=str(skillPower)
+    replace_psd_text_layer(ps,skillPowerLayerPath,skillPowerLayer,str(skillPower))
 
     spe1IconGroup=skillLayerGroup.layerSets.getByName(settings["Spe1IconGroupName"])
     set_spe_image(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
