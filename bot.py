@@ -15,36 +15,25 @@ import random
 
 os.environ['PYTHONUNBUFFERED'] = "1"
 
-
-#Only windows computer supports the photoshop api
-photoshopSupported=True
-try:
-    from photoshop import Session
-    import photoshop.api as photoshop
-except:
-    photoshopSupported=False
-
-
 intents = discord.Intents.default()
 intents.members=True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
-settingsFile= open('settings.json', encoding="utf-8")
 
 try:
     print("Settings:")
-    with open('settings.json', 'r') as fin:
+    with open('settings.json', 'r', encoding="utf-8") as fin:
         print(fin.read())
 except:
     print("Couldnt print settings")
 
-settings=json.load(settingsFile)
+with open('settings.json', encoding="utf-8") as settingsFile:
+    settings = json.load(settingsFile)
+
 con = sqlite3.connect("Data/data.db")
 con.row_factory = sqlite3.Row
 
-#Node namespace, to add at the start of any node we create
-nodeNamespace="ns0:"
-#Same with atrib
+# Namespace for attributes
 attribNamespace="ns1:"
 
 #region Database management
@@ -83,7 +72,6 @@ def create_tables():
                 FOREIGN KEY(skill2_id) REFERENCES skills(id),
                 FOREIGN KEY(owner_id) REFERENCES users(id) ON DELETE CASCADE
         );""",
-        #A whitelist entry means that a user can modify a card, even if he's not the admin
         """CREATE TABLE IF NOT EXISTS whitelist_entry (
                 user_id INTEGER,
                 card_id INTEGER,
@@ -212,7 +200,6 @@ def get_or_create_user(discordId, guildId):
     result=cursor.fetchone()
     if(result!=None): return sqlite3Row_to_dict(result)
 
-    #Cannot create user if guild id is none
     if(guildId==None):
         return None
 
@@ -272,8 +259,6 @@ def update_user_overwrite(userId, overwriteId):
     con.commit()
 
 def get_or_create_card(user, ignoreOverwrites:bool=False):
-    # for userKey in user:
-    #     print(str(userKey))
     userId=user["id"]
 
     if user["overwrite_discord_id"]!=None and ignoreOverwrites==False:
@@ -355,7 +340,6 @@ def update_skill(skill):
                 """,(skill["skill_name"],skill["skill_desc"],skill["skill_cost"],skill["spe1"],skill["spe2"],skill["spe3"],skill["id"]))
     con.commit()
 
-#return the spe of the user, which is the default server spe if no override exist for any role of the user
 def get_spe_for_user(guildId, userRoles):
     server=get_or_create_server_settings(guildId)
     spe=server["default_spe"]
@@ -369,8 +353,6 @@ def get_spe_for_user(guildId, userRoles):
 #endregion
 
 #region SVG management
-
-#Get layer by path written as Group/Group/Layer, for exampel Infos/Name
 def get_svg_layer_by_path(root, layerPath):
     subGroups=str(layerPath).split("/")
     currentLayer=root
@@ -382,14 +364,12 @@ def get_svg_layer_by_path(root, layerPath):
         if(currentLayer==None):continue
         for child in currentLayer:
             if sanitizeTag(child.tag)!="g":continue
-            #If the g node has no id, it's probably a mask, so we just replace it with its "true" layer child
             if('id' not in child.attrib): 
                 gChild=child[0]
                 if(gChild==None): continue
                 if(sanitizeTag(gChild.tag)!="g"):continue
                 if('id' not in gChild.attrib):continue
                 child=gChild
-            #If there's a child data-name we can try it too for more accuracy
             if isSvgLayerEqual(child.attrib['id'],group) or ("data-name" in child.attrib and child.attrib["data-name"]==group):
                 nextLayer=child
                 break
@@ -404,7 +384,6 @@ def getFontSizeFromStyle(style:str):
     fontSize=float(match.group(1))
     return fontSize
 
-#Returns the new style
 def getStyleWithNewFontSize(style:str, newFontSize:float):
     pattern=r"(font-size:[ ]*.*px;*)"
     match=re.search(pattern, style)
@@ -415,15 +394,6 @@ def getStyleWithNewFontSize(style:str, newFontSize:float):
         style=style+";"+"font-size: "+str(newFontSize)+"px"
     return style
     
-def get_text_node_of_svg_layer(layer):
-    for child in layer:
-        if sanitizeTag(child.tag)=="text":
-            textDiv=child
-            break
-    if(textDiv==None):
-        print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
-    return textDiv
-
 def change_text_of_svg_layer(layer,text:str):
     text=str(text)
     textDiv=None
@@ -449,9 +419,7 @@ def change_font_size_of_svg_layer(layer,sizeInPx:float, fontScaleRatio, psdToSvg
     oldFontSize=getFontSizeFromStyle(style)
     newFontSize=fontScaleRatio*sizeInPx
     textDiv.attrib["style"]=getStyleWithNewFontSize(style, newFontSize)
-    #It makes the text "centered" on its resize, only works for horizontal texts, if in the future you want scalable vertical text, you'll have to change things here
     translate_node(textDiv, 0, 0.5*(oldFontSize-newFontSize))
-
 
 def toggle_svg_layer_visibility(layer, visibility:bool):
     notVisibleString="display:none;"
@@ -476,8 +444,6 @@ def toggle_svg_layer_visibility(layer, visibility:bool):
     
     layer.attrib["style"]=desiredString+layer.attrib["style"]
 
-
-#node.find doesn't work because the tags are prefixed with bullshit, so we made our own version
 def find_child_by_sanitize_tag(node, tag):
     for child in node:
         if(sanitizeTag(child.tag)==tag):
@@ -485,8 +451,6 @@ def find_child_by_sanitize_tag(node, tag):
     return None
 
 def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
-    #First we get and store the transform attribute
-    
     if("transform" not in node.attrib): 
         transform="translate(0 0)"
     else:
@@ -495,7 +459,6 @@ def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
     if(transform=="" or transform==None):
         transform="translate(0 0)"
 
-    # Extraire les valeurs de translation
     translatePattern = r'translate\(([^)]+)\)'
     translateMatch = re.search(translatePattern, transform)
 
@@ -503,7 +466,6 @@ def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
     scale_match = re.search(scale_pattern, transform)
     scaleFactor=1
     if scale_match and relativeToScale:
-        #sometime the scale is sliglty different on x and y, leading to 2 value, but we can afford to not care
         scaleFactor = float(scale_match.group(1).split(" ")[0])
     
     values = translateMatch.group(1).split(" ")
@@ -522,7 +484,6 @@ def replace_image_for_svg(root,layerToReplacePath, input_file):
     imageRelativePath=os.path.relpath(input_file,svgFolder)
     imageNode.attrib[attribNamespace+"href"]=imageRelativePath
 
-    #we get the ratio of the new image using PILImage
     newImageFile = Image.open(input_file)
     width, height = newImageFile.size
     ratio = float(width) / float(height)
@@ -533,7 +494,6 @@ def replace_image_for_svg(root,layerToReplacePath, input_file):
     newReferenceWidth=referenceWidth
     newReferenceHeight=referenceHeight
 
-    #if we're wider than the reference ratio, width is dictated by height
     if(ratio>referenceRatio):
         print("biggerRatio")
         newReferenceWidth=ratio*referenceHeight
@@ -548,25 +508,19 @@ def replace_image_for_svg(root,layerToReplacePath, input_file):
 
     imageNode.attrib["width"]=str(math.ceil(newReferenceWidth))
     imageNode.attrib["height"]=str(math.ceil(newReferenceHeight))
-
     
-#The tags are all prefixed by "{http://www.w3.org/2000/svg}", this function removes it
 def sanitizeTag(input:str):
     return input.replace("{http://www.w3.org/2000/svg}","")
 
-#Remove everything after a "_" in a layer id, keeping only the good part. But yes, it means we can't have "_" in the actual name of the id
 def sanitizeLayerId(input:str):
     return input.split("_")[0]
 
-#since we mess with underscores and layer IDs in the SVG are suffixed with weird numbers, we can't just do ==, and yes, this raise the problem of false positivie, but it's an issue for a future programmer :)
 def isSvgLayerEqual(svgLayerId:str, target:str):
     if(" " in target or "_" in target):
         print("/!\\ Error: layerPath:"+target+" contains a forbidden character: \" \" or a \"_\"")
     treatedId=sanitizeLayerId(svgLayerId)
-    #If the start of the layer id is the target id, then yes, it's the layer we're looking for (or a lookalike)
     return treatedId==target
 
-#Very close to export_to_photoshop.py's create_psd_card 
 def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):   
     svgTemplatePath=os.path.join(os.getcwd(),settings["TemplateSvgFile"])
     parser1 = ET.XMLParser(encoding="utf-8")
@@ -574,7 +528,6 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
 
     root = tree.getroot()
 
-    #Font size between photoshop and svg are not the same, but min and max font size in the settings are expressed for photoshop, so we get the ratio that was calculated when we processed the svg template with process_template.py
     fontScaleRatio=float(tree.getroot().attrib["fontScaleRatio"])
     psdToSvgCoordinatesMultiplier=float(tree.getroot().attrib["psdToSvgCoordinatesMultiplier"])
 
@@ -589,7 +542,6 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
                 continue
             if("isolation" not in child.attrib["style"]): 
                 continue
-            #Sometimes the Gs are contained in another G that only has a "isolation:isolate" style attribute, this avoid getting stuck because of this
             root=child
             break
 
@@ -652,16 +604,11 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     with open(generatedSvgPath, "wb") as f:
         f.write(output.getbuffer())
     
-    #now that we have the svg, we must convert it to jpeg
     exportPath = os.path.join(mkdtemp(),str(fileName)+".png")
-    #inkScape is the only software that respects our svg, so we'll just run it
     inkscapeCommand="inkscape "+os.path.relpath(generatedSvgPath, os.getcwd())+" --export-filename="+os.path.relpath(exportPath, os.getcwd())+" --export-dpi="+str(settings["PreviewDPI"])
-    if(isPreview):
-        exportPath = os.path.join(mkdtemp(),str(fileName)+".png")
-        inkscapeCommand="inkscape "+os.path.relpath(generatedSvgPath, os.getcwd())+" --export-filename="+os.path.relpath(exportPath, os.getcwd())+" --export-dpi="+str(settings["PreviewDPI"])
     os.system(inkscapeCommand)
+    
     return exportPath
-
 
 def fill_layers_for_skill(root,skillLayerGroupPath,skillDatas):
     print(skillLayerGroupPath+"/"+settings["SkillDescLayerName"])
@@ -721,7 +668,6 @@ def replacePingsByCardNames(startString:str):
         startString=startString.replace(matchObject.group(),"\""+cardName+"\"")
     return startString
 
-#returns in a percentage how much the person have progressed on their card
 def getProgressionForUser(userid:str):
     totalFields=0
     filledFields=0
@@ -730,7 +676,6 @@ def getProgressionForUser(userid:str):
         return field!=None and field!=""
 
     def countSkill(skillDatas, totalFields, filledFields):
-        #the others fields have a default value so they're not counted, and nobody is filling just one part of their skill, so it's ok
         totalFields+=1
         if(isFilled(skillDatas["skill_desc"])): filledFields+=1
         return totalFields, filledFields
@@ -758,7 +703,6 @@ def getProgressionForUser(userid:str):
     if os.path.exists(cardImagePath):
         filledFields+=1
     
-    #print(f"filledFields: {filledFields}, totalFields:{totalFields}")
     return float(filledFields)/float(totalFields)
 
 @tree.command(
@@ -792,7 +736,6 @@ async def setCurrentServerAsMain(interaction):
 async def setCard(interaction, card_name:str=None, card_name_font_size:float=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
                   bottom_text_content:str=None, hp_value:int=None, card_image:discord.Attachment=None, owner_image:discord.Attachment=None):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
-    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
     if(user==None):
         await interaction.response.send_message("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
         return
@@ -889,7 +832,6 @@ async def createLegendary(interaction, card_name:str, owner_name:str):
 @tree.command(
     name="delete_legendary",
     description="Delete a legendary card",
-    #guild=discord.Object(id=790626187944394772)
 )
 async def deleteLegendary(interaction, id:str):
     delete_legendary_user(id)
@@ -928,7 +870,6 @@ async def listLegendaries(interaction):
 @app_commands.choices(spe3=specialtiesChoices)
 async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:str=None, skill_cost:int=None, spe1:int=None, spe2:int=None, spe3:int=None):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
-    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
     if(user==None):
         await interaction.response.send_message("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
         return
@@ -1060,7 +1001,6 @@ async def getCurrentSwitch(interaction):
 @tree.command(
     name="get_advancement",
     description="Prints the advancement of all the people of a role in your server, who did their card and who didn't",
-    #guild=discord.Object(id=790626187944394772)
 )
 @app_commands.describe(enumerate_empty="List the names of those who have a currently empty card")
 @app_commands.describe(enumerate_partial="List the names of those who have a currently partially filled card")
@@ -1073,7 +1013,7 @@ async def getAdvancement(interaction, role:discord.Role, enumerate_empty:bool=Tr
     emptyUsers=[]
     partialUsers=[]
     completeUsers=[]
-    #We iterate over all the members of the discord but ignore all who don't have the role
+    
     for member in interaction.guild.members:
         if(role not in member.roles): continue
         progression:float=getProgressionForUser(str(member.id))
@@ -1111,7 +1051,6 @@ async def getAdvancement(interaction, role:discord.Role, enumerate_empty:bool=Tr
 @tree.command(
     name="export_all",
     description="Exports all the users cards",
-    #guild=discord.Object(id=790626187944394772)
 )
 @app_commands.choices(format=[
     app_commands.Choice(name='PDF', value=0),
@@ -1148,8 +1087,6 @@ async def exportAll(interaction, format:int):
         message+="\nThe images are coming in multiple zip files, starting with the card images"
         await interaction.followup.send(message,ephemeral=True,file=discord.File(jsonPath))
 
-        #We copy the card images, then the owner photos, to a temp folder, once its big enough, we send it. this avoid sending files too big for discord
-
         tempZipFolder=mkdtemp()
         zipNbr=0
 
@@ -1159,7 +1096,6 @@ async def exportAll(interaction, format:int):
             zipNbr+=1
             zipPath=os.path.join(tempZipFolder,zipName+str(zipNbr))
             shutil.make_archive(zipPath, 'zip', destFolder)
-            #shutil adds the .zip on its own, so we must add it afters it's done cooking, else with have double .zip
             zipPath+=".zip"
             os.chdir(tempZipFolder)
             try:
@@ -1171,20 +1107,17 @@ async def exportAll(interaction, format:int):
         imagePath=""
         destFolder=""
         for name in os.listdir(os.path.join(currentDir,settings["CardImagesFolder"])):
-            # Open file
             imagePath=os.path.join(currentDir,settings["CardImagesFolder"], name)
             destFolder=os.path.join(tempZipFolder, os.path.basename(settings["CardImagesFolder"]))
             if(os.path.exists(os.path.join(tempZipFolder, os.path.basename(settings["CardImagesFolder"])))==False):
                 os.mkdir(destFolder)
             destPath=os.path.join(destFolder,name)
             shutil.copy(imagePath,destPath)
-            # get size
             size=0
             for path, dirs, files in os.walk(tempZipFolder):
                 for f in files:
                     fp = os.path.join(path, f)
                     size += os.path.getsize(fp)
-            #if size is superior to 8MB, we send the content of the temp folder, then we create a new temp folder
             if(size>8000000):
                 await sendZip(interaction,"CardImages",destFolder,"Here is a part of Owner Photos, unzip them in your export scripts folder","\nCannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory")
                 
@@ -1194,20 +1127,17 @@ async def exportAll(interaction, format:int):
         tempZipFolder=mkdtemp()
         zipNbr=0
         for name in os.listdir(os.path.join(currentDir,settings["OwnerPhotosFolder"])):
-            # Open file
             imagePath=os.path.join(currentDir,settings["OwnerPhotosFolder"], name)
             destFolder=os.path.join(tempZipFolder, os.path.basename(settings["OwnerPhotosFolder"]))
             if(os.path.exists(os.path.join(tempZipFolder, os.path.basename(settings["OwnerPhotosFolder"])))==False):
                 os.mkdir(destFolder)
             destPath=os.path.join(destFolder,name)
             shutil.copy(imagePath,destPath)
-            # get size
             size=0
             for path, dirs, files in os.walk(tempZipFolder):
                 for f in files:
                     fp = os.path.join(path, f)
                     size += os.path.getsize(fp)
-            #if size is superior to 8MB, we send the content of the temp folder, then we create a new temp folder
             if(size>8000000):
                 await sendZip(interaction,"OwnerPhotos",destFolder,"Here is a part of Owner Photos, unzip them in your export scripts folder","\nCannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory")
 
@@ -1265,7 +1195,6 @@ async def get(interaction):
 
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
     
-    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
     if(user==None):
         await interaction.response.send_message("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
         return
@@ -1273,7 +1202,6 @@ async def get(interaction):
 
     card=get_or_create_card(user)
     returnValue=""
-    #In most cases, cardOwner is the user, but it may be another user if the current user is an admin who used the switch feature to modify a legendary card or the card of someone else
     cardOwner=get_owner_of_card(card)
 
     returnValue+="Owner name: "+card["owner_name"]
@@ -1310,13 +1238,11 @@ async def send_message_with_preview(interaction, message):
     await interaction.response.defer(ephemeral=True, thinking=True)
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
 
-    #If user is none this means we weren't able to create the user, which means that the person tried to use the bot for the first time in DMs, with no guild id
     if(user==None):
         await interaction.followup.send("Please first use the bot on a server, then you'll be able to use it in its DMs",ephemeral=True)
         return
 
     card=get_or_create_card(user)
-    #In most cases, cardOwner is the user, but it may be another user if the current user is an admin who used the switch feature to modify a legendary card or the card of someone else
     cardOwner=get_owner_of_card(card)
 
     mainGuildOfUser=user["guild_id"]
@@ -1344,14 +1270,6 @@ async def send_message_with_preview(interaction, message):
 @client.event
 async def on_ready():
     await tree.sync()
-    #await tree.sync(guild=discord.Object(id=790626187944394772))
 
-@client.event
-async def on_message(message):
-    if(random.randint(0,4)>0): return
-    if(message.author.id!=317408530422562827):   return
-    await message.add_reaction("🙄")
-
-print("This line was last modified on the 31/07/2024 at 14:38 by Jeremy (to test Docker Recreate)")
+print("Démarrage du bot Pokenjmin...")
 client.run(settings["Token"])
-#endregion
