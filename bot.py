@@ -618,11 +618,11 @@ def fill_layers_for_skill(root,skillLayerGroupPath,skillDatas):
     skillTitleLayer=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["SkillTitleLayerName"])
     change_text_of_svg_layer(skillTitleLayer,skillDatas["skill_name"])
 
-    skillCostLayer=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["SkillCostLayerName"])
-    skillCost=skillDatas["skill_power"]
-    if(skillCost<-9999999):
-        skillCost=""
-    change_text_of_svg_layer(skillCostLayer,skillCost)
+    skillPowerLayer=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["SkillPowerLayerName"])
+    skillPower=skillDatas["skill_power"]
+    if(skillPower<-9999999):
+        skillPower=""
+    change_text_of_svg_layer(skillPowerLayer,skillPower)
 
     spe1IconGroup= get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["Spe1IconGroupName"])
     set_spe_image_for_svg(spe1IconGroup,skillDatas["spe1"],"IconLayerName")
@@ -1189,7 +1189,7 @@ async def get(interaction):
     def skillToString(skillDatas):
         returnString=""
         returnString+="\tName: "+skillDatas["skill_name"]
-        returnString+="\n\tCost: "+str(skillDatas["skill_power"])
+        returnString+="\n\tPower: "+str(skillDatas["skill_power"])
         returnString+="\n\tDesc: "+skillDatas["skill_desc"]
         return returnString
 

@@ -4,9 +4,9 @@ services:
     container_name: pokenjmin-bot
     restart: unless-stopped
     volumes:
-      - ./volume1/docker/PokenjminBot/Data:/usr/src/app/Data
-      - ./volume1/docker/PokenjminBot/settings.json:/usr/src/app/settings.json
-      - ./volume1/docker/PokenjminBot/Exports:/usr/src/app/Exports
+      - /volume1/docker/PokenjminBot/Data:/usr/src/app/Data
+      - /volume1/docker/PokenjminBot/settings.json:/usr/src/app/settings.json
+      - /volume1/docker/PokenjminBot/Exports:/usr/src/app/Exports
     deploy:
       resources:
         limits:
