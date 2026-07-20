@@ -3,3 +3,4 @@ Exports/
 temp/
 __pycache__/
 *.db
+compose-exemple.yml
