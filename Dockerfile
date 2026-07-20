@@ -9,7 +9,7 @@ COPY . .
 
 # Install system dependencies
 RUN apt-get update && \
-    apt-get install -y libcairo2-dev inkscape && \
+    apt-get install -y libcairo2-dev inkscape fontconfig && \
     rm -rf /var/lib/apt/lists/*
 
 # Create a directory for fonts
@@ -17,6 +17,9 @@ RUN mkdir -p /usr/share/fonts/truetype/
 
 # Copy fonts to the system directory
 RUN cp -r /usr/src/app/Fonts /usr/share/fonts/truetype/
+
+# Refresh system font cache so Inkscape can find them
+RUN fc-cache -f -v
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
