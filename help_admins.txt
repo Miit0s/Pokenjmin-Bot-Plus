@@ -1,10 +1,23 @@
-If you see this second help message, it means you're an admin, congratulation !
+If you see this second help message, it means you're an admin. Congratulations! 
 
-You can modify other people cards using /switch_to_user_card, one you're switch, the /set_skill, /set_card and /preview commands will affect the other user's card. If you lose track of which card you're modifying, you can use the /get_current_switch command. You can reset your switch status with /reset_switch command.
+## Managing Users' Cards
+You can modify other people's cards using the switch system:
+* **`/switch_to_user_card`** : Switch your focus to another user. Once switched, the `/set_skill`, `/set_card`, and `/preview` commands will affect *their* card instead of yours.
+* **`/get_current_switch`** : Check which card you are currently modifying if you lose track.
+* **`/reset_switch`** : Reset your switch status to return to modifying your own card.
 
-You can create lengdary cards using /create_legendary, once your legendary is created, get its id using /list_legendaries and switch to it using the /switch_to_legendary command. You can then modify it same as another user's card.
+## Legendary Cards
+* **`/create_legendary`** : Create a new legendary card.
+* **`/list_legendaries`** : List all existing legendary cards and get their IDs.
+* **`/switch_to_legendary`** : Switch to a legendary card using its ID to modify it just like a regular user's card.
 
-You can export the full deck using /export_all, you can choose the format. PDF is very long may not work if there are too much cards, JSON can then be used with export_to_photoshop.py to generate the final cards
+## Server & Role Settings
+These settings will fill fields for your server's members automatically:
+* **`/set_server_settings`** : Set the cohort name and default specialty for the entire server (useful for single-specialty formations like IEM or Licence).
+* **`/set_role_settings`** : Assign a specific specialty to a Discord role (useful for pluri-specialty formations like Master JMIN).
 
-You can also set things up for your server, like its cohort name and default specialty (useful if you're in a single specialty formation, like IEM or License) with /set_server_settings, if you're in a pluri-specialty formation, like Master JMIN, you can affect a specialty to different roles of your discord server, using /set_role_settings. These settings will fill fields of your server's members automaticly.
-Congratulation for your rank and make good use of your powers !
+## Exporting
+* **`/export_all`** : Export the full deck and choose your format. 
+  > *Note: PDF generation is very long and may not work if there are too many cards. We recommend exporting to **JSON** and using the `export_to_photoshop.py` script to generate the final high-quality cards.*
+
+Congratulations on your rank, and make good use of your powers!
