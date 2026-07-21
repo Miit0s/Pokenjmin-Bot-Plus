@@ -852,7 +852,7 @@ async def setCard(interaction, card_name:str=None, card_name_font_size:float=Non
     if(error==False):
         feedbackMessage+="All field successfully setted !"
 
-    await get(interaction, feedbackMessage)
+    await get.callback(interaction, feedbackMessage)
 
 @tree.command(
     name="create_legendary",
@@ -936,7 +936,7 @@ async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:s
     if(spe3!=None): skill["spe3"]=spe3
     update_skill(skill)
 
-    await get(interaction, "All field successfully setted !")
+    await get.callback(interaction, "All field successfully setted !")
 
 @tree.command(
     name="set_server_settings",
