@@ -31,7 +31,7 @@
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g3" /><defs
+     inkscape:current-layer="Passif" /><defs
      id="defs1"><mask
        id="mask"
        x="0"
@@ -838,21 +838,30 @@
            width="1103"
            height="141"
            transform="translate(19.11591 217.15122) scale(0.13752)"
-           xlink:href="Template_Pokenjmin_Unprocessed75.png" /></g><g id="BottomText">
+           xlink:href="Template_Pokenjmin_Unprocessed75.png" /></g><g
+         id="BottomText">
     <text
-       id="text7"
-       data-name="BottomText"
-       style="font-stretch:condensed;font-size:5.84479px;line-height:1;font-family:GillSansMT, 'Gill Sans MT';text-align:justify;white-space:pre;shape-inside:url(#rect7);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
-       space="preserve"
-       label="TextBox7"
-       xml:space="preserve"><tspan
-         x="22.828125"
-         y="225.09106"
-         id="tspan12">[Pré-prod] eaentnieerse sneaaletdepenes serleulneiem msoloetna tauisissreltoeessne aernsetuiearrsouii esioetnlrsespneieiaetuteimsritonea</tspan></text>
+   id="text7"
+   data-name="BottomText"
+   style="font-stretch:condensed;font-size:5.84479px;line-height:1;font-family:GillSansMT, 'Gill Sans MT';text-align:start;white-space:pre;shape-inside:url(#rect7);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;-inkscape-font-specification:'GillSansMT, Gill Sans MT, Condensed';font-weight:normal;font-style:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+   space="preserve"
+   label="TextBox7"
+   xml:space="preserve"
+   x="0"
+   y="0"><tspan
+     x="22.828125"
+     y="225.09106"
+     id="tspan11">[Pré-prod] </tspan><tspan
+     x="22.828125"
+     y="230.93585"
+     id="tspan12">eaentnieersesneaaletdepenesserleulneiemmsoloetnat</tspan><tspan
+     x="22.828125"
+     y="236.78064"
+     id="tspan13">auisissreltoeessneaernsetuiearrsouii</tspan></text>
 </g></g><g
        style="display:inline"
        mask="url(#mask)"
-       id="g1"><g
+       id="CardImageMaskContainer"><g
          id="CardImageMask"><g
            id="CardImage_Image"
            data-name="CardImage Image"><image
@@ -898,7 +907,7 @@
            xlink:href="Template_Pokenjmin_Unprocessed81.png" /></g></g><g
        style="display:inline"
        mask="url(#mask-2)"
-       id="g2"><g
+       id="OwnerPhotoMaskContainer"><g
          id="OwnerPhotoMask"
          style="display:inline"><g
            id="OwnerPhoto_Image"
@@ -927,7 +936,7 @@
            xml:space="preserve"><tspan
              x="21.350224"
              y="39.607422"
-             id="tspan16">P19</tspan></text></g><g
+             id="tspan14">P19</tspan></text></g><g
          id="CardName"><text
            style="font-weight:700;font-stretch:condensed;font-size:10.8874px;line-height:1;font-family:GillSansMT-Bold, 'Gill Sans MT';text-align:left;white-space:pre;shape-inside:url(#rect9);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
            space="preserve"
@@ -936,7 +945,7 @@
            xml:space="preserve"><tspan
              x="20.765625"
              y="32.697653"
-             id="tspan17">CardName</tspan></text></g><g
+             id="tspan15">CardName</tspan></text></g><g
          id="CPValeur"><text
            style="font-weight:700;font-stretch:condensed;font-size:12.6064px;line-height:1;font-family:GillSansMT-Bold, 'Gill Sans MT';text-align:right;white-space:pre;shape-inside:url(#rect10);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
            space="preserve"
@@ -945,7 +954,7 @@
            xml:space="preserve"><tspan
              x="98.331784"
              y="34.329862"
-             id="tspan18">CPValeur</tspan></text></g><g
+             id="tspan16">CPValeur</tspan></text></g><g
          id="CPNom"><text
            style="font-stretch:condensed;font-size:6.87623px;line-height:1;font-family:GillSansMT, 'Gill Sans MT';text-align:right;white-space:pre;shape-inside:url(#rect11);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
            space="preserve"
@@ -954,7 +963,7 @@
            xml:space="preserve"><tspan
              x="112.97217"
              y="34.112995"
-             id="tspan19">CPNom</tspan></text></g><g
+             id="tspan17">CPNom</tspan></text></g><g
          id="Description"><text
            style="font-stretch:condensed;font-size:5.78749px;line-height:1;font-family:GillSansMT, 'Gill Sans MT';text-align:center;white-space:pre;shape-inside:url(#rect12);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
            space="preserve"
@@ -963,7 +972,7 @@
            xml:space="preserve"><tspan
              x="91.547383"
              y="134.28385"
-             id="tspan20">Description</tspan></text></g><g
+             id="tspan18">Description</tspan></text></g><g
          id="OwnerName"><text
            transform="scale(0.99074,1)"
            style="font-stretch:condensed;font-size:6.87623px;line-height:1;font-family:GillSansMT, 'Gill Sans MT';text-align:right;writing-mode:vertical-lr;white-space:pre;shape-inside:url(#rect13);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
@@ -973,7 +982,7 @@
            xml:space="preserve"><tspan
              x="21.350224"
              y="79.133504"
-             id="tspan21">OwnerName</tspan></text></g></g><g
+             id="tspan19">OwnerName</tspan></text></g></g><g
        id="PreviewWatermark"
        style="opacity: 0.14117647058823526"><g
          id="RasterizedPreviewText_Image"

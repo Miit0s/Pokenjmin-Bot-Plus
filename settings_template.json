@@ -39,8 +39,8 @@
 	"CPValueLayer":"Infos/CPValeur",
 	"CohortNameValueLayer":"Infos/P19",
 	"BottomTextLayer":"Passif/BottomText",
-	"CardImageLayer":"CardImageMask/CardImage",
-	"OwnerPhotoLayer":"OwnerPhotoMask/OwnerPhoto",
+	"CardImageLayer":"CardImageMaskContainer/CardImageMask/CardImage",
+	"OwnerPhotoLayer":"OwnerPhotoMaskContainer/OwnerPhotoMask/OwnerPhoto",
 
 	"Skill1Group":"Skill1",
 	"Skill2Group":"Skill2",
