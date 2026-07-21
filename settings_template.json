@@ -61,49 +61,49 @@
 			"DisplayName":"⬜​ None",
 			"IconLayerName":"None",
 			"BackgroundLayerName":"None",
-			"WatermarkLayerName":"Yeopote"
+			"WatermarkLayerName":"None"
 		},
 		{
 			"Id":1,
 			"DisplayName":"🤖 Prog",
 			"IconLayerName":"Prog",
 			"BackgroundLayerName":"ProgFond",
-			"WatermarkLayerName":"Yeopote"
+			"WatermarkLayerName":"MasterP22"
 		},
 		{
 			"Id":2,
 			"DisplayName":"🎲 GD",
 			"IconLayerName":"GD2",
 			"BackgroundLayerName":"GDFond",
-			"WatermarkLayerName":"Yeopote"
+			"WatermarkLayerName":"MasterP22"
 		},
 		{
 			"Id":3,
 			"DisplayName":"🎨 Graph",
 			"IconLayerName":"Graph",
 			"BackgroundLayerName":"GraphFond",
-			"WatermarkLayerName":"Yeopote"
+			"WatermarkLayerName":"MasterP22"
 		},
 		{
 			"Id":4,
 			"DisplayName":"🧠 Ergo",
 			"IconLayerName":"Ergo",
 			"BackgroundLayerName":"ErgoFond",
-			"WatermarkLayerName":"Yeopote"
+			"WatermarkLayerName":"MasterP22"
 		},
 		{
 			"Id":5,
 			"DisplayName":"👔 Producing",
 			"IconLayerName":"CDP",
 			"BackgroundLayerName":"CDPFond",
-			"WatermarkLayerName":"Yeopote"
+			"WatermarkLayerName":"MasterP22"
 		},
 		{
 			"Id":6,
 			"DisplayName":"🎧 Sound-designer",
 			"IconLayerName":"Son",
 			"BackgroundLayerName":"SonFond",
-			"WatermarkLayerName":"Yeopote"
+			"WatermarkLayerName":"MasterP22"
 		},
 		{
 			"Id":7,
@@ -117,7 +117,7 @@
 			"DisplayName":"❔License",
 			"IconLayerName":"License",
 			"BackgroundLayerName":"LicenseFond",
-			"WatermarkLayerName":"PCAT"
+			"WatermarkLayerName":"LicenceP4"
 		},
 		{
 			"Id":9,

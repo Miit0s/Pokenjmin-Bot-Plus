@@ -535,13 +535,7 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
         tag=sanitizeTag(child.tag)
         if(tag!="g"): continue
 
-        if("id" not in child.attrib): 
-            if(sanitizeTag(child.tag)!="g"): 
-                continue
-            if("style" not in child.attrib): 
-                continue
-            if("isolation" not in child.attrib["style"]): 
-                continue
+        if "style" in child.attrib and "isolation" in child.attrib["style"]:
             root=child
             break
 
