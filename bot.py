@@ -514,6 +514,9 @@ def replace_image_for_svg(root,layerToReplacePath, input_file):
     imageRelativePath=os.path.relpath(input_file,svgFolder)
     imageNode.attrib[attribNamespace+"href"]=imageRelativePath
 
+    xlink_namespace = "{http://www.w3.org/1999/xlink}href"
+    imageNode.attrib[xlink_namespace] = imageRelativePath
+
     newImageFile = Image.open(input_file)
     width, height = newImageFile.size
     ratio = float(width) / float(height)
@@ -849,7 +852,7 @@ async def setCard(interaction, card_name:str=None, card_name_font_size:float=Non
     if(error==False):
         feedbackMessage+="All field successfully setted !"
 
-    await send_message_with_preview(interaction, feedbackMessage)
+    await get(interaction, feedbackMessage)
 
 @tree.command(
     name="create_legendary",
