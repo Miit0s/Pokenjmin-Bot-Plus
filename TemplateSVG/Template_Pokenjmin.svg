@@ -540,7 +540,7 @@
            xml:space="preserve"><tspan
              x="151.18533"
              y="189.89917"
-             id="tspan1">Cost</tspan></text></g><g
+             id="tspan11">Cost</tspan></text></g><g
          id="Title"><text
            id="text2"
            data-name="Title"
@@ -550,7 +550,7 @@
            xml:space="preserve"><tspan
              x="50.058594"
              y="189.02579"
-             id="tspan2">Compétence 2                      </tspan></text></g><g
+             id="tspan12">Compétence 2                      </tspan></text></g><g
          id="Desc"><text
            id="text3"
            data-name="Desc"
@@ -560,13 +560,13 @@
            xml:space="preserve"><tspan
              x="39.607422"
              y="196.58268"
-             id="tspan3">eaentnieersesneaaletdepenesserleulneiemmsolo</tspan><tspan
+             id="tspan13">eaentnieersesneaaletdepenesserleulneiemmsolo</tspan><tspan
              x="39.607422"
              y="202.37017"
-             id="tspan4">etnatauisissreltoeessneaernsetuiearrsouiiesioetnl</tspan><tspan
+             id="tspan20">etnatauisissreltoeessneaernsetuiearrsouiiesioetnl</tspan><tspan
              x="39.607422"
              y="208.15766"
-             id="tspan5">rsespneieiaetuteimsritonea</tspan></text></g></g><g
+             id="tspan21">rsespneieiaetuteimsritonea</tspan></text></g></g><g
        id="Skill1"><g
          id="Spe3_2"
          data-name="Spe3"><g
@@ -800,7 +800,7 @@
            xml:space="preserve"><tspan
              x="151.18533"
              y="153.7312"
-             id="tspan6">Cost</tspan></text></g><g
+             id="tspan22">Cost</tspan></text></g><g
          id="Title_3"
          data-name="Title"><text
            id="text5"
@@ -811,7 +811,7 @@
            xml:space="preserve"><tspan
              x="50.058594"
              y="153.13126"
-             id="tspan7">Compétence 1                      </tspan></text></g><g
+             id="tspan23">Compétence 1                      </tspan></text></g><g
          id="Desc_3"
          data-name="Desc"><text
            id="text6"
@@ -822,13 +822,13 @@
            xml:space="preserve"><tspan
              x="39.332031"
              y="161.37565"
-             id="tspan8">eaentnieersesneaaletdepenesserleulneiemmsolo</tspan><tspan
+             id="tspan24">eaentnieersesneaaletdepenesserleulneiemmsolo</tspan><tspan
              x="39.332031"
              y="167.16314"
-             id="tspan9">etnatauisissreltoeessneaernsetuiearrsouiiesioetnl</tspan><tspan
+             id="tspan25">etnatauisissreltoeessneaernsetuiearrsouiiesioetnl</tspan><tspan
              x="39.332031"
              y="172.95063"
-             id="tspan10">rsespneieiaetuteimsritonea</tspan></text></g></g><g
+             id="tspan26">rsespneieiaetuteimsritonea</tspan></text></g></g><g
        id="Passif"><g
          id="Bg_Image"
          data-name="Bg Image"
@@ -843,7 +843,7 @@
     <text
    id="text7"
    data-name="BottomText"
-   style="font-stretch:condensed;font-size:5.84479px;line-height:1;font-family:GillSansMT, 'Gill Sans MT';text-align:start;white-space:pre;shape-inside:url(#rect7);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round;-inkscape-font-specification:'GillSansMT, Gill Sans MT, Condensed';font-weight:normal;font-style:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:condensed;font-size:5.84479px;line-height:1;font-family:GillSansMT, 'Gill Sans MT';-inkscape-font-specification:'GillSansMT, Gill Sans MT, Condensed';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:justify;white-space:pre;shape-inside:url(#rect7);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
    space="preserve"
    label="TextBox7"
    xml:space="preserve"
@@ -851,13 +851,17 @@
    y="0"><tspan
      x="22.828125"
      y="225.09106"
-     id="tspan11">[Pré-prod] </tspan><tspan
+     id="tspan28"><tspan
+       dx="0 0 0 0 0 0 0 0 0 0 0 9.4460258 0 0 0 0 0 0 0 0 0 0 0 0 0 0 9.4460297"
+       id="tspan27">[Pré-prod] eaentnieersesn eaaletdepenesserleu </tspan></tspan><tspan
      x="22.828125"
      y="230.93585"
-     id="tspan12">eaentnieersesneaaletdepenesserleulneiemmsoloetnat</tspan><tspan
+     id="tspan30"><tspan
+       dx="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 34.862488"
+       id="tspan29">lneiemmsoloetnatauisiss reltoeessneaern </tspan></tspan><tspan
      x="22.828125"
      y="236.78064"
-     id="tspan13">auisissreltoeessneaernsetuiearrsouii</tspan></text>
+     id="tspan31">setuiearrsouii</tspan></text>
 </g></g><g
        style="display:inline"
        mask="url(#mask)"
@@ -936,7 +940,7 @@
            xml:space="preserve"><tspan
              x="21.350224"
              y="39.607422"
-             id="tspan14">P19</tspan></text></g><g
+             id="tspan32">P19</tspan></text></g><g
          id="CardName"><text
            style="font-weight:700;font-stretch:condensed;font-size:10.8874px;line-height:1;font-family:GillSansMT-Bold, 'Gill Sans MT';text-align:left;white-space:pre;shape-inside:url(#rect9);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
            space="preserve"
@@ -945,7 +949,7 @@
            xml:space="preserve"><tspan
              x="20.765625"
              y="32.697653"
-             id="tspan15">CardName</tspan></text></g><g
+             id="tspan33">CardName</tspan></text></g><g
          id="CPValeur"><text
            style="font-weight:700;font-stretch:condensed;font-size:12.6064px;line-height:1;font-family:GillSansMT-Bold, 'Gill Sans MT';text-align:right;white-space:pre;shape-inside:url(#rect10);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
            space="preserve"
@@ -954,7 +958,7 @@
            xml:space="preserve"><tspan
              x="98.331784"
              y="34.329862"
-             id="tspan16">CPValeur</tspan></text></g><g
+             id="tspan34">CPValeur</tspan></text></g><g
          id="CPNom"><text
            style="font-stretch:condensed;font-size:6.87623px;line-height:1;font-family:GillSansMT, 'Gill Sans MT';text-align:right;white-space:pre;shape-inside:url(#rect11);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
            space="preserve"
@@ -963,7 +967,7 @@
            xml:space="preserve"><tspan
              x="112.97217"
              y="34.112995"
-             id="tspan17">CPNom</tspan></text></g><g
+             id="tspan35">CPNom</tspan></text></g><g
          id="Description"><text
            style="font-stretch:condensed;font-size:5.78749px;line-height:1;font-family:GillSansMT, 'Gill Sans MT';text-align:center;white-space:pre;shape-inside:url(#rect12);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
            space="preserve"
@@ -972,7 +976,7 @@
            xml:space="preserve"><tspan
              x="91.547383"
              y="134.28385"
-             id="tspan18">Description</tspan></text></g><g
+             id="tspan36">Description</tspan></text></g><g
          id="OwnerName"><text
            transform="scale(0.99074,1)"
            style="font-stretch:condensed;font-size:6.87623px;line-height:1;font-family:GillSansMT, 'Gill Sans MT';text-align:right;writing-mode:vertical-lr;white-space:pre;shape-inside:url(#rect13);display:inline;fill:#000001;fill-rule:evenodd;stroke-width:110;stroke-linecap:round;stroke-linejoin:round"
@@ -982,7 +986,7 @@
            xml:space="preserve"><tspan
              x="21.350224"
              y="79.133504"
-             id="tspan19">OwnerName</tspan></text></g></g><g
+             id="tspan37">OwnerName</tspan></text></g></g><g
        id="PreviewWatermark"
        style="opacity: 0.14117647058823526"><g
          id="RasterizedPreviewText_Image"

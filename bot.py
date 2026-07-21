@@ -394,25 +394,37 @@ def getStyleWithNewFontSize(style:str, newFontSize:float):
         style=style+";"+"font-size: "+str(newFontSize)+"px"
     return style
     
-def change_text_of_svg_layer(layer,text:str):
-    text=str(text)
-    textDiv=None
+def change_text_of_svg_layer(layer, text:str):
+    text = str(text)
+    textDiv = None
     for child in layer:
-        if sanitizeTag(child.tag)=="text":
-            textDiv=child
+        if sanitizeTag(child.tag) == "text":
+            textDiv = child
             break
-    if(textDiv==None):
-        print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
+            
+    if textDiv is None:
+        print("/!\\Couldn't find a text layer for  " + layer.attrib.get('id', 'unknown'))
         return
     
     tspan_found = False
+    children_to_remove = []
+    
     for child in textDiv:
         if sanitizeTag(child.tag) == "tspan":
             if not tspan_found:
+                for subchild in list(child):
+                    child.remove(subchild)
+                
                 child.text = text
+                child.tail = ""
                 tspan_found = True
             else:
-                child.text = ""
+                children_to_remove.append(child)
+        else:
+            children_to_remove.append(child)
+            
+    for child in children_to_remove:
+        textDiv.remove(child)
     
     if not tspan_found:
         textDiv.text = text
