@@ -4,3 +4,8 @@ temp/
 __pycache__/
 *.db
 compose-exemple.yml
+settings_template.json
+settings.json
+setup_script.sh
+Template_Pokenjmin.ai
+Template_Pokenjmin.psd

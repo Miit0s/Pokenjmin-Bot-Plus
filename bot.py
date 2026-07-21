@@ -475,7 +475,7 @@ def find_child_by_sanitize_tag(node, tag):
             return child
     return None
 
-def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
+def translate_node(node, deltaX, deltaY, relativeToScale:bool=True):
     if("transform" not in node.attrib): 
         transform="translate(0 0)"
     else:
@@ -486,6 +486,11 @@ def translate_node(node, deltaX,deltaY, relativeToScale:bool=True):
 
     translatePattern = r'translate\(([^)]+)\)'
     translateMatch = re.search(translatePattern, transform)
+
+    #Avoid crash when Inkscape transformed the translate to a matrix
+    if translateMatch is None:
+        transform += " translate(0 0)"
+        translateMatch = re.search(translatePattern, transform)
 
     scale_pattern = r'scale\(([^)]+)\)'
     scale_match = re.search(scale_pattern, transform)
