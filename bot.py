@@ -796,8 +796,13 @@ async def setCard(interaction, card_name:str=None, card_name_font_size:float=Non
                 ratio= im.width/im.height
                 if(abs(ratio-settings["CardImagesPreferredRatio"])>=0.005):
                     feedbackMessage+="card_image isn't in the preferred ratio "+str(settings["CardImagesPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(math.ceil(1080*settings["CardImagesPreferredRatio"]))+"\\*"+str(1080)+"\n"
-                im.save(os.path.join(os.getcwd(),settings["CardImagesFolder"],str(fileName)+".png"))
-        except:
+                
+                save_dir = os.path.join(os.getcwd(), settings["CardImagesFolder"])
+                os.makedirs(save_dir, exist_ok=True)
+
+                im.save(os.path.join(save_dir, str(fileName)+".png"))
+        except Exception as error:
+            print(f"Error during the card_image save : {error}")
             feedbackMessage+="There was an error converting the card_image, try exporting it to another format like png or jpg\n"
             error=True
 
@@ -812,8 +817,13 @@ async def setCard(interaction, card_name:str=None, card_name_font_size:float=Non
                 ratio= im.width/im.height
                 if(abs(ratio-settings["OwnerPhotoPreferredRatio"])>=0.005):
                     feedbackMessage+="owner_photo isn't in the preferred ratio "+str(settings["OwnerPhotoPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(1080)+"\\*"+str(math.ceil(1080*settings["OwnerPhotoPreferredRatio"]))+"\n"
-                im.save(os.path.join(os.getcwd(),settings["OwnerPhotosFolder"],str(fileName)+".png"))
-        except:
+                
+                save_dir = os.path.join(os.getcwd(), settings["OwnerPhotosFolder"])
+                os.makedirs(save_dir, exist_ok=True) # Crée le dossier s'il n'existe pas
+
+                im.save(os.path.join(save_dir, str(fileName)+".png"))
+        except Exception as error:
+            print(f"Error during the owner_photo save : {error}")
             feedbackMessage+="There was an error converting the owner image, try exporting it to another format like png or jpg\n"
             error=True
 
