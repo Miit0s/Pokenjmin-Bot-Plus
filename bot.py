@@ -403,8 +403,21 @@ def change_text_of_svg_layer(layer,text:str):
             break
     if(textDiv==None):
         print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
-
-    textDiv.text=text
+        return
+    
+    tspan_found = False
+    for child in textDiv:
+        if sanitizeTag(child.tag) == "tspan":
+            if not tspan_found:
+                child.text = text
+                tspan_found = True
+            else:
+                child.text = ""
+    
+    if not tspan_found:
+        textDiv.text = text
+    else:
+        textDiv.text = ""
 
 def change_font_size_of_svg_layer(layer,sizeInPx:float, fontScaleRatio, psdToSvgCoordinatesMultiplier):
     textDiv=None
