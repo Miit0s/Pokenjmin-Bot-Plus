@@ -21,4 +21,4 @@ You can reference other cards in your skills description, card description, or b
 ## Image Recommendations
 To ensure your card looks perfect, please follow these guidelines:
 * **`owner_image`** : Preferred ratio is **1:1**. We recommend a resolution of at least `1080x1080` pixels.
-* **`card_image`** : Preferred ratio is **1.48:1**. We recommend a resolution of at least `1080x1523` pixels.
+* **`card_image`** : Preferred ratio is **1.48:1**. We recommend a resolution of at least `1598x1080` pixels.

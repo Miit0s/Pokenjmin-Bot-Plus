@@ -743,7 +743,7 @@ async def setCurrentServerAsMain(interaction):
 @app_commands.describe(card_description="Card description. You can ping friends or paste legendary IDs to reference them.")
 @app_commands.describe(bottom_text_title="Title of the bottom text section (default is 'Pré-prod')")
 @app_commands.describe(bottom_text_content="Content of the bottom text. You can ping friends here too.")
-@app_commands.describe(card_image="Main illustration. Preferred ratio is 1.48:1 (e.g., 1080x1523 pixels)")
+@app_commands.describe(card_image="Main illustration. Preferred ratio is 1.48:1 (e.g., 1598x1080 pixels)")
 @app_commands.describe(owner_image="Your profile photo. Preferred ratio is 1:1 (e.g., 1080x1080 pixels)")
 async def setCard(interaction, card_name:str=None, card_name_font_size:float=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
                   bottom_text_content:str=None, hp_value:int=None, card_image:discord.Attachment=None, owner_image:discord.Attachment=None):
@@ -795,7 +795,7 @@ async def setCard(interaction, card_name:str=None, card_name_font_size:float=Non
             with Image.open(bruteImagePath) as im:
                 ratio= im.width/im.height
                 if(abs(ratio-settings["CardImagesPreferredRatio"])>=0.005):
-                    feedbackMessage+="card_image isn't in the preferred ratio "+str(settings["CardImagesPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(1080)+"\\*"+str(math.ceil(1080*settings["CardImagesPreferredRatio"]))+"\n"
+                    feedbackMessage+="card_image isn't in the preferred ratio "+str(settings["CardImagesPreferredRatio"])+" it may not fit as you wish, consider modifying the image to be in the preferred ratio with dimensions of, for example "+str(math.ceil(1080*settings["CardImagesPreferredRatio"]))+"\\*"+str(1080)+"\n"
                 im.save(os.path.join(os.getcwd(),settings["CardImagesFolder"],str(fileName)+".png"))
         except:
             feedbackMessage+="There was an error converting the card_image, try exporting it to another format like png or jpg\n"
