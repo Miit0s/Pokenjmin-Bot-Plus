@@ -10,6 +10,9 @@ Every change made will send you a new preview that **only you can see**. We kind
 * **`/preview`** : View your card's preview without changing anything.
 * **`/get`** : Get all the parameters of your card in a clean text format.
 
+## Server Settings
+* **`/set_current_server_as_main`** : Make the current server your main one. This determines how your specialty (spe) and cohort are computed based on your roles in this server.
+
 ## Mentions & References
 You can reference other cards in your skills description, card description, or bottom text:
 * **Friends:** Ping your friend directly in the text. *Please don't add any quotes or formatting around the ping*; the bot will add its own formatting to ensure a consistent deck.

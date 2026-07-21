@@ -725,7 +725,7 @@ async def help(interaction):
 
 @tree.command(
     name="set_current_server_as_main",
-    description="Make this server your main. It determines how your spe is computed"
+    description="Make this server your main. It determines how your specialty (spe) and cohort are computed."
 )
 async def setCurrentServerAsMain(interaction):
     update_user_guild(interaction.user.id, interaction.guild_id)
@@ -733,13 +733,18 @@ async def setCurrentServerAsMain(interaction):
 
 @tree.command(
     name="set_card",
-    description="Set the value of one or more fields of your card"
+    description="Set the value of one or more fields of your card. Leave empty the ones you don't want to change."
 )
 @app_commands.describe(card_name="The name at the top of the card")
-@app_commands.describe(card_name_font_size="The font size of the name at the top of the card, leave empty in doubt")
+@app_commands.describe(card_name_font_size="Font size of the card name, leave empty in doubt (useful to fix text overflow)")
 @app_commands.describe(owner_name="YOUR name, on the left side")
 @app_commands.describe(hp_name="The name beside the HP's value at the top of the card")
 @app_commands.describe(hp_value="HP's value at the top of the card")
+@app_commands.describe(card_description="Card description. You can ping friends or paste legendary IDs to reference them.")
+@app_commands.describe(bottom_text_title="Title of the bottom text section (default is 'Pré-prod')")
+@app_commands.describe(bottom_text_content="Content of the bottom text. You can ping friends here too.")
+@app_commands.describe(card_image="Main illustration. Preferred ratio is 1.48:1 (e.g., 1080x1523 pixels)")
+@app_commands.describe(owner_image="Your profile photo. Preferred ratio is 1:1 (e.g., 1080x1080 pixels)")
 async def setCard(interaction, card_name:str=None, card_name_font_size:float=None, owner_name:str=None,hp_name:str=None, card_description:str=None, bottom_text_title:str=None, 
                   bottom_text_content:str=None, hp_value:int=None, card_image:discord.Attachment=None, owner_image:discord.Attachment=None):
     user=get_or_create_user(interaction.user.id, interaction.guild_id)
@@ -821,8 +826,10 @@ async def setCard(interaction, card_name:str=None, card_name_font_size:float=Non
 
 @tree.command(
     name="create_legendary",
-    description="Create a legendary card"
+    description="[ADMIN] Create a legendary card"
 )
+@app_commands.describe(card_name="The name of the legendary card")
+@app_commands.describe(owner_name="The owner/creator name on the side")
 async def createLegendary(interaction, card_name:str, owner_name:str):
     if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
@@ -838,15 +845,16 @@ async def createLegendary(interaction, card_name:str, owner_name:str):
 
 @tree.command(
     name="delete_legendary",
-    description="Delete a legendary card",
+    description="[ADMIN] Delete a legendary card using its specific ID",
 )
+@app_commands.describe(id="The ID of the legendary card to delete (use /list_legendaries to find it)")
 async def deleteLegendary(interaction, id:str):
     delete_legendary_user(id)
     await interaction.response.send_message("Legendary deleted !",ephemeral=True)
 
 @tree.command(
     name="list_legendaries",
-    description="Get the list of all existing legendary cards"
+    description="Get the list of all existing legendary cards and their Insertion Text to reference them"
 )
 async def listLegendaries(interaction):
     results=list_legendary_cards()
@@ -866,8 +874,15 @@ async def listLegendaries(interaction):
 
 @tree.command(
     name="set_skill",
-    description="Set the value of one or more fields of your card"
+    description="Set the value of one of your skills. Leave empty the fields you don't want to change."
 )
+@app_commands.describe(skill_nbr="Which skill you want to edit")
+@app_commands.describe(skill_name="The name of the skill")
+@app_commands.describe(skill_desc="Skill description. You can ping friends or paste legendary IDs to reference them.")
+@app_commands.describe(skill_power="The power value of the skill")
+@app_commands.describe(spe1="First specialty icon required for the skill")
+@app_commands.describe(spe2="Second specialty icon required for the skill")
+@app_commands.describe(spe3="Third specialty icon required for the skill")
 @app_commands.choices(skill_nbr=[
     app_commands.Choice(name='Skill 1', value=1),
     app_commands.Choice(name='Skill 2', value=2)
@@ -900,8 +915,10 @@ async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:s
 
 @tree.command(
     name="set_server_settings",
-    description="Set the default spe for a given server"
+    description="[ADMIN] Set the default specialty and cohort for the entire server"
 )
+@app_commands.describe(default_spe="The default specialty given to all members of this server")
+@app_commands.describe(cohort="The cohort name displayed on the cards (e.g. Master JMIN 2026)")
 @app_commands.choices(default_spe=specialtiesChoices)
 async def setServerSettings(interaction, default_spe:int, cohort:str):
     if(str(interaction.user.id) not in settings["Admins"]):
@@ -916,8 +933,10 @@ async def setServerSettings(interaction, default_spe:int, cohort:str):
 
 @tree.command(
     name="set_role_settings",
-    description="Set the default spe for a given server"
+    description="[ADMIN] Assign a specific specialty to a Discord role"
 )
+@app_commands.describe(role="The Discord role to target")
+@app_commands.describe(spe="The specialty assigned to this role")
 @app_commands.choices(spe=specialtiesChoices)
 async def setRoleSettings(interaction, role:discord.Role, spe:int):
     if(str(interaction.user.id) not in settings["Admins"]):
@@ -931,7 +950,7 @@ async def setRoleSettings(interaction, role:discord.Role, spe:int):
 
 @tree.command(
         name="get_admins",
-        description="List all the admins of the bot"
+        description="List all the users currently registered as admins of the bot"
 )
 async def getAdmins(interaction):
     messageResponse="List of all admins:\n"
@@ -941,8 +960,9 @@ async def getAdmins(interaction):
 
 @tree.command(
     name="switch_to_user_card",
-    description="Allows you to set your current card to another user's one",
+    description="[ADMIN] Switch your focus to another user's card to modify it for them",
 )
+@app_commands.describe(target="The Discord user whose card you want to edit")
 async def switchToUserCard(interaction, target:discord.User):
     if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
@@ -956,8 +976,9 @@ async def switchToUserCard(interaction, target:discord.User):
 
 @tree.command(
     name="switch_to_legendary",
-    description="Allows you to set your current card to another user's one"
+    description="[ADMIN] Switch your focus to a legendary card to modify it"
 )
+@app_commands.describe(target_id="The ID of the legendary card (use /list_legendaries to find it)")
 async def switchToLegendary(interaction, target_id:str):
     if(str(interaction.user.id) not in settings["Admins"]):
         await interaction.response.send_message("Only admins can use this command !",ephemeral=True)
@@ -977,7 +998,7 @@ async def switchToLegendary(interaction, target_id:str):
 
 @tree.command(
     name="reset_switch",
-    description="Set your current card as your own"
+    description="[ADMIN] Reset your switch status to return to modifying your own card"
 )
 async def resetSwitch(interaction):
     if(str(interaction.user.id) not in settings["Admins"]):
@@ -990,7 +1011,7 @@ async def resetSwitch(interaction):
 
 @tree.command(
     name="get_current_switch",
-    description="Get what card you are modifying"
+    description="[ADMIN] Check which user's or legendary's card you are currently modifying"
 )
 async def getCurrentSwitch(interaction):
     if(str(interaction.user.id) not in settings["Admins"]):
@@ -1007,8 +1028,9 @@ async def getCurrentSwitch(interaction):
 
 @tree.command(
     name="get_advancement",
-    description="Prints the advancement of all the people of a role in your server, who did their card and who didn't",
+    description="[ADMIN] Check the card completion progress of all people possessing a specific role",
 )
+@app_commands.describe(role="The Discord role to check")
 @app_commands.describe(enumerate_empty="List the names of those who have a currently empty card")
 @app_commands.describe(enumerate_partial="List the names of those who have a currently partially filled card")
 @app_commands.describe(enumerate_complete="List the names of those who have a completely filled card")
@@ -1190,7 +1212,7 @@ async def exportAll(interaction, format:int):
 
 @tree.command(
     name="get",
-    description="Prints all the values of your card in a text format, quicker than a full preview"
+    description="Get all the parameters of your card in a clean text format, quicker than a preview."
 )
 async def get(interaction):
     def skillToString(skillDatas):
@@ -1236,7 +1258,7 @@ async def get(interaction):
 
 @tree.command(
     name="preview",
-    description="Exports your card as a jpg"
+    description="View your card's visual preview without changing anything."
 )
 async def preview(interaction):
     await send_message_with_preview(interaction,"")
