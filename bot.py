@@ -897,8 +897,6 @@ async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:s
         return
     card=get_or_create_card(user)
     skill=get_skill_of_card(card,skill_nbr)
-    feedbackMessage=""
-    error=False
 
     if(skill_name!=None): skill["skill_name"]=skill_name
     if(skill_desc!=None): skill["skill_desc"]=skill_desc
@@ -908,10 +906,7 @@ async def setSkill(interaction, skill_nbr:int, skill_name:str=None, skill_desc:s
     if(spe3!=None): skill["spe3"]=spe3
     update_skill(skill)
 
-    if(error==False):
-        feedbackMessage+="All field successfully setted !"
-
-    await send_message_with_preview(interaction, feedbackMessage)
+    await get(interaction, "All field successfully setted !")
 
 @tree.command(
     name="set_server_settings",
@@ -1214,7 +1209,7 @@ async def exportAll(interaction, format:int):
     name="get",
     description="Get all the parameters of your card in a clean text format, quicker than a preview."
 )
-async def get(interaction):
+async def get(interaction, message: str = ""):
     def skillToString(skillDatas):
         returnString=""
         returnString+="\tName: "+skillDatas["skill_name"]
@@ -1230,7 +1225,7 @@ async def get(interaction):
 
 
     card=get_or_create_card(user)
-    returnValue=""
+    returnValue = f"{message}\n\n" if message else ""
     cardOwner=get_owner_of_card(card)
 
     returnValue+="Owner name: "+card["owner_name"]
