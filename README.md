@@ -39,6 +39,7 @@ Bots are tied to their developer's account. You must create your own application
 2. **Bot Token:** Paste your token (found in the Bot tab of the Developer Portal) into the JSON.
 3. **Admins:** Add the Discord IDs of your admins in the `Admins` array. (Admins are the only ones who can modify legendary cards and use setup commands).
 > *Note:* `CardNameFontSize` Min and Max are expressed in `px` based on the PSD. Don't worry about the SVG having completely different font size values; `process_template.py` calculates the ratio automatically.
+4. **Watermark** In the `Specialties` array, change the `WatermarkLayerName` by your current promotion (e.g. MasterP84). After that, go to the 3. section.
 
 ---
 
@@ -46,7 +47,19 @@ Bots are tied to their developer's account. You must create your own application
 
 If you need to modify the card's design, you must edit the source files. 
 
-### Step A: Photoshop & Illustrator
+### Option 1: Inkscape
+
+1. Open the svg file in TemplateSVG > Template_Pokenjmin.svg.
+2. Go in the section `Layers and objects`, and open the group g3 > Watermarks.
+3. Create a new group with the name you put in `WatermarkLayerName` (e.g. MasterP84), and add your promotion watermark in it as a image (.png or .jpeg).
+   * ⚠️ **Warning:** You need to change the group label AND id. For that go in Object Properties (Maj+Ctrl+O) and change the `ID` and `Label` settings.
+> *Notes:* One way to import an image into Inkscape is to drag and drop it onto the canvas.
+4. After that, position the watermark correctly where you want it to appear on the map.
+
+### Option 2: Photoshop & Illustrator
+
+**Step A: Design Export**
+
 1. Make your design changes in `Template_Pokenjmin.psd`.
    * ⚠️ **Warning:** Dynamic layer names **must not** contain underscores (`_`) or spaces!
    * *Tip:* Rasterize complex shapes with large strokes (like yellow borders) in Photoshop before moving to Illustrator.
@@ -60,7 +73,8 @@ If you need to modify the card's design, you must edit the source files.
    * **Images:** `Link`
 5. Save the file as `TemplateSVG/Template_Pokenjmin_Unprocessed.svg`. *(Clear the folder beforehand to avoid old PNGs piling up).*
 
-### Step B: Processing the SVG
+**Step B: Processing the SVG**
+
 Exporting directly from Illustrator leaves the SVG broken for dynamic text insertion. You must run the Python processing script:
 ```bash
 python3 process_template.py
@@ -76,12 +90,26 @@ The resulting file will be saved as `TemplateSVG/Template_Pokenjmin.svg`. **You 
 
 ---
 
-## 4. Deployment
+You can run the bot natively or easily deploy it using a Docker container.
 
-You can run the bot natively or in a container:
+### Option A: Manual
 
-* **Manual:** Install dependencies and run `python bot.py`.
-* **Docker:** *(Insert your standard Docker build/run commands here)*.
+Install the dependencies listed in Section 0 and run `python bot.py`.
+
+### Option B: Docker Compose (Recommended)
+
+The easiest and cleanest way to run the bot is via Docker Compose.
+
+1. Ensure Docker and Docker Compose are installed on your server/NAS.
+2. Create the required host directories to match the volume bindings (e.g., `/volume1/docker/PokenjminBot/Data` and `/volume1/docker/PokenjminBot/Exports`).
+3. Place your configured `settings.json` in the appropriate directory (`/volume1/docker/PokenjminBot/settings.json`).
+4. Create a `docker-compose.yml` file by using the [compose-exemple.yml](compose-exemple.yml). Adapt it so that it works with your server.
+> *Notes:* For exemple change the path from `/volume1/docker/PokenjminBot/Data` to one that work for you, like `/home/user/Documents/PokenjminBot/Data` for exemple.
+5. Start the container in the background by running:
+
+```bash
+docker compose up -d
+```
 
 ---
 
@@ -95,21 +123,11 @@ Because SVG generation causes slight visual/color loss, the final printable card
 2. The bot will send you `export.json` and several `.zip` files containing users' images.
 3. Extract these zip files directly into `Data/CardImages` and `Data/OwnerPhotos`.
 
-*If the zip files fail to send over Discord (due to size limits), retrieve them manually from your Docker container via SSH:*
+*If the zip files fail to send over Discord (due to size limits):*
+Thanks to your Docker Compose volume bindings, the generated files are already accessible directly on your host machine without needing to interact with the container.
 
-```bash
-# 1. Get your container ID
-docker ps
-
-# 2. Copy the image folders from the container to your host
-sudo docker cp <container_id>:/usr/src/app/Data/CardImages ./CardImages
-sudo docker cp <container_id>:/usr/src/app/Data/OwnerPhotos ./OwnerPhotos
-
-# 3. Zip them to download them to your local Windows PC
-sudo apt install zip
-sudo zip -r CardImages.zip ./CardImages
-sudo zip -r OwnerPhotos.zip ./OwnerPhotos
-```
+1. Connect to your host server/NAS.
+2. Navigate to your mapped `Data` directory (e.g., `/volume1/docker/PokenjminBot/Data`) and download the data.
 
 ### Step B: Run the Photoshop Script
 
