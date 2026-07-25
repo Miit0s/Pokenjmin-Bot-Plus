@@ -37,7 +37,7 @@
 	"DescriptionLayer":"Infos/Description",
 	"CPNameLayer":"Infos/CPNom",
 	"CPValueLayer":"Infos/CPValeur",
-	"CohortNameValueLayer":"Infos/P19",
+	"CohortNameValueLayer":"Infos/Promotion",
 	"BottomTextLayer":"Passif/BottomText",
 	"CardImageLayer":"CardImageMaskContainer/CardImageMask/CardImage",
 	"OwnerPhotoLayer":"OwnerPhotoMaskContainer/OwnerPhotoMask/OwnerPhoto",
