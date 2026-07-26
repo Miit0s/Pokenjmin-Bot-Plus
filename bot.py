@@ -354,20 +354,18 @@ def get_svg_layer_by_path(root, layerPath):
     
     inkscape_namespace = "{http://www.inkscape.org/namespaces/inkscape}label"
 
-    if " " in layerPath or "_" in layerPath:
-        print("/!\\ Error: layerPath:" + layerPath + " contains a forbidden character: \" \" or a \"_\"")
-
     for group in subGroups:
         nextLayer = None
         if currentLayer is None: continue
         
+        group_target = group.strip().lower()
+        
         for child in currentLayer:
-            label = child.attrib.get(inkscape_namespace)
+            label = str(child.attrib.get(inkscape_namespace, "")).strip().lower()
+            data_name = str(child.attrib.get("data-name", "")).strip().lower()
+            child_id = sanitizeLayerId(child.attrib.get("id", "")).strip().lower()
             
-            if label == group or ("data-name" in child.attrib and child.attrib["data-name"] == group):
-                nextLayer = child
-                break
-            elif label is None and 'id' in child.attrib and isSvgLayerEqual(child.attrib['id'], group):
+            if group_target == label or group_target == data_name or group_target == child_id:
                 nextLayer = child
                 break
                 
@@ -453,27 +451,14 @@ def change_font_size_of_svg_layer(layer, sizeInPx:float, fontScaleRatio, psdToSv
     translate_node(textDiv, 0, 0.5 * (oldFontSize - newFontSize))
 
 def toggle_svg_layer_visibility(layer, visibility:bool):
-    notVisibleString="display:none;"
-    visibleString="display:inline;"
-
-    desiredString=notVisibleString
-    undesiredString=visibleString
-    if(visibility):
-        desiredString=visibleString
-        undesiredString=notVisibleString
-
-    if("style" not in layer.attrib):
-        layer.attrib["style"]=desiredString
-        return
-
-    if(undesiredString in layer.attrib["style"]):
-        layer.attrib["style"]=layer.attrib["style"].replace(undesiredString, desiredString)
-        return
+    style = layer.attrib.get("style", "")
     
-    if(desiredString in layer.attrib["style"]):
-        return
+    style = re.sub(r'display\s*:\s*[a-zA-Z]+;?', '', style).strip()
     
-    layer.attrib["style"]=desiredString+layer.attrib["style"]
+    if visibility:
+        layer.attrib["style"] = "display:inline;" + style
+    else:
+        layer.attrib["style"] = "display:none;" + style
 
 def find_child_by_sanitize_tag(node, tag):
     for child in node:
@@ -702,23 +687,28 @@ def set_spe_image_for_svg(speIconsGroup, speId, imageLayerKey):
     if speIconsGroup is None:
         return
         
-    chosenSpe=None
+    chosenSpe = None
     for spe in settings["Specialties"]:
-        if spe["Id"]==speId:
-            chosenSpe=spe
+        if spe["Id"] == speId:
+            chosenSpe = spe
             break
     
-    if(chosenSpe==None):
-        toggle_svg_layer_visibility(speIconsGroup,False)
+    if chosenSpe is None:
+        toggle_svg_layer_visibility(speIconsGroup, False)
         return
 
+    target_name = str(chosenSpe[imageLayerKey]).strip().lower()
+
     for iconLayer in speIconsGroup:
-        layer_id = sanitizeLayerId(iconLayer.attrib.get("id", ""))
-        layer_label = iconLayer.attrib.get("{http://www.inkscape.org/namespaces/inkscape}label", "")
+        layer_id = str(iconLayer.attrib.get("id", "")).lower()
+        layer_label = str(iconLayer.attrib.get("{http://www.inkscape.org/namespaces/inkscape}label", "")).lower()
+        layer_data_name = str(iconLayer.attrib.get("data-name", "")).lower()
         
-        target_name = chosenSpe[imageLayerKey]
+        is_target = False
         
-        is_target = (layer_id == target_name) or (layer_label == target_name)
+        if target_name != "none":
+            if (target_name in layer_id) or (target_name in layer_label) or (target_name in layer_data_name):
+                is_target = True
         
         toggle_svg_layer_visibility(iconLayer, is_target)
 #endregion
