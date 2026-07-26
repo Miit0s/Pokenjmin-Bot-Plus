@@ -9,7 +9,7 @@ COPY . .
 
 # Install system dependencies
 RUN apt-get update && \
-    apt-get install -y libcairo2-dev inkscape fontconfig && \
+    apt-get install -y libcairo2-dev inkscape fontconfig icc-profiles-free && \
     rm -rf /var/lib/apt/lists/*
 
 # Create a directory for fonts
