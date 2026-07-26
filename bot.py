@@ -699,6 +699,9 @@ def fill_layers_for_skill(root,skillLayerGroupPath,skillDatas):
     return
 
 def set_spe_image_for_svg(speIconsGroup, speId, imageLayerKey):
+    if speIconsGroup is None:
+        return
+        
     chosenSpe=None
     for spe in settings["Specialties"]:
         if spe["Id"]==speId:
@@ -710,8 +713,14 @@ def set_spe_image_for_svg(speIconsGroup, speId, imageLayerKey):
         return
 
     for iconLayer in speIconsGroup:
-        if sanitizeTag(iconLayer.tag) != "g":continue
-        toggle_svg_layer_visibility(iconLayer, sanitizeLayerId(iconLayer.attrib["id"])==chosenSpe[imageLayerKey])
+        layer_id = sanitizeLayerId(iconLayer.attrib.get("id", ""))
+        layer_label = iconLayer.attrib.get("{http://www.inkscape.org/namespaces/inkscape}label", "")
+        
+        target_name = chosenSpe[imageLayerKey]
+        
+        is_target = (layer_id == target_name) or (layer_label == target_name)
+        
+        toggle_svg_layer_visibility(iconLayer, is_target)
 #endregion
 
 #region Bot management
