@@ -1,10 +1,8 @@
 {
 	"Token":"[TOKEN-HERE]",
 
-	"TemplatePsdFile":"Template_Pokenjmin.psd",
-	"UnprocessedTemplateSvgFile":"TemplateSVG/Template_Pokenjmin_Unprocessed.svg",
-	"TemplateSvgFile":"TemplateSVG/Template_Pokenjmin.svg",
-	"GeneratedSvgsFolder":"TemplateSVG",
+	"TemplateSvgFile":"TemplateFile/Template_Pokenjmin.svg",
+	"GeneratedSvgsFolder":"CardPreview",
 	"GeneratedSvgsExtension":".generated.svg",
 	"PreviewDPI":523.543,
 
@@ -15,7 +13,7 @@
 	"OwnerPhotosFolder":"Data/OwnerPhotos",
 	"OwnerPhotoPreferredRatio":1,
 	"CardNameFontSizeMin":48,
-	"CardNameFontSizeMax":79.17,
+	"CardNameFontSizeMax":79,
 
 	"Admins":
 	[
@@ -39,8 +37,8 @@
 	"CPValueLayer":"Infos/CPValeur",
 	"CohortNameValueLayer":"Infos/Promotion",
 	"BottomTextLayer":"Passif/BottomText",
-	"CardImageLayer":"CardImageMaskContainer/CardImageMask/CardImage",
-	"OwnerPhotoLayer":"OwnerPhotoMaskContainer/OwnerPhotoMask/OwnerPhoto",
+	"CardImageLayer":"CardImage",
+	"OwnerPhotoLayer":"OwnerPhoto",
 
 	"Skill1Group":"Skill1",
 	"Skill2Group":"Skill2",
@@ -54,6 +52,10 @@
 	"SpeIconGroupName":"SpeIcons",
 	"BackgroundsGroupName":"Backgrounds",
 	"WatermarkGroupName":"Watermarks",
+
+	"CardEdgeGroupName": "CardEdge",
+    "CardEdgeLegendaryLayerName": "CardEdgeLegendary",
+    "CardEdgeBasicLayerName": "CardEdgeBasic",
 
 	"Specialties":[
 		{
@@ -73,7 +75,7 @@
 		{
 			"Id":2,
 			"DisplayName":"🎲 GD",
-			"IconLayerName":"GD2",
+			"IconLayerName":"GD",
 			"BackgroundLayerName":"GDFond",
 			"WatermarkLayerName":"MasterP22"
 		},
@@ -114,9 +116,9 @@
 		},
 		{
 			"Id":8,
-			"DisplayName":"❔License",
-			"IconLayerName":"License",
-			"BackgroundLayerName":"LicenseFond",
+			"DisplayName":"❔ Licence",
+			"IconLayerName":"Licence",
+			"BackgroundLayerName":"LicenceFond",
 			"WatermarkLayerName":"LicenceP4"
 		},
 		{
@@ -128,7 +130,7 @@
 		}
 	],
 	"LegendarySpeId":9,
-	"LegendaryCohort":"2024",
+	"LegendaryCohort":"2026",
 	"HelpMessage":"help.txt",
 	"AdminHelpMessage":"help_admins.txt"
 }
