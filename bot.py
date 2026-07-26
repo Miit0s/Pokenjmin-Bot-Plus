@@ -6,7 +6,7 @@ import os
 import re
 import math
 import shutil
-import tempfile
+from tempfile import mkdtemp
 import xml.etree.ElementTree as ET
 from io import BytesIO
 from pathlib import Path
