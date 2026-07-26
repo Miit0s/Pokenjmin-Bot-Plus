@@ -20,14 +20,10 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 try:
-    print("Settings:")
-    with open('settings.json', 'r', encoding="utf-8") as fin:
-        print(fin.read())
+    with open('settings.json', encoding="utf-8") as settingsFile:
+        settings = json.load(settingsFile)
 except:
-    print("Couldnt print settings")
-
-with open('settings.json', encoding="utf-8") as settingsFile:
-    settings = json.load(settingsFile)
+    print("Couldn't find settings.json")
 
 con = sqlite3.connect("Data/data.db")
 con.row_factory = sqlite3.Row
@@ -568,7 +564,7 @@ def isSvgLayerEqual(svgLayerId:str, target:str):
     treatedId=sanitizeLayerId(svgLayerId)
     return treatedId==target
 
-def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False):   
+def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False, export_format="png", output_dir=None):   
     svgTemplatePath=os.path.join(os.getcwd(),settings["TemplateSvgFile"])
     parser1 = ET.XMLParser(encoding="utf-8")
     tree = ET.parse(svgTemplatePath,parser1)
@@ -663,8 +659,16 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     with open(generatedSvgPath, "wb") as f:
         f.write(output.getbuffer())
     
-    exportPath = os.path.join(mkdtemp(),str(fileName)+".png")
-    inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(exportPath, os.getcwd())}" --export-dpi={settings["PreviewDPI"]}'
+    if output_dir is None:
+        output_dir = mkdtemp()
+        
+    exportPath = os.path.join(output_dir, str(fileName) + "." + export_format)
+    
+    if export_format == "pdf":
+        inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(exportPath, os.getcwd())}" --export-text-to-path'
+    else:
+        inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(exportPath, os.getcwd())}" --export-dpi={settings.get("PreviewDPI", 96)}'
+    
     os.system(inkscapeCommand)
     
     return exportPath
@@ -1150,7 +1154,9 @@ async def exportAll(interaction, format:int):
     await interaction.response.defer(ephemeral=True, thinking=True)
 
     users=get_all_users_sorted(client)
-    if(format==1): #export as json
+    
+    # Export as JSON
+    if(format==1):
         for user in users:
             card=get_or_create_card(user,True)
             user["card"]=card
@@ -1162,110 +1168,31 @@ async def exportAll(interaction, format:int):
             user["card"]["skill2"]["skill_desc"]=replacePingsByCardNames(user["card"]["skill2"]["skill_desc"])
             user["card"]["skill1"]["skill_name"]=replacePingsByCardNames(user["card"]["skill1"]["skill_name"])
             user["card"]["skill2"]["skill_name"]=replacePingsByCardNames(user["card"]["skill2"]["skill_name"])
-        message="Use this json with an external script to generate PSD images etc."
-        exportFolder=mkdtemp()
-        jsonPath=os.path.join(exportFolder,"export.json")
+        
+        # On sauvegarde le JSON dans un dossier défini, ou dans le répertoire courant
+        exportFolder = os.path.join(os.getcwd(), settings.get("ExportJsonFolder", "ExportedJSON"))
+        os.makedirs(exportFolder, exist_ok=True)
+        jsonPath = os.path.join(exportFolder, "export.json")
         
         with open(jsonPath, 'w', encoding='utf8') as f:
             json.dump(users, f, ensure_ascii=False)
-        currentDir=os.getcwd()
-        os.chdir(os.path.dirname(jsonPath))
-        message+="\nThe images are coming in multiple zip files, starting with the card images"
-        await interaction.followup.send(message,ephemeral=True,file=discord.File(jsonPath))
-
-        tempZipFolder=mkdtemp()
-        zipNbr=0
-
-        async def sendZip(interaction, zipName:str, folderToZip:str, successMessage, fallbackMessage:str):
-            nonlocal tempZipFolder
-            nonlocal zipNbr
-            zipNbr+=1
-            zipPath=os.path.join(tempZipFolder,zipName+str(zipNbr))
-            shutil.make_archive(zipPath, 'zip', destFolder)
-            zipPath+=".zip"
-            os.chdir(tempZipFolder)
-            try:
-                await interaction.followup.send(successMessage,ephemeral=True, file=discord.File(zipPath))
-            except Exception as error:
-                await interaction.followup.send(str(error)+"\n"+fallbackMessage,ephemeral=True)
-            tempZipFolder=mkdtemp()
             
-        imagePath=""
-        destFolder=""
-        for name in os.listdir(os.path.join(currentDir,settings["CardImagesFolder"])):
-            imagePath=os.path.join(currentDir,settings["CardImagesFolder"], name)
-            destFolder=os.path.join(tempZipFolder, os.path.basename(settings["CardImagesFolder"]))
-            if(os.path.exists(os.path.join(tempZipFolder, os.path.basename(settings["CardImagesFolder"])))==False):
-                os.mkdir(destFolder)
-            destPath=os.path.join(destFolder,name)
-            shutil.copy(imagePath,destPath)
-            size=0
-            for path, dirs, files in os.walk(tempZipFolder):
-                for f in files:
-                    fp = os.path.join(path, f)
-                    size += os.path.getsize(fp)
-            if(size>8000000):
-                await sendZip(interaction,"CardImages",destFolder,"Here is a part of Owner Photos, unzip them in your export scripts folder","\nCannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory")
-                
-        await sendZip(interaction,"CardImages",destFolder,"Here is a part of Owner Photos, unzip them in your export scripts folder","\nCannot send the Card Images, download the folder "+settings["CardImagesFolder"]+" in your bot's directory and copy it your export script's directory")       
-        await interaction.followup.send("This was the last zip for card images, moving to owner images",ephemeral=True)
-
-        tempZipFolder=mkdtemp()
-        zipNbr=0
-        for name in os.listdir(os.path.join(currentDir,settings["OwnerPhotosFolder"])):
-            imagePath=os.path.join(currentDir,settings["OwnerPhotosFolder"], name)
-            destFolder=os.path.join(tempZipFolder, os.path.basename(settings["OwnerPhotosFolder"]))
-            if(os.path.exists(os.path.join(tempZipFolder, os.path.basename(settings["OwnerPhotosFolder"])))==False):
-                os.mkdir(destFolder)
-            destPath=os.path.join(destFolder,name)
-            shutil.copy(imagePath,destPath)
-            size=0
-            for path, dirs, files in os.walk(tempZipFolder):
-                for f in files:
-                    fp = os.path.join(path, f)
-                    size += os.path.getsize(fp)
-            if(size>8000000):
-                await sendZip(interaction,"OwnerPhotos",destFolder,"Here is a part of Owner Photos, unzip them in your export scripts folder","\nCannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory")
-
-        await sendZip(interaction,"OwnerPhotos",destFolder,"Here is a part of Owner Photos, unzip them in your export scripts folder","\nCannot send the Owner Photos, download the folder "+settings["OwnerPhotosFolder"]+" in your bot's directory and copy it your export script's directory")   
-        await interaction.followup.send("Export over !",ephemeral=True)
-        os.chdir(currentDir)
+        message = f"L'export JSON est terminé ! Vous pouvez récupérer le fichier `export.json` dans le dossier `{settings.get('ExportJsonFolder', 'ExportedJSON')}` du serveur. Les images associées sont déjà dans `{settings['CardImagesFolder']}` et `{settings['OwnerPhotosFolder']}`."
+        await interaction.followup.send(message, ephemeral=True)
         return
 
-    #export as pdf
-    message="/!\ This PDF has been generated using the SVG, not Photoshop, as such, it's not optimal. Please export to JSON then use the export script to get an optimal export"
-    imagesPaths=[]
-    for user in users:  
-        card=get_or_create_card(user,True)
-        fileName=get_discord_id_of_card(card)
-        exportedImage=create_svg_card(card,user["cohort"],user["spe"],fileName,str(fileName)+".png",False)
-        imagesPaths.append(exportedImage)
+    # Export as PDF
+    export_pdf_folder = os.path.join(os.getcwd(), settings.get("ExportPdfFolder", "ExportedPDFs"))
+    os.makedirs(export_pdf_folder, exist_ok=True)
     
-    imagesAsJpegPaths=[]
-    i=0
-    for imagePath in imagesPaths:
-        im = Image.open(imagePath)
-        rgb_im = im.convert('RGB')
-        jpgExportPath=os.path.join(mkdtemp(),str(i)+".jpg")
-        rgb_im.save(jpgExportPath)
-        imagesAsJpegPaths.append(jpgExportPath)
-        i+=1
-
-    images = [
-        Image.open(f)
-        for f in imagesAsJpegPaths
-    ]
-
-    pdfExportPath=os.path.join(mkdtemp(),"export.pdf")
-        
-    images[0].save(
-        pdfExportPath, "PDF" ,resolution=100.0, save_all=True, append_images=images[1:]
-    )
-
-    currentDir=os.getcwd()
-    os.chdir(os.path.dirname(pdfExportPath))
-    await interaction.followup.send(message,ephemeral=True,file=discord.File(pdfExportPath))
-    os.chdir(currentDir)
+    for user in users:  
+        card = get_or_create_card(user, True)
+        fileName = get_discord_id_of_card(card)
+        create_svg_card(card, user["cohort"], user["spe"], fileName, str(fileName)+".pdf", False, "pdf", export_pdf_folder)
+    
+    message = f"Les PDFs haute définition prêts pour l'impression ont été générés avec succès ! Ils sont disponibles manuellement sur le serveur dans le dossier `{settings.get('ExportPdfFolder', 'ExportedPDFs')}`."
+    
+    await interaction.followup.send(message, ephemeral=True)
 
 @tree.command(
     name="get",
