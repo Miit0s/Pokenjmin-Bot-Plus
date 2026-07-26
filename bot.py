@@ -571,8 +571,8 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
 
     root = tree.getroot()
 
-    fontScaleRatio=float(tree.getroot().attrib["fontScaleRatio"])
-    psdToSvgCoordinatesMultiplier=float(tree.getroot().attrib["psdToSvgCoordinatesMultiplier"])
+    fontScaleRatio = float(tree.getroot().attrib.get("fontScaleRatio", 1.0))
+    psdToSvgCoordinatesMultiplier = float(tree.getroot().attrib.get("psdToSvgCoordinatesMultiplier", 1.0))
 
     for child in root:
         tag=sanitizeTag(child.tag)
