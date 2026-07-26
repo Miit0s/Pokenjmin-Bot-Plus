@@ -4,9 +4,10 @@
 	"TemplateSvgFile":"TemplateFile/Template_Pokenjmin.svg",
 	"GeneratedSvgsFolder":"CardPreview",
 	"GeneratedSvgsExtension":".generated.svg",
-	"PreviewDPI":523.543,
+	"PreviewDPI":300,
 
 	"ExportPdfFolder":"Exports/PDF",
+	"ExportJsonFolder":"Exports/JSON",
 
 	"CardImagesFolder":"Data/CardImages",
 	"CardImagesPreferredRatio":1.48,
