@@ -1,17 +1,16 @@
 import discord
-import json
 from discord import app_commands
+import json
 import sqlite3
 import os
-from tempfile import mkdtemp
-from PIL import Image
 import re
-import xml.etree.ElementTree as ET
 import math
+import shutil
+import tempfile
+import xml.etree.ElementTree as ET
 from io import BytesIO
 from pathlib import Path
-import shutil
-import random
+from PIL import Image
 
 os.environ['PYTHONUNBUFFERED'] = "1"
 
@@ -354,28 +353,32 @@ def get_spe_for_user(guildId, userRoles):
 
 #region SVG management
 def get_svg_layer_by_path(root, layerPath):
-    subGroups=str(layerPath).split("/")
-    currentLayer=root
-    if(" " in layerPath or "_" in layerPath):
-        print("/!\\ Error: layerPath:"+layerPath+" contains a forbidden character: \" \" or a \"_\"")
+    subGroups = str(layerPath).split("/")
+    currentLayer = root
+    
+    inkscape_namespace = "{http://www.inkscape.org/namespaces/inkscape}label"
+
+    if " " in layerPath or "_" in layerPath:
+        print("/!\\ Error: layerPath:" + layerPath + " contains a forbidden character: \" \" or a \"_\"")
 
     for group in subGroups:
-        nextLayer=None
-        if(currentLayer==None):continue
+        nextLayer = None
+        if currentLayer is None: continue
+        
         for child in currentLayer:
-            if sanitizeTag(child.tag)!="g":continue
-            if('id' not in child.attrib): 
-                gChild=child[0]
-                if(gChild==None): continue
-                if(sanitizeTag(gChild.tag)!="g"):continue
-                if('id' not in gChild.attrib):continue
-                child=gChild
-            if isSvgLayerEqual(child.attrib['id'],group) or ("data-name" in child.attrib and child.attrib["data-name"]==group):
-                nextLayer=child
+            label = child.attrib.get(inkscape_namespace)
+            
+            if label == group or ("data-name" in child.attrib and child.attrib["data-name"] == group):
+                nextLayer = child
                 break
-        if(nextLayer==None):
-            print("/!\\Couldn't find the layer "+layerPath)
-        currentLayer=nextLayer
+            elif label is None and 'id' in child.attrib and isSvgLayerEqual(child.attrib['id'], group):
+                nextLayer = child
+                break
+                
+        if nextLayer is None:
+            print("/!\\Couldn't find the layer " + layerPath)
+        currentLayer = nextLayer
+        
     return currentLayer
 
 def getFontSizeFromStyle(style:str):
@@ -396,14 +399,17 @@ def getStyleWithNewFontSize(style:str, newFontSize:float):
     
 def change_text_of_svg_layer(layer, text:str):
     text = str(text)
-    textDiv = None
-    for child in layer:
-        if sanitizeTag(child.tag) == "text":
-            textDiv = child
-            break
+    
+    textDiv = layer if sanitizeTag(layer.tag) == "text" else None
+    
+    if textDiv is None:
+        for child in layer:
+            if sanitizeTag(child.tag) == "text":
+                textDiv = child
+                break
             
     if textDiv is None:
-        print("/!\\Couldn't find a text layer for  " + layer.attrib.get('id', 'unknown'))
+        print("/!\\Couldn't find a text layer for " + str(layer))
         return
     
     tspan_found = False
@@ -431,20 +437,24 @@ def change_text_of_svg_layer(layer, text:str):
     else:
         textDiv.text = ""
 
-def change_font_size_of_svg_layer(layer,sizeInPx:float, fontScaleRatio, psdToSvgCoordinatesMultiplier):
-    textDiv=None
-    for child in layer:
-        if sanitizeTag(child.tag)=="text":
-            textDiv=child
-            break
-    if(textDiv==None):
-        print("/!\\Couldn't find a text layer for  "+layer.attrib['id'])
+def change_font_size_of_svg_layer(layer, sizeInPx:float, fontScaleRatio, psdToSvgCoordinatesMultiplier):
+    textDiv = layer if sanitizeTag(layer.tag) == "text" else None
+    
+    if textDiv is None:
+        for child in layer:
+            if sanitizeTag(child.tag) == "text":
+                textDiv = child
+                break
+                
+    if textDiv is None:
+        print("/!\\Couldn't find a text layer")
+        return
 
-    style=textDiv.attrib["style"]
-    oldFontSize=getFontSizeFromStyle(style)
-    newFontSize=fontScaleRatio*sizeInPx
-    textDiv.attrib["style"]=getStyleWithNewFontSize(style, newFontSize)
-    translate_node(textDiv, 0, 0.5*(oldFontSize-newFontSize))
+    style = textDiv.attrib["style"]
+    oldFontSize = getFontSizeFromStyle(style)
+    newFontSize = fontScaleRatio * sizeInPx
+    textDiv.attrib["style"] = getStyleWithNewFontSize(style, newFontSize)
+    translate_node(textDiv, 0, 0.5 * (oldFontSize - newFontSize))
 
 def toggle_svg_layer_visibility(layer, visibility:bool):
     notVisibleString="display:none;"
@@ -507,11 +517,18 @@ def translate_node(node, deltaX, deltaY, relativeToScale:bool=True):
     newTransformString=transform.replace(f"translate({translateMatch.group(1)})",f"translate({x} {y})")
     node.attrib["transform"]=newTransformString
 
-def replace_image_for_svg(root,layerToReplacePath, input_file):
-    layer=get_svg_layer_by_path(root,layerToReplacePath)
-    imageNode=find_child_by_sanitize_tag(layer,"image")
-    svgFolder=os.path.join(os.getcwd(),settings["GeneratedSvgsFolder"])
-    imageRelativePath=os.path.relpath(input_file,svgFolder)
+def replace_image_for_svg(root, layerToReplacePath, input_file):
+    layer = get_svg_layer_by_path(root, layerToReplacePath)
+    
+    imageNode = layer if sanitizeTag(layer.tag) == "image" else find_child_by_sanitize_tag(layer, "image")
+    
+    if imageNode is None:
+        print(f"/!\\ Couldn't find an image node in path {layerToReplacePath}")
+        return
+        
+    svgFolder = os.path.join(os.getcwd(), settings["GeneratedSvgsFolder"])
+    imageRelativePath = os.path.relpath(input_file, svgFolder)
+    
     imageNode.attrib[attribNamespace+"href"]=imageRelativePath
 
     xlink_namespace = "{http://www.w3.org/1999/xlink}href"
@@ -528,11 +545,8 @@ def replace_image_for_svg(root,layerToReplacePath, input_file):
     newReferenceHeight=referenceHeight
 
     if(ratio>referenceRatio):
-        print("biggerRatio")
         newReferenceWidth=ratio*referenceHeight
     else:
-        print("smallerRatio")
-        print(ratio)
         newReferenceHeight=referenceWidth/ratio
     
     widthDiff=newReferenceWidth-referenceWidth
@@ -622,6 +636,24 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     watermarkLayerGroup=get_svg_layer_by_path(root,settings["WatermarkGroupName"])
     set_spe_image_for_svg(watermarkLayerGroup, spe,"WatermarkLayerName")
 
+    isLegendary = (spe == settings["LegendarySpeId"])
+    cardEdgeGroup = get_svg_layer_by_path(root, settings.get("CardEdgeGroupName", "CardEdge"))
+    
+    if cardEdgeGroup is not None:
+        inkscape_namespace = "{http://www.inkscape.org/namespaces/inkscape}label"
+        legendary_name = settings.get("CardEdgeLegendaryLayerName", "CardEdgeLegendary")
+        basic_name = settings.get("CardEdgeBasicLayerName", "CardEdgeBasic")
+        
+        for child in cardEdgeGroup:
+            label = child.attrib.get(inkscape_namespace)
+            if label is None:
+                label = sanitizeLayerId(child.attrib.get("id", ""))
+                
+            if label == legendary_name:
+                toggle_svg_layer_visibility(child, isLegendary)
+            elif label == basic_name:
+                toggle_svg_layer_visibility(child, not isLegendary)
+
     cohortNameLayer = get_svg_layer_by_path(root,settings["CohortNameValueLayer"])
     change_text_of_svg_layer(cohortNameLayer,cohort)
 
@@ -632,7 +664,7 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
         f.write(output.getbuffer())
     
     exportPath = os.path.join(mkdtemp(),str(fileName)+".png")
-    inkscapeCommand="inkscape "+os.path.relpath(generatedSvgPath, os.getcwd())+" --export-filename="+os.path.relpath(exportPath, os.getcwd())+" --export-dpi="+str(settings["PreviewDPI"])
+    inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(exportPath, os.getcwd())}" --export-dpi={settings["PreviewDPI"]}'
     os.system(inkscapeCommand)
     
     return exportPath
