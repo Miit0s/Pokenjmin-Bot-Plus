@@ -5,6 +5,7 @@
 	"GeneratedSvgsFolder":"CardPreview",
 	"GeneratedSvgsExtension":".generated.svg",
 	"PreviewDPI":96,
+	"FinalExportDPI":300,
 
 	"ExportPdfFolder":"Exports/PDF",
 	"ExportJsonFolder":"Exports/JSON",

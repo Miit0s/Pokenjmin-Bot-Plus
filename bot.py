@@ -650,7 +650,7 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     exportPath = os.path.join(output_dir, str(fileName) + "." + export_format)
     
     if export_format == "pdf":
-        inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(exportPath, os.getcwd())}" --export-text-to-path'
+        inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(exportPath, os.getcwd())}" --export-text-to-path --export-dpi={settings.get("FinalExportDPI", 300)}'
     else:
         inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(exportPath, os.getcwd())}" --export-dpi={settings.get("PreviewDPI", 96)}'
     
@@ -1184,10 +1184,18 @@ async def exportAll(interaction, format:int):
     export_pdf_folder = os.path.join(os.getcwd(), settings.get("ExportPdfFolder", "ExportedPDFs"))
     os.makedirs(export_pdf_folder, exist_ok=True)
     
-    for user in users:  
+    total_users = len(users)
+    print(f"=== Begin of the PDF export for {total_users} users ===")
+    
+    for i, user in enumerate(users):  
         card = get_or_create_card(user, True)
         fileName = get_discord_id_of_card(card)
-        create_svg_card(card, user["cohort"], user["spe"], fileName, str(fileName)+".pdf", False, "pdf", export_pdf_folder)
+        
+        print(f"[{i+1}/{total_users}] Generating the PDF for the card {fileName}")
+        
+        create_svg_card(card, user["cohort"], user["spe"], fileName, str(fileName)+".png", False, "pdf", export_pdf_folder)
+    
+    print("=== Export PDF finished successfully ! ===")
     
     message = f"Les PDFs haute définition prêts pour l'impression ont été générés avec succès ! Ils sont disponibles manuellement sur le serveur dans le dossier `{settings.get('ExportPdfFolder', 'ExportedPDFs')}`."
     
