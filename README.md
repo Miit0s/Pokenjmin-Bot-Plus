@@ -1,6 +1,11 @@
+The Pokenjmin Bot Plus is a fork from the original bot by [Pordrack and tomdexp](https://github.com/Pordrack/Pokenjmin-Bot) with three main goals:
+- Merge the old bot with the new changes made by the Master P21 that was not public
+- Use fully open source software, and so fully dockable on Linux (f*ck Adobe)
+- Improve the documentation so future promotions can set up the Discord bot more easily
+
 # Pokenjmin Bot - Documentation & Setup Guide
 
-Welcome to the Pokenjmin Bot project! This bot allows Discord users to dynamically create and customize their own trading cards, with an offline Photoshop export script for high-quality printing.
+Welcome to the Pokenjmin Bot Plus project! This bot allows Discord users to dynamically create and customize their own trading cards, with an export that uses CMYK (or CMJN in french) as color profile for high-quality printing.
 
 ---
 
@@ -10,7 +15,6 @@ Welcome to the Pokenjmin Bot project! This bot allows Discord users to dynamical
 Install the required packages using `pip` (or via your `requirements.txt`):
 * `discord.py` ([PyPI-Discord](https://pypi.org/project/discord.py/))
 * `pillow` (version 10.4.0) ([PyPI-Pillow](https://pypi.org/project/pillow/))
-* `photoshop-python-api` ([PyPI-Photoshop-Python-API](https://pypi.org/project/photoshop-python-api/)) *(Required only for the final offline export)*
 
 ### System Requirements (Windows / WSL)
 To guarantee 100% font accuracy between Discord previews and final renders (especially if users input "Zalgo" text), the final export relies on **Windows Subsystem for Linux (WSL)** with **Inkscape** and your project's fonts installed.
@@ -39,7 +43,7 @@ Bots are tied to their developer's account. You must create your own application
 2. **Bot Token:** Paste your token (found in the Bot tab of the Developer Portal) into the JSON.
 3. **Admins:** Add the Discord IDs of your admins in the `Admins` array. (Admins are the only ones who can modify legendary cards and use setup commands).
 > *Note:* `CardNameFontSize` Min and Max are expressed in `px` based on the PSD. Don't worry about the SVG having completely different font size values; `process_template.py` calculates the ratio automatically.
-4. **Watermark** In the `Specialties` array, change the `WatermarkLayerName` by your current promotion (e.g. MasterP84). After that, go to the 3. section.
+4. **Watermark** In the `Specialties` array, change `WatermarkLayerName` to your current promotion (e.g. MasterP84). After that, go to the Section 3.
 
 ---
 
@@ -47,48 +51,26 @@ Bots are tied to their developer's account. You must create your own application
 
 If you need to modify the card's design, you must edit the source files. 
 
-### Option 1: Inkscape
+### Step 1: Krita
 
-1. Open the svg file in TemplateSVG > Template_Pokenjmin.svg.
-2. Go in the section `Layers and objects`, and open the group g3 > Watermarks.
-3. Create a new group with the name you put in `WatermarkLayerName` (e.g. MasterP84), and add your promotion watermark in it as a image (.png or .jpeg).
-   * ⚠️ **Warning:** You need to change the group label AND id. For that go in Object Properties (Maj+Ctrl+O) and change the `ID` and `Label` settings.
+Krita handles all the static elements. Go to TemplateFile > Template_Pokenjmin.kra and make your changes. Once you are done, you can export your work as a .tiff (or .png if .tiff does not work).
+
+### Step 2: Inkscape
+
+As for Inkscape, it handles all the dynamic elements of the card, so everything that is modified by the user (text, card, owner image, ...) or by his specialty (background, the spe icons, ...). So if you want to change the text font, the speciality backgrounds, the speciality icons, etc., you’ll need to do it here.
+⚠️ **Warning:** The layer structure and names are important, if you modify it, don't forget to reflect your changes in your settings.json or the bot will crash when trying to generate a preview.
+
+For example, to add or modify the SVG file, here are the steps to add your promotion watermark:
+
+1. Open the svg file in TemplateFile > Template_Pokenjmin.svg.
+2. Go in the section `Layers and objects`, and open the group `Watermarks`.
+3. Add your promotion watermark in it as an image (.png or .jpeg) with the name you put in `WatermarkLayerName` (e.g. MasterP84) in your settings.json.
 > *Notes:* One way to import an image into Inkscape is to drag and drop it onto the canvas.
-4. After that, position the watermark correctly where you want it to appear on the map.
-
-### Option 2: Photoshop & Illustrator
-
-**Step A: Design Export**
-
-1. Make your design changes in `Template_Pokenjmin.psd`.
-   * ⚠️ **Warning:** Dynamic layer names **must not** contain underscores (`_`) or spaces!
-   * *Tip:* Rasterize complex shapes with large strokes (like yellow borders) in Photoshop before moving to Illustrator.
-2. Open the PSD in **Adobe Illustrator**.
-   * ⚠️ *Make sure Illustrator hasn't ignored any layer names from Photoshop.*
-3. Make all dynamic layers visible (spe icons, watermarks, backgrounds, etc.). Hidden layers will NOT be exported!
-4. Go to `File > Export > Export As...` and choose **SVG**.
-   * **Decimals:** `5` (Maximum)
-   * **Styling:** `Inline Style`
-   * **Font:** `SVG`
-   * **Images:** `Link`
-5. Save the file as `TemplateSVG/Template_Pokenjmin_Unprocessed.svg`. *(Clear the folder beforehand to avoid old PNGs piling up).*
-
-**Step B: Processing the SVG**
-
-Exporting directly from Illustrator leaves the SVG broken for dynamic text insertion. You must run the Python processing script:
-```bash
-python3 process_template.py
-```
-
-**What this script does:**
-
-* Changes the `text-anchor` property to reflect PSD alignment.
-* Translates text to avoid shifting (currently bruteforced, so manual tweaks may be needed for fancy angles).
-* ⚠️ *Ensure your Photoshop unit preferences (Preferences -> Rulers & Units) are set to **"Points"**, otherwise the script's PSD-to-SVG font size math will fail.*
-
-The resulting file will be saved as `TemplateSVG/Template_Pokenjmin.svg`. **You must repeat Step A and B every time you alter the visual design.**
+4. After that, position the watermark correctly where you want it to appear on the card.
 
 ---
+
+## 4. Running the Bot
 
 You can run the bot natively or easily deploy it using a Docker container.
 
@@ -104,7 +86,7 @@ The easiest and cleanest way to run the bot is via Docker Compose.
 2. Create the required host directories to match the volume bindings (e.g., `/volume1/docker/PokenjminBot/Data` and `/volume1/docker/PokenjminBot/Exports`).
 3. Place your configured `settings.json` in the appropriate directory (`/volume1/docker/PokenjminBot/settings.json`).
 4. Create a `docker-compose.yml` file by using the [compose-exemple.yml](compose-exemple.yml). Adapt it so that it works with your server.
-> *Notes:* For exemple change the path from `/volume1/docker/PokenjminBot/Data` to one that work for you, like `/home/user/Documents/PokenjminBot/Data` for exemple.
+> *Notes:* For exemple change the path from `/volume1/docker/PokenjminBot/Data` to one that works for you, like `/home/user/Documents/PokenjminBot/Data` for exemple.
 5. Start the container in the background by running:
 
 ```bash
@@ -113,28 +95,6 @@ docker compose up -d
 
 ---
 
-## 5. Final Export (Offline)
+## 5. Final Export
 
-Because SVG generation causes slight visual/color loss, the final printable cards must be generated via Photoshop. **This requires a Windows computer with Photoshop 2020+, Python 3.12+, WSL, and Inkscape installed on WSL.**
-
-### Step A: Retrieve Data from the Bot
-
-1. On Discord, run the command `/export_all` and choose **JSON**.
-2. The bot will send you `export.json` and several `.zip` files containing users' images.
-3. Extract these zip files directly into `Data/CardImages` and `Data/OwnerPhotos`.
-
-*If the zip files fail to send over Discord (due to size limits):*
-Thanks to your Docker Compose volume bindings, the generated files are already accessible directly on your host machine without needing to interact with the container.
-
-1. Connect to your host server/NAS.
-2. Navigate to your mapped `Data` directory (e.g., `/volume1/docker/PokenjminBot/Data`) and download the data.
-
-### Step B: Run the Photoshop Script
-
-Place `export.json` in your local bot directory and run the exporter:
-
-```bash
-python export_to_photoshop.py export.json
-```
-
-This script will take over Photoshop, replace layers one by one, and output a high-quality, merged PDF ready for printing!
+With Pokenjmin Bot Plus, the final export can be simply done by executing the `/export_all` bot command with PDF as parameters. You can follow the progress in your Docker's log. When this is finished, all your cards will be available in the `Exports/PDF` folder you provided in your `docker-compose` file.
