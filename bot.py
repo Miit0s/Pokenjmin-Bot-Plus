@@ -791,7 +791,7 @@ async def setCurrentServerAsMain(interaction):
     description="Set the value of one or more fields of your card. Leave empty the ones you don't want to change."
 )
 @app_commands.describe(card_name="The name at the top of the card")
-@app_commands.describe(card_name_font_size="Font size of the card name, leave empty in doubt (useful to fix text overflow). Base size is 60")
+@app_commands.describe(card_name_font_size="Font size of the card name, leave empty in doubt (useful to fix text overflow). Base size is 80")
 @app_commands.describe(owner_name="YOUR name, on the left side")
 @app_commands.describe(hp_name="The name beside the HP's value at the top of the card")
 @app_commands.describe(hp_value="HP's value at the top of the card")

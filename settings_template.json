@@ -13,8 +13,8 @@
 	"CardImagesPreferredRatio":1.48,
 	"OwnerPhotosFolder":"Data/OwnerPhotos",
 	"OwnerPhotoPreferredRatio":1,
-	"CardNameFontSizeMin":48,
-	"CardNameFontSizeMax":79,
+	"CardNameFontSizeMin":45,
+	"CardNameFontSizeMax":80,
 
 	"Admins":
 	[
