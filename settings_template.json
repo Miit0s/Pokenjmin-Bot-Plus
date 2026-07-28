@@ -65,6 +65,7 @@
 			"DisplayName":"⬜​ None",
 			"IconLayerName":"None",
 			"BackgroundLayerName":"None",
+			"Promotion":"None",
 			"WatermarkLayerName":"None"
 		},
 		{
@@ -72,6 +73,7 @@
 			"DisplayName":"🤖 Prog",
 			"IconLayerName":"Prog",
 			"BackgroundLayerName":"ProgFond",
+			"Promotion":"P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -79,6 +81,7 @@
 			"DisplayName":"🎲 GD",
 			"IconLayerName":"GD",
 			"BackgroundLayerName":"GDFond",
+			"Promotion":"P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -86,6 +89,7 @@
 			"DisplayName":"🎨 Graph",
 			"IconLayerName":"Graph",
 			"BackgroundLayerName":"GraphFond",
+			"Promotion":"P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -93,6 +97,7 @@
 			"DisplayName":"🧠 Ergo",
 			"IconLayerName":"Ergo",
 			"BackgroundLayerName":"ErgoFond",
+			"Promotion":"P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -100,6 +105,7 @@
 			"DisplayName":"👔 Producing",
 			"IconLayerName":"CDP",
 			"BackgroundLayerName":"CDPFond",
+			"Promotion":"P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -107,6 +113,7 @@
 			"DisplayName":"🎧 Sound-designer",
 			"IconLayerName":"Son",
 			"BackgroundLayerName":"SonFond",
+			"Promotion":"P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -114,25 +121,35 @@
 			"DisplayName":"⚙️ IEM",
 			"IconLayerName":"IEM",
 			"BackgroundLayerName":"IEMFond",
+			"Promotion":"",
 			"WatermarkLayerName":"None"
 		},
 		{
 			"Id":8,
-			"DisplayName":"❔ Licence",
+			"DisplayName":"💻 Licence Prog",
 			"IconLayerName":"Licence",
 			"BackgroundLayerName":"LicenceFond",
+			"Promotion":"LP6",
 			"WatermarkLayerName":"LicenceP4"
 		},
 		{
 			"Id":9,
+			"DisplayName":"🖌️ Licence Art",
+			"IconLayerName":"Licence",
+			"BackgroundLayerName":"LicenceFond",
+			"Promotion":"LP1",
+			"WatermarkLayerName":"LicenceP4"
+		},
+		{
+			"Id":10,
 			"DisplayName":"🌟 Legendary",
 			"IconLayerName":"Legende",
 			"BackgroundLayerName":"LegendeFond",
+			"Promotion":"2026",
 			"WatermarkLayerName":"None"
 		}
 	],
 	"LegendarySpeId":9,
-	"LegendaryCohort":"2026",
 	"HelpMessage":"help.txt",
 	"AdminHelpMessage":"help_admins.txt"
 }

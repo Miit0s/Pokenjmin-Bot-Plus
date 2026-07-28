@@ -549,7 +549,7 @@ def isSvgLayerEqual(svgLayerId:str, target:str):
     treatedId=sanitizeLayerId(svgLayerId)
     return treatedId==target
 
-def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=False, export_format="png", output_dir=None):   
+def create_svg_card(cardDatas, speId, fileName, cardImagesName, isPreview=False, export_format="png", output_dir=None):   
     svgTemplatePath=os.path.join(os.getcwd(),settings["TemplateSvgFile"])
     parser1 = ET.XMLParser(encoding="utf-8")
     tree = ET.parse(svgTemplatePath,parser1)
@@ -606,18 +606,18 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
     if os.path.exists(ownerPhotoPath):
         replace_image_for_svg(root,settings["OwnerPhotoLayer"],ownerPhotoPath)
     
-    if(spe==None): spe=0
+    if(speId==None): speId=0
 
     speIconLayerGroup=get_svg_layer_by_path(root,settings["SpeIconGroupName"])
-    set_spe_image_for_svg(speIconLayerGroup,spe,"IconLayerName")
+    set_spe_image_for_svg(speIconLayerGroup,speId,"IconLayerName")
 
     backgroundLayerGroup=get_svg_layer_by_path(root,settings["BackgroundsGroupName"])
-    set_spe_image_for_svg(backgroundLayerGroup, spe,"BackgroundLayerName")
+    set_spe_image_for_svg(backgroundLayerGroup, speId,"BackgroundLayerName")
 
     watermarkLayerGroup=get_svg_layer_by_path(root,settings["WatermarkGroupName"])
-    set_spe_image_for_svg(watermarkLayerGroup, spe,"WatermarkLayerName")
+    set_spe_image_for_svg(watermarkLayerGroup, speId,"WatermarkLayerName")
 
-    isLegendary = (spe == settings["LegendarySpeId"])
+    isLegendary = (speId == settings["LegendarySpeId"])
     cardEdgeGroup = get_svg_layer_by_path(root, settings.get("CardEdgeGroupName", "CardEdge"))
     
     if cardEdgeGroup is not None:
@@ -634,6 +634,11 @@ def create_svg_card(cardDatas, cohort, spe, fileName, cardImagesName, isPreview=
                 toggle_svg_layer_visibility(child, isLegendary)
             elif label == basic_name:
                 toggle_svg_layer_visibility(child, not isLegendary)
+    
+    cohort=""
+    for spe in settings["Specialties"]:
+        if spe["Id"] == speId:
+            cohort = spe["Promotion"]
 
     cohortNameLayer = get_svg_layer_by_path(root,settings["CohortNameValueLayer"])
     change_text_of_svg_layer(cohortNameLayer,cohort)
@@ -1193,7 +1198,7 @@ async def exportAll(interaction, format:int):
         
         print(f"[{i+1}/{total_users}] Generating the PDF for the card {fileName}")
         
-        create_svg_card(card, user["cohort"], user["spe"], fileName, str(fileName)+".png", False, "pdf", export_pdf_folder)
+        create_svg_card(card, user["spe"], fileName, str(fileName)+".png", False, "pdf", export_pdf_folder)
     
     print("=== Export PDF finished successfully ! ===")
     
@@ -1273,15 +1278,14 @@ async def send_message_with_preview(interaction, message):
                                         ,ephemeral=True)
         return
     
-    spe=settings["LegendarySpeId"]
-    cohort=settings["LegendaryCohort"]
+    speId=settings["LegendarySpeId"]
+    
     if cardOwner["legendary_user"]==0 :
         memberRoles=client.get_guild(mainGuildOfUser).get_member(int(get_discord_id_of_card(card))).roles
-        spe=get_spe_for_user(mainGuildOfUser,memberRoles)
-        cohort=serverSettings["server_cohort"]
+        speId=get_spe_for_user(mainGuildOfUser,memberRoles)
     
     fileName=get_discord_id_of_card(card)
-    jpegPreviewPath=create_svg_card(card,  cohort, spe, fileName,str(fileName)+".png", True)
+    jpegPreviewPath=create_svg_card(card, speId, fileName,str(fileName)+".png", True)
     currentDir=os.getcwd()
     os.chdir(os.path.dirname(jpegPreviewPath))
     await interaction.followup.send(message,ephemeral=True,file=discord.File(jpegPreviewPath))
