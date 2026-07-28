@@ -121,7 +121,7 @@
 			"DisplayName":"⚙️ IEM",
 			"IconLayerName":"IEM",
 			"BackgroundLayerName":"IEMFond",
-			"Promotion":"",
+			"Promotion":"P10",
 			"WatermarkLayerName":"None"
 		},
 		{
@@ -129,7 +129,7 @@
 			"DisplayName":"💻 Licence Prog",
 			"IconLayerName":"Licence",
 			"BackgroundLayerName":"LicenceFond",
-			"Promotion":"LP6",
+			"Promotion":"P6",
 			"WatermarkLayerName":"LicenceP4"
 		},
 		{
@@ -137,7 +137,7 @@
 			"DisplayName":"🖌️ Licence Art",
 			"IconLayerName":"Licence",
 			"BackgroundLayerName":"LicenceFond",
-			"Promotion":"LP1",
+			"Promotion":"P1",
 			"WatermarkLayerName":"LicenceP4"
 		},
 		{
