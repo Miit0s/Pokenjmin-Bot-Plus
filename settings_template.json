@@ -73,7 +73,7 @@
 			"DisplayName":"🤖 Prog",
 			"IconLayerName":"Prog",
 			"BackgroundLayerName":"ProgFond",
-			"Promotion":"P22",
+			"Promotion":"JMIN P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -81,7 +81,7 @@
 			"DisplayName":"🎲 GD",
 			"IconLayerName":"GD",
 			"BackgroundLayerName":"GDFond",
-			"Promotion":"P22",
+			"Promotion":"JMIN P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -89,7 +89,7 @@
 			"DisplayName":"🎨 Graph",
 			"IconLayerName":"Graph",
 			"BackgroundLayerName":"GraphFond",
-			"Promotion":"P22",
+			"Promotion":"JMIN P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -97,7 +97,7 @@
 			"DisplayName":"🧠 Ergo",
 			"IconLayerName":"Ergo",
 			"BackgroundLayerName":"ErgoFond",
-			"Promotion":"P22",
+			"Promotion":"JMIN P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -105,7 +105,7 @@
 			"DisplayName":"👔 Producing",
 			"IconLayerName":"CDP",
 			"BackgroundLayerName":"CDPFond",
-			"Promotion":"P22",
+			"Promotion":"JMIN P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -113,7 +113,7 @@
 			"DisplayName":"🎧 Sound-designer",
 			"IconLayerName":"Son",
 			"BackgroundLayerName":"SonFond",
-			"Promotion":"P22",
+			"Promotion":"JMIN P22",
 			"WatermarkLayerName":"MasterP22"
 		},
 		{
@@ -121,7 +121,7 @@
 			"DisplayName":"⚙️ IEM",
 			"IconLayerName":"IEM",
 			"BackgroundLayerName":"IEMFond",
-			"Promotion":"P10",
+			"Promotion":"IEM P10",
 			"WatermarkLayerName":"None"
 		},
 		{
@@ -129,7 +129,7 @@
 			"DisplayName":"💻 Licence Prog",
 			"IconLayerName":"Licence",
 			"BackgroundLayerName":"LicenceFond",
-			"Promotion":"P6",
+			"Promotion":"LP P6",
 			"WatermarkLayerName":"LicenceP4"
 		},
 		{
@@ -137,7 +137,7 @@
 			"DisplayName":"🖌️ Licence Art",
 			"IconLayerName":"Licence",
 			"BackgroundLayerName":"LicenceFond",
-			"Promotion":"P1",
+			"Promotion":"LA P1",
 			"WatermarkLayerName":"LicenceP4"
 		},
 		{
