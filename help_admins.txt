@@ -24,7 +24,8 @@ These settings will fill fields for your server's members automatically:
 * **`/set_role_settings`** : Assign a specific specialty to a Discord role (useful for pluri-specialty formations like Master JMIN).
 
 ## Exporting
-* **`/export_all`** : Export the full deck and choose your format. 
-  > *Note: PDF generation is very long and may not work if there are too many cards. We recommend exporting to **JSON** and using the `export_to_photoshop.py` script to generate the final high-quality cards.*
+* **`/export_all`** : Export the full deck with the chosen format. 
+  > *Note: PDF generation can take a long time depending on the number of cards. The completion status can be seen in the Docker logs. 
+  > The processed cards are saved in the Docker-provided folder, so ask the person in charge of hosting the bot to get the results.*
 
 Congratulations on your rank, and make good use of your powers!
