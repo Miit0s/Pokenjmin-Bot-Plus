@@ -1301,10 +1301,7 @@ async def send_message_with_preview(interaction, message):
     
     fileName=get_discord_id_of_card(card)
     jpegPreviewPath=create_svg_card(card, speId, fileName,str(fileName)+".png", True)
-    currentDir=os.getcwd()
-    os.chdir(os.path.dirname(jpegPreviewPath))
-    await interaction.followup.send(message,ephemeral=True,file=discord.File(jpegPreviewPath))
-    os.chdir(currentDir)
+    await interaction.followup.send(message, ephemeral=True, file=discord.File(jpegPreviewPath))
 
 @client.event
 async def on_ready():
