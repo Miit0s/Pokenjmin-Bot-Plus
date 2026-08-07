@@ -6,6 +6,7 @@
 	"GeneratedSvgsExtension":".generated.svg",
 	"PreviewDPI":96,
 	"FinalExportDPI":300,
+	"IccProfilePath":"TemplateFile/FOGRA39L_coated.icc",
 
 	"ExportPdfFolder":"Exports/PDF",
 	"ExportJsonFolder":"Exports/JSON",
@@ -129,7 +130,7 @@
 			"DisplayName":"💻 Licence Prog",
 			"IconLayerName":"Licence",
 			"BackgroundLayerName":"LicenceFond",
-			"Promotion":"LP P6",
+			"Promotion":"LIJV P6",
 			"WatermarkLayerName":"LicenceP4"
 		},
 		{
@@ -137,7 +138,7 @@
 			"DisplayName":"🖌️ Licence Art",
 			"IconLayerName":"Licence",
 			"BackgroundLayerName":"LicenceFond",
-			"Promotion":"LA P1",
+			"Promotion":"LAN P1",
 			"WatermarkLayerName":"LicenceP4"
 		},
 		{

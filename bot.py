@@ -655,11 +655,26 @@ def create_svg_card(cardDatas, speId, fileName, cardImagesName, isPreview=False,
     exportPath = os.path.join(output_dir, str(fileName) + "." + export_format)
     
     if export_format == "pdf":
-        inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(exportPath, os.getcwd())}" --export-text-to-path --export-dpi={settings.get("FinalExportDPI", 300)}'
+        temp_rgb_pdf = os.path.join(output_dir, str(fileName) + "_rgb.pdf")
+        inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(temp_rgb_pdf, os.getcwd())}" --export-text-to-path --export-dpi={settings.get("FinalExportDPI", 300)}'
+        os.system(inkscapeCommand)
+
+        icc_profile = os.path.join(os.getcwd(), settings.get("IccProfilePath", "TemplateFile/FOGRA39L_coated.icc"))
+
+        gs_command = (
+            f'gs -q -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite '
+            f'-sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK '
+            f'-sOutputICCProfile="{icc_profile}" '
+            f'-sOutputFile="{os.path.relpath(exportPath, os.getcwd())}" '
+            f'"{os.path.relpath(temp_rgb_pdf, os.getcwd())}"'
+        )
+        os.system(gs_command)
+
+        if os.path.exists(temp_rgb_pdf):
+            os.remove(temp_rgb_pdf)
     else:
         inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(exportPath, os.getcwd())}" --export-dpi={settings.get("PreviewDPI", 96)}'
-    
-    os.system(inkscapeCommand)
+        os.system(inkscapeCommand)
     
     return exportPath
 
