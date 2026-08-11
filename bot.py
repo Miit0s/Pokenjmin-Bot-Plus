@@ -107,21 +107,25 @@ def get_all_users_sorted(discordClient):
         user=sqlite3Row_to_dict(r)
         
         user["overwrite_discord_id"]=None
-        spe=settings["LegendarySpeId"]
-        cohort=settings["LegendaryCohort"]
+        speId=settings["LegendarySpeId"]
+
+        for spe in settings["Specialties"]:
+            if spe["Id"] == speId:
+                cohort = spe["Promotion"]
+
         if(user["legendary_user"]==False):
             guild=discordClient.get_guild(user["guild_id"])
             if(guild==None): continue
             member=guild.get_member(int(user["discord_id"]))
             if(member==None): continue
             memberRoles=member.roles
-            spe=get_spe_for_user(user["guild_id"],memberRoles)
+            speId=get_spe_for_user(user["guild_id"],memberRoles)
             mainGuildOfUser=user["guild_id"]
             serverSettings=get_server_settings(mainGuildOfUser)
             if(serverSettings==None): continue
             cohort=serverSettings["server_cohort"]
 
-        user["spe"]=spe
+        user["spe"]=speId
         user["cohort"]=cohort
         users.append(user)
     users.sort(key=sort_by_spe)
@@ -536,10 +540,6 @@ def create_svg_card(cardDatas, speId, fileName, cardImagesName, isPreview=False,
 
     root = tree.getroot()
 
-    # On force la taille physique pour l'imprimeur
-    root.attrib["width"] = "67mm"
-    root.attrib["height"] = "93mm"
-    # On indique que le contenu interne utilise tes anciennes coordonnées en pixels
     root.attrib["viewBox"] = "0 0 1381 1917"
 
     fontScaleRatio = float(tree.getroot().attrib.get("fontScaleRatio", 1.0))
@@ -641,6 +641,11 @@ def create_svg_card(cardDatas, speId, fileName, cardImagesName, isPreview=False,
     exportPath = os.path.join(output_dir, str(fileName) + "." + export_format)
     
     if export_format == "pdf":
+        # On force la taille physique pour l'imprimeur
+        root.attrib["width"] = "67mm"
+        root.attrib["height"] = "93mm"
+        # On indique que le contenu interne utilise tes anciennes coordonnées en pixels
+
         temp_rgb_pdf = os.path.join(output_dir, str(fileName) + "_rgb.pdf")
         inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(temp_rgb_pdf, os.getcwd())}" --export-text-to-path --export-dpi={settings.get("FinalExportDPI", 300)}'
         os.system(inkscapeCommand)
