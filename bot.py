@@ -515,27 +515,7 @@ def replace_image_for_svg(root, layerToReplacePath, input_file):
     xlink_namespace = "{http://www.w3.org/1999/xlink}href"
     imageNode.attrib[xlink_namespace] = imageRelativePath
 
-    newImageFile = Image.open(input_file)
-    width, height = newImageFile.size
-    ratio = float(width) / float(height)
-
-    referenceWidth=float(imageNode.attrib["width"])
-    referenceHeight=float(imageNode.attrib["height"])
-    referenceRatio=referenceWidth/referenceHeight
-    newReferenceWidth=referenceWidth
-    newReferenceHeight=referenceHeight
-
-    if(ratio>referenceRatio):
-        newReferenceWidth=ratio*referenceHeight
-    else:
-        newReferenceHeight=referenceWidth/ratio
-    
-    widthDiff=newReferenceWidth-referenceWidth
-    heightDiff=newReferenceHeight-referenceHeight
-    translate_node(imageNode,-widthDiff/2,-heightDiff/2)
-
-    imageNode.attrib["width"]=str(math.ceil(newReferenceWidth))
-    imageNode.attrib["height"]=str(math.ceil(newReferenceHeight))
+    imageNode.attrib["preserveAspectRatio"] = "xMidYMid slice"
     
 def sanitizeTag(input:str):
     return input.replace("{http://www.w3.org/2000/svg}","")
@@ -555,6 +535,12 @@ def create_svg_card(cardDatas, speId, fileName, cardImagesName, isPreview=False,
     tree = ET.parse(svgTemplatePath,parser1)
 
     root = tree.getroot()
+
+    # On force la taille physique pour l'imprimeur
+    root.attrib["width"] = "67mm"
+    root.attrib["height"] = "93mm"
+    # On indique que le contenu interne utilise tes anciennes coordonnées en pixels
+    root.attrib["viewBox"] = "0 0 1381 1917"
 
     fontScaleRatio = float(tree.getroot().attrib.get("fontScaleRatio", 1.0))
     psdToSvgCoordinatesMultiplier = float(tree.getroot().attrib.get("psdToSvgCoordinatesMultiplier", 1.0))
