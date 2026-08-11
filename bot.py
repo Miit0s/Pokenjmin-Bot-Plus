@@ -542,8 +542,6 @@ def create_svg_card(cardDatas, speId, fileName, cardImagesName, isPreview=False,
 
     root = tree.getroot()
 
-    root.attrib["viewBox"] = "0 0 1381 1917"
-
     fontScaleRatio = float(tree.getroot().attrib.get("fontScaleRatio", 1.0))
     psdToSvgCoordinatesMultiplier = float(tree.getroot().attrib.get("psdToSvgCoordinatesMultiplier", 1.0))
 
@@ -632,6 +630,13 @@ def create_svg_card(cardDatas, speId, fileName, cardImagesName, isPreview=False,
     cohortNameLayer = get_svg_layer_by_path(root,settings["CohortNameValueLayer"])
     change_text_of_svg_layer(cohortNameLayer,cohort)
 
+    if export_format == "pdf":
+        # On force la taille physique pour l'imprimeur
+        root.attrib["width"] = "67mm"
+        root.attrib["height"] = "93mm"
+        # On indique que le contenu interne utilise tes anciennes coordonnées en pixels
+        root.attrib["viewBox"] = "0 0 1381 1917"
+
     output = BytesIO()
     tree.write(output, encoding='utf-8', xml_declaration=True) 
     generatedSvgPath=os.path.join(os.getcwd(),settings["GeneratedSvgsFolder"],fileName+settings["GeneratedSvgsExtension"])
@@ -644,11 +649,6 @@ def create_svg_card(cardDatas, speId, fileName, cardImagesName, isPreview=False,
     exportPath = os.path.join(output_dir, str(fileName) + "." + export_format)
     
     if export_format == "pdf":
-        # On force la taille physique pour l'imprimeur
-        root.attrib["width"] = "67mm"
-        root.attrib["height"] = "93mm"
-        # On indique que le contenu interne utilise tes anciennes coordonnées en pixels
-
         temp_rgb_pdf = os.path.join(output_dir, str(fileName) + "_rgb.pdf")
         inkscapeCommand = f'inkscape "{os.path.relpath(generatedSvgPath, os.getcwd())}" --export-filename="{os.path.relpath(temp_rgb_pdf, os.getcwd())}" --export-text-to-path --export-dpi={settings.get("FinalExportDPI", 300)}'
         os.system(inkscapeCommand)
