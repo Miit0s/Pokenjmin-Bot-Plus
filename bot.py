@@ -11,6 +11,7 @@ import xml.etree.ElementTree as ET
 from io import BytesIO
 from pathlib import Path
 from PIL import Image
+import asyncio
 
 os.environ['PYTHONUNBUFFERED'] = "1"
 
@@ -112,6 +113,7 @@ def get_all_users_sorted(discordClient):
         for spe in settings["Specialties"]:
             if spe["Id"] == speId:
                 cohort = spe["Promotion"]
+                break
 
         if(user["legendary_user"]==False):
             guild=discordClient.get_guild(user["guild_id"])
@@ -625,6 +627,7 @@ def create_svg_card(cardDatas, speId, fileName, cardImagesName, isPreview=False,
     for spe in settings["Specialties"]:
         if spe["Id"] == speId:
             cohort = spe["Promotion"]
+            break
 
     cohortNameLayer = get_svg_layer_by_path(root,settings["CohortNameValueLayer"])
     change_text_of_svg_layer(cohortNameLayer,cohort)
@@ -654,6 +657,7 @@ def create_svg_card(cardDatas, speId, fileName, cardImagesName, isPreview=False,
 
         gs_command = (
             f'gs -q -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite '
+            f'--permit-file-read="{icc_profile}" '
             f'-sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK '
             f'-sOutputICCProfile="{icc_profile}" '
             f'-sOutputFile="{os.path.relpath(exportPath, os.getcwd())}" '
@@ -1204,7 +1208,10 @@ async def exportAll(interaction, format:int):
         
         print(f"[{i+1}/{total_users}] Generating the PDF for the card {fileName}")
         
-        create_svg_card(card, user["spe"], fileName, str(fileName)+".png", False, "pdf", export_pdf_folder)
+        await asyncio.to_thread(
+            create_svg_card, 
+            card, user["spe"], fileName, str(fileName)+".png", False, "pdf", export_pdf_folder
+        )
     
     print("=== Export PDF finished successfully ! ===")
     
