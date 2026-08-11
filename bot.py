@@ -26,7 +26,7 @@ try:
 except:
     print("Couldn't find settings.json")
 
-con = sqlite3.connect("Data/data.db")
+con = sqlite3.connect("Data/data.db", check_same_thread=False)
 con.row_factory = sqlite3.Row
 
 # Namespace for attributes
@@ -674,7 +674,6 @@ def create_svg_card(cardDatas, speId, fileName, cardImagesName, isPreview=False,
     return exportPath
 
 def fill_layers_for_skill(root,skillLayerGroupPath,skillDatas):
-    print(skillLayerGroupPath+"/"+settings["SkillDescLayerName"])
     skillDescLayer=get_svg_layer_by_path(root, skillLayerGroupPath+"/"+settings["SkillDescLayerName"])
     change_text_of_svg_layer(skillDescLayer,replacePingsByCardNames(skillDatas["skill_desc"]))
 
