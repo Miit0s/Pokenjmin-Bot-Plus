@@ -1153,7 +1153,7 @@ async def getAdvancement(interaction, role:discord.Role, enumerate_empty:bool=Tr
 
 @tree.command(
     name="export_all",
-    description="Exports all the users cards",
+    description="[ADMINS] Exports all the users cards",
 )
 @app_commands.choices(format=[
     app_commands.Choice(name='PDF', value=0),
@@ -1190,11 +1190,13 @@ async def exportAll(interaction, format:int):
         with open(jsonPath, 'w', encoding='utf8') as f:
             json.dump(users, f, ensure_ascii=False)
             
-        message = f"L'export JSON est terminé ! Vous pouvez récupérer le fichier `export.json` dans le dossier `{settings.get('ExportJsonFolder', 'ExportedJSON')}` du serveur. Les images associées sont déjà dans `{settings['CardImagesFolder']}` et `{settings['OwnerPhotosFolder']}`."
+        message = f"The JSON export is complete! You can find the `export.json` file in the folder `{settings.get('ExportJsonFolder', 'ExportedJSON')}` in the server. The associated images are already in `{settings['CardImagesFolder']}` and `{settings['OwnerPhotosFolder']}`."
         await interaction.followup.send(message, ephemeral=True)
         return
 
     # Export as PDF
+    await interaction.followup.send(f"The PDF export of {len(users)} cards as started. This will take time. You will receive a private message when this is finish", ephemeral=True)
+
     export_pdf_folder = os.path.join(os.getcwd(), settings.get("ExportPdfFolder", "ExportedPDFs"))
     os.makedirs(export_pdf_folder, exist_ok=True)
     
@@ -1214,9 +1216,12 @@ async def exportAll(interaction, format:int):
     
     print("=== Export PDF finished successfully ! ===")
     
-    message = f"Les PDFs haute définition prêts pour l'impression ont été générés avec succès ! Ils sont disponibles manuellement sur le serveur dans le dossier `{settings.get('ExportPdfFolder', 'ExportedPDFs')}`."
+    message = f"The high-resolution, print-ready PDFs have been successfully generated! They are available on the server in the folder `{settings.get('ExportPdfFolder', 'ExportedPDFs')}`."
     
-    await interaction.followup.send(message, ephemeral=True)
+    try:
+        await interaction.user.send(message)
+    except discord.Forbidden:
+        print(f"Unable to send the end-of-export PM to {interaction.user.name}. PMs are blocked.")
 
 @tree.command(
     name="get",
